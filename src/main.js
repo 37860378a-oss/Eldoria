@@ -80,7 +80,7 @@ const hud = createHud(player, world);
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);
 scene.add(ambient);
 const sun = new THREE.DirectionalLight(0xffe5bf, 2.35);
-sun.position.copy(sunDirection).multiplyScalar(120);
+sun.position.set(-55, 94, 35);
 sun.castShadow = true;
 sun.shadow.mapSize.set(1024, 1024);
 sun.shadow.camera.left = -95;

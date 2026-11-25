@@ -101,3 +101,12 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - La distancia elegida modifica la niebla y el recorte de cámara para reducir la carga visual en equipos modestos.
 - El movimiento del personaje queda pausado mientras el menú está abierto.
 - Pendiente de prueba visual: verificar el nacimiento del río, la visibilidad de las partículas y el comportamiento del menú en navegador.
+
+
+## Versión 2.0 — Ambientación de Piedra Clara
+
+- Se enriqueció el mobiliario del asentamiento con seis barriles de madera y sus aros, además de cinco cajones con refuerzos visibles.
+- Los elementos se generan mediante mallas instanciadas para mantener bajo el número de llamadas de dibujo.
+- Se conserva la señalización y la iluminación decorativa existentes, manteniendo despejados los recorridos principales.
+- El cauce del río queda sin cambios en esta etapa; su corrección se retoma más adelante.
+- Pendiente de prueba visual: revisar que los nuevos objetos apoyen correctamente sobre el terreno y no bloqueen los caminos.

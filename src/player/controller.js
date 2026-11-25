@@ -20,7 +20,8 @@ export function createPlayerController(scene, camera, heightAt) {
   const keys = new Set();
   let yaw = 0;
   let pitch = 0.22;
-  let started = false;\n  let paused = false;
+  let started = false;
+  let paused = false;
   const forward = new THREE.Vector3();
   const right = new THREE.Vector3();
   const desired = new THREE.Vector3();
@@ -45,7 +46,8 @@ export function createPlayerController(scene, camera, heightAt) {
 
   return {
     object: player,
-    start() { started = true; },\n    setPaused(value) { paused = !!value; keys.clear(); },
+    start() { started = true; },
+    setPaused(value) { paused = !!value; keys.clear(); },
     isStarted() { return started; },
     update(delta) {
       if (!started) {

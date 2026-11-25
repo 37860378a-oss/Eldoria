@@ -7,6 +7,6 @@ export function createWorld(scene) {
   const terrain = createTerrain(scene);
   createPaths(scene, terrain.heightAt);
   createVillage(scene, terrain.heightAt);
-  createNature(scene, terrain.heightAt);
-  return terrain;
+  const nature = createNature(scene, terrain.heightAt);
+  return { ...terrain, nature };
 }

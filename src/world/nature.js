@@ -23,7 +23,9 @@ const trails = [
 ];
 function nearTrail(x, z) { return trails.some(s => distanceToSegment(x,z,s[0],s[1],s[2],s[3]) < 4.4); }
 function clearForNature(x, z) {
-  if (Math.abs(z + 25) < 12.5) return false;
+  if (Math.abs(z + 25) < 15) return false;
+  if (Math.hypot((x + 69) / 17, (z - 38) / 12) < 1.5) return false;
+  if (Math.hypot((x - 69) / 13, (z - 61) / 10) < 1.5) return false;
   if (x > -59 && x < 1 && z > -24 && z < 25) return false;
   if (x > 0 && x < 16 && z > -39 && z < -14) return false;
   return !nearTrail(x, z);

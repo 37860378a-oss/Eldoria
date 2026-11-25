@@ -77,7 +77,7 @@ export function createVillage(scene, heightAt) {
     const z = -4 - 21 * t;
     const path = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.12, 2.5), pathMat);
     path.position.set(x, baseY(x, z) + 0.09, z);
-    path.rotation.y = Math.atan2(-21, 31);
+    path.rotation.y = Math.atan2(21, 31);
     village.add(path);
   }
   scene.add(village);

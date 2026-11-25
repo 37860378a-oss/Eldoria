@@ -151,3 +151,14 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se aumentó a 1024×1024 la resolución procedural del terreno y de los caminos, con grano fino, variaciones orgánicas y filtrado mipmap/anisótropo.
 - El terreno incorpora relieve de microdetalle mediante bump mapping suave para dar lectura a la superficie sin sumar geometría.
 - Se mantiene la generación procedural y el uso de módulos existentes para controlar el coste de renderizado.
+
+
+## Versión 2.6 — Dirección artística Hand-Painted Stylized Art
+- Se establece una dirección visual global de fantasía estilizada pintada a mano.
+- El terreno utiliza manchas amplias de color, pinceladas cortas y acentos orgánicos; se reduce el bump para evitar una lectura fotográfica o granulada.
+- Los caminos reciben capas pictóricas de tierra, pinceladas claras y piedras pintadas.
+- Piedra, revoque, madera y tejados de los edificios usan patrones ilustrados con juntas, vetas y luces pintadas.
+- Se armoniza la paleta de árboles, arbustos, rocas y hierba con tonos más cálidos y siluetas facetadas.
+- Se conservan geometría, distribución, módulos, puente y brazo del río. No se incorporan masas de agua nuevas.
+- La generación sigue siendo procedural y no requiere descargas de texturas externas.
+- Pendiente de validación visual y de rendimiento en el equipo objetivo.

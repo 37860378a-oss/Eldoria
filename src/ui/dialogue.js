@@ -37,7 +37,7 @@ export function createDialogue(player, actors, hud) {
       event.preventDefault();
       return;
     }
-    if (event.code !== "KeyE" || !player.started) return;
+    if (event.code !== "KeyE" || !player.isStarted()) return;
     event.preventDefault();
     if (current) { advance(); return; }
     const actor = actors.nearest(player.getPosition());

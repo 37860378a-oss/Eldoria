@@ -64,8 +64,9 @@ export function createNature(scene,heightAt) {
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
     const trunkRadius=.38+random()*.18,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
-    const embed=0.85*scale;
-    trunks.push({x,y:ground+(height*.5-.85)*scale,z,sx:trunkRadius*scale,sy:(height*.5+.85)*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
+    const embed=.4;
+    // El cilindro mide 1 unidad de alto: sy representa su altura total.
+    trunks.push({x,y:ground+(height*.5-embed*.5)*scale,z,sx:trunkRadius*scale,sy:(height+embed)*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
     // Raíces visibles que nacen al nivel del suelo y se abren alrededor del tronco.
     for(let r=0;r<3+Math.floor(random()*2);r++){
       const angle=(r/4)*Math.PI*2+random()*.35,length=(1.05+random()*.7)*scale;

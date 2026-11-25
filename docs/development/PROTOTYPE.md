@@ -110,3 +110,14 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se conserva la señalización y la iluminación decorativa existentes, manteniendo despejados los recorridos principales.
 - El cauce del río queda sin cambios en esta etapa; su corrección se retoma más adelante.
 - Pendiente de prueba visual: revisar que los nuevos objetos apoyen correctamente sobre el terreno y no bloqueen los caminos.
+
+
+## Versión 2.1 — Edificios de Piedra Clara
+
+- Se incorporaron tres edificios diferenciados: una vivienda, una herrería y un almacén.
+- Las construcciones combinan cimientos de piedra, paredes claras, vigas de madera y cubiertas inclinadas con variaciones de color y escala.
+- Las fachadas incluyen accesos entreabiertos para permitir ver parte del mobiliario interior.
+- La herrería incorpora horno, brasa y yunque; el almacén incluye estanterías y mercancías.
+- Los edificios se generan desde un módulo independiente (`villageBuildings.js`) y se integran al crear el mundo.
+- Se mantienen materiales compartidos y geometría sencilla para cuidar el rendimiento.
+- Pendiente de validación visual: comprobar la ubicación de los tres edificios, que no invadan caminos ni mobiliario, y que las puertas e interiores se vean correctamente desde el recorrido del jugador.

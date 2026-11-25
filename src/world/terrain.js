@@ -20,8 +20,8 @@ export function terrainHeight(x,z){
   let h=baseHeight(x,z);
   // Cauce excavado con taludes suaves, no una zanja rectangular.
   const riverDistance=Math.abs(z+25);
-  h-=3.9*Math.exp(-Math.pow(riverDistance/5.8,2));
-  h-=.62*Math.exp(-Math.pow(riverDistance/11.5,2));
+  h-=3.55*Math.exp(-Math.pow(riverDistance/7.2,2));
+  h-=.95*Math.exp(-Math.pow(riverDistance/15.5,2));
   for(const lake of LAKES)h-=depression(x,z,lake);
   return h;
 }
@@ -45,7 +45,7 @@ export function createTerrain(scene){
     const variation=(Math.sin(x*.11)+Math.cos(z*.13))*.035;
     const color=meadow.clone().lerp(light,THREE.MathUtils.clamp(.34+h*.028+variation,0,.8));
     if(h>5)color.lerp(earth,.2);
-    const bank=1-THREE.MathUtils.smoothstep(distance,5.2,12.5);
+    const bank=1-THREE.MathUtils.smoothstep(distance,7.5,17.5);
     color.lerp(wet,bank*.72);
     colors.push(color.r,color.g,color.b);
   }
@@ -53,19 +53,24 @@ export function createTerrain(scene){
   const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1}));ground.receiveShadow=true;scene.add(ground);
 
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
-  const waterGeo=new THREE.PlaneGeometry(240,9.8,180,12);waterGeo.rotateX(-Math.PI/2);
+  const waterGeo=new THREE.PlaneGeometry(240,12.8,220,16);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
-  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,-1.5,-25);scene.add(river);
+  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,-.35,-25);scene.add(river);scene.add(current);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];
   for(const side of [-1,1]){
     const points=[];
-    for(let i=0;i<100;i++){const x=-116+i*2.35,z=-25+side*(5.1+Math.sin(i*.22)*.55);points.push(new THREE.Vector3(x,terrainHeight(x,z)+.05,z));}
+    for(let i=0;i<100;i++){const x=-116+i*2.35,z=-25+side*(7.0+Math.sin(i*.22)*.7);points.push(new THREE.Vector3(x,terrainHeight(x,z)+.04,z));}
     const stones=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),bankMat,points.length),dummy=new THREE.Object3D();
     points.forEach((p,i)=>{const s=.35+((i*17)%11)/15;dummy.position.copy(p);dummy.scale.set(s*1.8,s*.38,s*.7);dummy.rotation.y=i*.71;dummy.updateMatrix();stones.setMatrixAt(i,dummy.matrix);});
     scene.add(stones);bankGroups.push(stones);
   }
+  const currentMat=new THREE.MeshBasicMaterial({color:0xc1e5e5,transparent:true,opacity:.62,depthWrite:false});
+  const currentGeo=new THREE.ConeGeometry(.2,.62,3);currentGeo.rotateZ(-Math.PI/2);
+  const current=new THREE.InstancedMesh(currentGeo,currentMat,22);current.frustumCulled=false;
+  const currentData=[];const currentDummy=new THREE.Object3D();
+  for(let i=0;i<22;i++){currentData.push({x:-112+i*10.4,z:-28+(i%3)*2.7,phase:i*.43});}
   const lakes=[];
   for(const lakeData of LAKES){
     const level=baseHeight(lakeData.x,lakeData.z)+lakeData.offset;
@@ -82,6 +87,8 @@ export function createTerrain(scene){
         waterPositions[i*3+1]=baseWater[i*3+1]+Math.sin(x*.075+time*1.15)*.045+Math.cos(z*.8+time*.8)*.025;
       }
       waterGeo.attributes.position.needsUpdate=true;waterGeo.computeVertexNormals();
+      currentData.forEach((p,i)=>{const x=((p.x+112+time*2.8+p.phase*2)%228)-112;currentDummy.position.set(x,river.position.y+.18+Math.sin(x*.075+time*1.15)*.045,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
+      current.instanceMatrix.needsUpdate=true;
     }
   };
 }

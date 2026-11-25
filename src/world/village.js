@@ -17,7 +17,7 @@ function box(parent, w, h, d, material, x, y, z) {
   parent.add(mesh);
   return mesh;
 }
-function makeHouse(scene, x, z, width, depth, height, roofMat = mats.roof) {
+function makeHouse(scene, x, z, width, depth, height, heightAt, roofMat = mats.roof) {
   const group = new THREE.Group();
   box(group, width, height, depth, mats.plaster, 0, height / 2, 0);
   const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(width, depth) * 0.78, height * 0.72, 4), roofMat);
@@ -28,7 +28,7 @@ function makeHouse(scene, x, z, width, depth, height, roofMat = mats.roof) {
   box(group, width * 0.16, height * 0.52, 0.12, mats.darkWood, 0, height * 0.26, depth / 2 + 0.07);
   box(group, width * 0.17, height * 0.24, 0.08, mats.glow, -width * 0.28, height * 0.62, depth / 2 + 0.08);
   box(group, width * 0.17, height * 0.24, 0.08, mats.glow, width * 0.28, height * 0.62, depth / 2 + 0.08);
-  group.position.set(x, 0, z);
+  group.position.set(x, heightAt(x, z), z);
   scene.add(group);
   return group;
 }
@@ -36,12 +36,12 @@ function makeHouse(scene, x, z, width, depth, height, roofMat = mats.roof) {
 export function createVillage(scene, heightAt) {
   const village = new THREE.Group();
   const baseY = (x, z) => heightAt(x, z);
-  makeHouse(village, -28, 6, 10, 8, 5.4, mats.roofLight); // posada
-  makeHouse(village, -12, 7, 8, 7, 4.7); // herrería
-  makeHouse(village, -37, -7, 7, 7, 4.2, mats.roofLight);
-  makeHouse(village, -17, -10, 8, 6, 4.3);
-  makeHouse(village, -42, 12, 7, 8, 4.6);
-  makeHouse(village, -5, 13, 7, 7, 4.2, mats.roofLight);
+  makeHouse(village, -28, 6, 10, 8, 5.4, baseY, mats.roofLight); // posada
+  makeHouse(village, -12, 7, 8, 7, 4.7, baseY); // herrería
+  makeHouse(village, -37, -7, 7, 7, 4.2, baseY, mats.roofLight);
+  makeHouse(village, -17, -10, 8, 6, 4.3, baseY);
+  makeHouse(village, -42, 12, 7, 8, 4.6, baseY);
+  makeHouse(village, -5, 13, 7, 7, 4.2, baseY, mats.roofLight);
   const square = new THREE.Mesh(new THREE.CylinderGeometry(9.5, 9.5, 0.24, 8), mats.stone);
   square.position.set(-25, baseY(-25, 0) + 0.1, 0);
   village.add(square);
@@ -71,10 +71,13 @@ export function createVillage(scene, heightAt) {
 
   // Camino de tierra: piezas cortas siguiendo el acceso desde el pueblo al puente.
   const pathMat = new THREE.MeshStandardMaterial({ color: 0xb19b70, roughness: 1 });
-  for (let i = 0; i < 12; i++) {
-    const z = -2 - i * 2.0;
-    const path = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.12, 2.2), pathMat);
-    path.position.set(8, baseY(8, z) + 0.09, z);
+  for (let i = 0; i < 22; i++) {
+    const t = i / 21;
+    const x = -23 + 31 * t;
+    const z = -4 - 21 * t;
+    const path = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.12, 2.5), pathMat);
+    path.position.set(x, baseY(x, z) + 0.09, z);
+    path.rotation.y = Math.atan2(-21, 31);
     village.add(path);
   }
   scene.add(village);

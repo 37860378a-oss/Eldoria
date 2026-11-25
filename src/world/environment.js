@@ -60,9 +60,6 @@ export function createEnvironment(scene,heightAt){
   const rocks=[],mounds=[];
   for(let i=0;i<240;i++){
     const x=(random()-.5)*500,z=(random()-.5)*500;
-    if(Math.abs(z+25)<17)continue;
-    const lakeZones=[[-69,38,17,12], [69,61,13,10], [-158,118,20,15], [154,-145,17,13], [174,142,15,12], [-48,168,16,12]];
-    if(lakeZones.some(([lx,lz,rx,rz])=>Math.hypot((x-lx)/rx,(z-lz)/rz)<1.35))continue;
     const y=heightAt(x,z),type=Math.floor(random()*3),s=.45+random()*.7;
     for(let j=0;j<4;j++){
       const a=random()*Math.PI*2,r=random()*1.2;

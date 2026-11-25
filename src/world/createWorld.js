@@ -6,23 +6,13 @@ import { createVillageDetails } from "./villageDetails.js";
 import { createExploration } from "./exploration.js";
 import { createActors } from "./actors.js";
 
-const BRIDGE_LINE = [
-  { z: -37, x: 8.2 },
-  { z: -32, x: 7.2 },
-  { z: -27, x: 6.7 },
-  { z: -22, x: 7.5 },
-  { z: -17, x: 9.2 }
-];
-
-function bridgeCenterX(z) {
-  for (let i = 0; i < BRIDGE_LINE.length - 1; i++) {
-    const a = BRIDGE_LINE[i], b = BRIDGE_LINE[i + 1];
-    if (z >= a.z && z <= b.z) {
-      const t = (z - a.z) / (b.z - a.z);
-      return a.x + (b.x - a.x) * t;
-    }
-  }
-  return null;
+const BRIDGE_START_Z = -37.2;
+const BRIDGE_END_Z = -16.8;
+const BRIDGE_CENTER_X = 8.2;
+function bridgeHeightAt(x,z,heightAt) {
+  if(z<BRIDGE_START_Z||z>BRIDGE_END_Z||Math.abs(x-BRIDGE_CENTER_X)>4.05)return null;
+  const t=(z-BRIDGE_START_Z)/(BRIDGE_END_Z-BRIDGE_START_Z);
+  return heightAt(x,z)+.48+3.65*Math.sin(Math.PI*t);
 }
 
 export function createWorld(scene) {
@@ -34,16 +24,9 @@ export function createWorld(scene) {
   const exploration = createExploration(scene, terrain.heightAt);
   const actors = createActors(scene, terrain.heightAt);
 
-  // El personaje usa el tablero como suelo cuando está dentro del puente.
-  // Fuera de su ancho vuelve a seguir la altura normal del terreno.
-  function walkHeightAt(x, z) {
-    const centerX = bridgeCenterX(z);
-    if (centerX !== null && Math.abs(x - centerX) <= 3.85) {
-      return terrain.heightAt(x, z)
-        + 0.68
-        + 4.25 * Math.exp(-((z + 25) ** 2) / 43);
-    }
-    return terrain.heightAt(x, z);
+  // El personaje sigue el perfil del arco al cruzar el puente.
+  function walkHeightAt(x,z) {
+    return bridgeHeightAt(x,z,terrain.heightAt) ?? terrain.heightAt(x,z);
   }
 
   return { ...terrain, nature, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); } };

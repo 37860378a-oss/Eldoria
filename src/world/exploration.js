@@ -121,7 +121,7 @@ export function createExploration(scene,heightAt){
   const forestTrail=[[17,-51],[8,-58],[-5,-62],[-20,-64],[-36,-67],[-53,-70],[-65,-72]];
   makeTrail(scene,heightAt,mainTrail,4.3,true);makeTrail(scene,heightAt,forestTrail,3.6);
   const ruins=createRuins(scene,heightAt),grove=createWhisperGrove(scene,heightAt);
-  const caves=[createCave(scene,heightAt,-210,-132,.4),createCave(scene,heightAt,205,156,Math.PI),createCave(scene,heightAt,18,232,-.5)];
+  const caves=[createCave(scene,heightAt,-235,-132,Math.PI/2),createCave(scene,heightAt,235,156,-Math.PI/2),createCave(scene,heightAt,18,240,Math.PI)];
   const regionAt=(x,z)=>{
     if(Math.hypot((x-43)/19,(z+76)/17)<1.35)return "Santuario de las Primeras Brasas";
     if(Math.hypot((x+65)/31,(z+70)/27)<1.05)return "Bosque de los Susurros";

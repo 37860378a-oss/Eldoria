@@ -32,7 +32,7 @@ const sunSpherical = new THREE.Spherical(1, THREE.MathUtils.degToRad(72), THREE.
 sunDirection.setFromSpherical(sunSpherical).normalize();
 sky.material.uniforms.sunPosition.value.copy(sunDirection);
 
-const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500000);
 const world = createWorld(scene);
 // walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
 const player = createPlayerController(scene, camera, world.walkHeightAt);

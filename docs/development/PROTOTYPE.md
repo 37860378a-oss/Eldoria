@@ -171,3 +171,12 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Los caminos usan pinceladas más grandes y contraste más claro; la vegetación lateral conserva su transición.
 - Se mantiene el enfoque de rendimiento: CanvasTextures pequeñas, materiales compartidos y sin mapas de alta resolución externos.
 - Pendiente de confirmación visual en el navegador del usuario.
+
+
+## Revisión 2.7 — Sistema de superficies pintadas
+- Se incorpora `src/world/paintedMaterials.js` como generador compartido de materiales ilustrados.
+- El generador crea mapas CanvasTexture de 1024 px con pinceladas amplias, capas de color y detalles dibujados por superficie: pradera, tierra, piedra, revoque, madera y tejas.
+- Terreno y caminos dejan de depender de sus generadores de ruido anteriores y usan el nuevo sistema pictórico.
+- Los edificios reutilizan el mismo generador para piedra, revoque, madera y tejados, manteniendo sus modelos, UV y distribución.
+- No se agregan imágenes externas ni geometría adicional; las texturas se generan localmente y se reutilizan por material.
+- La validación visual y de rendimiento queda pendiente de la prueba en navegador con Live Server.

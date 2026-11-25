@@ -59,7 +59,6 @@ function createSkyTexture() {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.needsUpdate = true;
   return texture;
 }

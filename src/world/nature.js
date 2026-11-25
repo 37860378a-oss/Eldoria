@@ -56,15 +56,24 @@ function branchEntry(x,y,z,angle,length,radius) {
 }
 
 export function createNature(scene,heightAt) {
-  const random=seeded(4812), trunks=[],branches=[],crowns=leafMats.map(()=>[]), shrubs=shrubMats.map(()=>[]),rocks=[],grass=grassMats.map(()=>[]);
+  const random=seeded(4812), trunks=[],roots=[],branches=[],crowns=leafMats.map(()=>[]), shrubs=shrubMats.map(()=>[]),rocks=[],grass=grassMats.map(()=>[]);
   const treeLeaves=[];
   let attempts=0,treeCount=0;
-  while(treeCount<76&&attempts++<1800) {
+  while(treeCount<96&&attempts++<2200) {
     const x=(random()-.5)*198,z=(random()-.5)*198;
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
     const trunkRadius=.24+random()*.12,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
     trunks.push({x,y:ground+height*.5*scale,z,sx:trunkRadius*scale,sy:height*.5*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
+    // Raíces visibles que nacen al nivel del suelo y se abren alrededor del tronco.
+    for(let r=0;r<3+Math.floor(random()*2);r++){
+      const angle=(r/4)*Math.PI*2+random()*.35,length=(1.05+random()*.7)*scale;
+      const dir=new THREE.Vector3(Math.cos(angle),.12+random()*.08,Math.sin(angle)).normalize();
+      const start=new THREE.Vector3(x,ground+.13*scale,z),end=start.clone().addScaledVector(dir,length);
+      const mid=start.clone().add(end).multiplyScalar(.5);
+      const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
+      roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.16*scale,sy:length*.5,sz:.16*scale,q});
+    }
     const clusterCount=4+Math.floor(random()*3);
     for(let b=0;b<4+Math.floor(random()*2);b++){
       const angle=random()*Math.PI*2,branchY=height*(.42+random()*.34),length=1.25+random()*1.35;
@@ -84,7 +93,10 @@ export function createNature(scene,heightAt) {
     }
     treeCount++;
   }
-  addInstances(scene,new THREE.CylinderGeometry(.15,.36,1,7,1),trunkMat,trunks);
+  addInstances(scene,new THREE.CylinderGeometry(.19,.49,1,8,1),trunkMat,trunks);
+  const rootMesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(.025,.19,1,6),trunkMat,roots.length),rootDummy=new THREE.Object3D();
+  roots.forEach((e,i)=>{rootDummy.position.set(e.x,e.y,e.z);rootDummy.quaternion.copy(e.q);rootDummy.scale.set(e.sx,e.sy,e.sz);rootDummy.updateMatrix();rootMesh.setMatrixAt(i,rootDummy.matrix);});
+  rootMesh.instanceMatrix.needsUpdate=true;scene.add(rootMesh);
   const branchMesh=addInstances(scene,new THREE.CylinderGeometry(.055,.13,1,5),branchMat,branches);
   if(branchMesh){
     const dummy=new THREE.Object3D();
@@ -94,19 +106,19 @@ export function createNature(scene,heightAt) {
   const crownGroups=crowns.map((entries,i)=>({mesh:addInstances(scene,new THREE.SphereGeometry(1,8,6),leafMats[i],entries),entries})).filter(group=>group.mesh);
 
   let shrubCount=0;attempts=0;
-  while(shrubCount<105&&attempts++<1500){
+  while(shrubCount<150&&attempts++<2100){
     const x=(random()-.5)*194,z=(random()-.5)*194;if(!clearForNature(x,z)||random()<.25)continue;
     const s=.5+random()*.65,i=Math.floor(random()*shrubMats.length);
     shrubs[i].push({x,y:heightAt(x,z)+s*.42,z,sx:s*1.25,sy:s*.8,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});shrubCount++;
   }
   const shrubGroups=shrubs.map((entries,i)=>({mesh:addInstances(scene,new THREE.IcosahedronGeometry(.78,1),shrubMats[i],entries),entries})).filter(group=>group.mesh);
   const rockGeo=new THREE.DodecahedronGeometry(1,0);
-  for(let i=0;i<44;i++){const x=(random()-.5)*194,z=(random()-.5)*188;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
+  for(let i=0;i<64;i++){const x=(random()-.5)*194,z=(random()-.5)*188;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
   addInstances(scene,rockGeo,rockMat,rocks);
 
   const bladeGeo=new THREE.ConeGeometry(.12,.72,3),grassMeshes=[];
   let grassCount=0;attempts=0;
-  while(grassCount<260&&attempts++<2200){
+  while(grassCount<560&&attempts++<4200){
     const x=(random()-.5)*190,z=(random()-.5)*190;if(!clearForNature(x,z)||random()<.35)continue;
     const s=.5+random()*.75,i=Math.floor(random()*grassMats.length);
     grass[i].push({x,y:heightAt(x,z)+.3*s,z,sx:s,sy:s,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});grassCount++;

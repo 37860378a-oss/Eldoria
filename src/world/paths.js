@@ -23,7 +23,7 @@ function ribbon(scene,heightAt,points,width,material,options={}){
     for(let j=0;j<bands.length;j++){
       const f=bands[j],x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
       const edge=Math.abs(f),blend=smooth((edge-.88)/.57);
-      let y=heightAt(x,z)+.045+(options.ramp?(.48+4.25*Math.exp(-((z+25)**2)/43))*options.ramp(z):0);
+      let y=heightAt(x,z)+.045+(options.ramp?(.48*options.ramp(z)):0);
       y+=Math.sin(i*.31+j*.7)*.006;
       vertices.push(x,y,z);uv.push(t*12,j/(bands.length-1));
       const color=dust.clone().lerp(grass,blend);colors.push(color.r,color.g,color.b);
@@ -38,5 +38,5 @@ const northBridgeRamp=()=>0;
 export function createPaths(scene,heightAt){
   const road=new THREE.MeshStandardMaterial({map:roadTexture(),vertexColors:true,roughness:1,side:THREE.DoubleSide});
   ribbon(scene,heightAt,[[-49,2],[-44,-3],[-39,-6],[-33,-7],[-27,-6],[-22,-3],[-18,1],[-18,6],[-22,10],[-29,12],[-37,10],[-43,6],[-49,2]],4.2,road);
-  ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road);
+  ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road,{ramp:z=>smooth((-13-z)/3.8)});
 }

@@ -50,7 +50,7 @@ export function createPlayerController(scene, camera, heightAt) {
     setPaused(value) { paused = !!value; keys.clear(); },
     isStarted() { return started; },
     update(delta) {
-      if (!started) {
+      if (!started || paused) {
         desired.set(player.position.x, player.position.y + 1.1, player.position.z);
       } else {
         forward.set(-Math.sin(yaw), 0, -Math.cos(yaw));

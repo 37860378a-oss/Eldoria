@@ -29,5 +29,5 @@ export function createWorld(scene) {
     return bridgeHeightAt(x,z,terrain.heightAt) ?? terrain.heightAt(x,z);
   }
 
-  return { ...terrain, nature, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); } };
+  return { ...terrain, nature, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); nature.update(time); exploration.update(time); } };
 }

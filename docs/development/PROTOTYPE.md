@@ -3,7 +3,7 @@
 ## Versión 1.1 — Corrección de la aldea y trazado de caminos
 
 ### Correcciones de distribución
-- Se retiró la parcela que estaba demasiado cerca del cauce y se reubicó al oeste de Piedra Clara, lejos del río y de sus bancos.
+- Se retiró la parcela que estaba demasiado cerca del cauce y se reubicó al oeste de Piedra Clara y se alejó de la franja del río y de sus bancos.
 - Se actualizaron las zonas de exclusión de vegetación para que coincidan con la nueva parcela.
 - Se eliminaron las dos salidas exteriores provisionales y los mojones asociados: no se mostrarán caminos que terminen sin conectar con una zona jugable.
 - Se conserva únicamente el circuito de la plaza y el acceso principal al puente, que forman un recorrido reconocible.

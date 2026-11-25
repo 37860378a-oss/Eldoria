@@ -121,3 +121,12 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Los edificios se generan desde un módulo independiente (`villageBuildings.js`) y se integran al crear el mundo.
 - Se mantienen materiales compartidos y geometría sencilla para cuidar el rendimiento.
 - Pendiente de validación visual: comprobar la ubicación de los tres edificios, que no invadan caminos ni mobiliario, y que las puertas e interiores se vean correctamente desde el recorrido del jugador.
+
+
+## Versión 2.2 — Iluminación y opciones de viaje
+- Se centraron las cubiertas a dos aguas sobre la estructura y se corrigió la posición de la cumbrera.
+- Las puertas ahora giran desde un pivote de bisagra y conservan el acceso abierto.
+- Se añadieron dos antorchas por edificio con parpadeo visual e iluminación cálida.
+- El menú de pausa incorpora calidad gráfica, escala de renderizado, distancia de visión y pantalla completa.
+- Se añadió reloj del mundo, ciclo día/noche configurable, control de velocidad y ajuste manual de hora.
+- La escala de renderizado reduce la resolución interna del canvas; la resolución física de pantalla sigue dependiendo del navegador y del sistema operativo.

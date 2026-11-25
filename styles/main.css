@@ -54,3 +54,19 @@ button:hover{filter:brightness(1.08);transform:translateY(-1px)}button span{marg
 .pause-text-button{display:block;margin:10px auto 0;padding:7px 12px;background:transparent;border:0;box-shadow:none;color:#c9c5b8;font-size:10px}
 .pause-footnote{margin-top:15px;color:#8f978c;font-size:9px}
 @media(max-width:650px){.pause-card{padding:25px 20px}.pause-card h2{font-size:25px}}
+
+/* Panel ampliado de opciones de Eldoria */
+.pause-card{width:min(760px,100%);max-height:90vh;overflow:auto;text-align:left;padding:26px 30px}
+.pause-card .pause-eyebrow,.pause-card h2,.pause-card .pause-description{text-align:center}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.settings-section{padding:16px;background:#ffffff09;border:1px solid #ffffff1c;min-width:0}
+.settings-section h3{margin:0 0 15px;color:var(--gold);font:600 15px Cinzel,serif}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:13px 0 7px;color:#e8e2d3;font-size:11px}
+.setting-row strong{color:var(--gold);font-variant-numeric:tabular-nums}
+.settings-section input[type=range]{width:100%;accent-color:#d9b878}
+.settings-section select{max-width:58%;padding:7px 9px;background:#1d2b23;color:#eee5d0;border:1px solid #d9b87866;font:11px Manrope,sans-serif}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;margin:14px 0;color:#e8e2d3;font-size:11px}
+.toggle-row input{accent-color:#d9b878;width:16px;height:16px}
+.secondary-setting{width:100%;margin-top:15px;padding:9px;background:#ffffff0b;color:#e8e2d3;border-color:#d9b87855;box-shadow:none}
+#resume-button{display:block;width:100%;text-align:center}
+@media(max-width:650px){.pause-card{max-height:94vh;padding:22px 16px}.settings-grid{grid-template-columns:1fr}.settings-section{padding:13px}.setting-row{font-size:10px}}

@@ -28,9 +28,12 @@ function addInstances(scene, geometry, material, entries) {
 }
 
 export function createVillageDetails(scene, heightAt) {
+  // Faroles colocados en una línea coherente junto a los bordes de los caminos.
+  // Se mantienen fuera del centro de la calzada para no obstruir el recorrido.
   const lanterns = [
-    [-43, 4], [-34, -11], [-18, 5], [-5, -15],
-    [13, -40], [28, -50]
+    [-47, -2], [-40, -8], [-32, -10], [-23, -6],
+    [-16, 3], [-22, 14], [-36, 14], [-44, 9],
+    [7, -15], [12, -41], [29, -51], [43, -56]
   ];
 
   const posts = lanterns.map(([x, z]) => ({

@@ -43,11 +43,12 @@ function addRoof(parent,w,d,eave,ridge,material) {
   box(parent,timber,0,ridge+.08,d/2,w*.13,.18,d+.9);
 }
 function addDoor(parent,w,wallY,frontZ) {
-  // Marco y puerta abierta: el hueco permite ver el mobiliario interior.
-  box(parent,timber,-.66,wallY*.52,frontZ,.16,wallY*.96,.22);
-  box(parent,timber,.66,wallY*.52,frontZ,.16,wallY*.96,.22);
-  box(parent,timber,0,wallY+.02,frontZ,1.48,.18,.22);
-  const door=box(parent,darkWood,-.53,wallY*.48,frontZ-.15,.92,wallY*.88,.12);
+  // Marco de altura humana y hoja entreabierta: el interior queda visible.
+  const doorH=2.35;
+  box(parent,timber,-.66,doorH/2,frontZ,.16,doorH,.22);
+  box(parent,timber,.66,doorH/2,frontZ,.16,doorH,.22);
+  box(parent,timber,0,doorH+.08,frontZ,1.48,.18,.22);
+  const door=box(parent,darkWood,-.53,doorH/2,frontZ-.15,.92,doorH-.12,.12);
   door.rotation.y=-.82;
 }
 function buildHouse(scene,heightAt,{x,z,w=8,d=7,h=4.2,roof=0,rotation=0,type="home"}) {

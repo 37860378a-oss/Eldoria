@@ -15,8 +15,9 @@ const stoneMaterial = new THREE.MeshStandardMaterial({
 function makeChannel(scene, heightAt) {
   // Brazo sinuoso: nace en la laguna, pasa bajo el puente y llega al muelle.
   const points = [
-    [-5,-58],[-1,-53],[3,-48],[5,-43],[4,-38],
-    [2,-34],[-1,-31],[-5,-29],[-9,-27],[-12,-24.2]
+    [-5,-58],[-1,-53],[2,-48],[5,-43],[8,-39],
+    [8.2,-35],[8.2,-31],[7,-28],[3,-27],[-2,-27],
+    [-7,-25.5],[-12,-24.2]
   ].map(([x,z]) => new THREE.Vector3(x,0,z));
   const curve = new THREE.CatmullRomCurve3(points, false, "centripetal");
   const segments = 180, across = 18, vertices = [], indices = [], uvs = [];

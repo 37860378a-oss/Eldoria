@@ -1,29 +1,10 @@
 import * as THREE from "three";
+import { createPaintedTexture } from "./paintedMaterials.js";
 
 function roadTexture(){
-  const size=1024,c=document.createElement("canvas");c.width=c.height=size;
-  const ctx=c.getContext("2d");let seed=7241;
-  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
-  ctx.fillStyle="#a88a60";ctx.fillRect(0,0,size,size);
-  const colors=["#b99a6b","#92764f","#c4a477","#806746","#d0b184","#9e8058"];
-  for(let i=0;i<2100;i++){
-    const x=rnd()*size,y=rnd()*size,w=5+rnd()*36,h=2+rnd()*10;
-    ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*.32);ctx.globalAlpha=.28+rnd()*.38;
-    ctx.fillStyle=colors[Math.floor(rnd()*colors.length)];ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();ctx.restore();
-  }
-  for(let i=0;i<3600;i++){
-    const x=rnd()*size,y=rnd()*size,len=2+rnd()*12;
-    ctx.strokeStyle=rnd()>.5?"rgba(242,213,162,.72)":"rgba(70,48,29,.58)";
-    ctx.lineWidth=.8+rnd()*2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y+(rnd()-.5)*3);ctx.stroke();
-  }
-  for(let i=0;i<650;i++){
-    const x=rnd()*size,y=rnd()*size,r=1+rnd()*3;
-    ctx.fillStyle="#77664f";ctx.beginPath();ctx.ellipse(x,y,r*1.5,r,rnd()*2,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="rgba(235,211,167,.48)";ctx.beginPath();ctx.ellipse(x-r*.35,y-r*.35,r*.7,r*.35,0,0,Math.PI*2);ctx.fill();
-  }
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
-  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,1);t.anisotropy=8;
-  t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;return t;
+  const texture=createPaintedTexture("earth",7241);
+  texture.repeat.set(4,1);
+  return texture;
 }
 function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
 function ribbon(scene,heightAt,points,width,material,options={}){

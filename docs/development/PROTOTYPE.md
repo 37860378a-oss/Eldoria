@@ -1,37 +1,35 @@
-# Primer prototipo 3D de Eldoria
-## Versión 0.2 — Paisaje del Valle
+# Prototipo 3D de Eldoria
+## Versión 0.3 — Vegetación y Piedra Clara
 
-Esta etapa mejora el relieve y la lectura visual del valle sin introducir dependencias nuevas ni aumentar de forma importante el coste de renderizado.
+Esta versión incorpora variedad ambiental y más identidad visual en los edificios, manteniendo geometrías compartidas e instancias para cuidar el rendimiento.
 
 ## Ejecutar en Windows
 
-1. Descarga la rama `desarrollo-lore` como ZIP desde GitHub y descomprime la carpeta.
-2. Abre la carpeta del proyecto en Visual Studio Code.
+1. Descarga la rama `desarrollo-lore` como ZIP y descomprime la carpeta.
+2. Abre la carpeta en Visual Studio Code.
 3. Inicia Live Server desde `index.html`.
 4. Abre la dirección local que muestra Live Server.
 
-No abras `index.html` directamente con doble clic: los módulos JavaScript necesitan un servidor HTTP. Three.js se carga desde jsDelivr, por lo que hace falta conexión a internet.
+Se necesita conexión a internet para cargar Three.js desde jsDelivr.
 
-## Qué incluye esta versión
+## Novedades
 
-- Relieve con colinas amplias, lomas secundarias y zonas suaves para caminar.
-- Superficie del terreno con variación de color y una textura procedural liviana generada en memoria.
-- Río y orillas con tonos más naturales.
-- Camino principal curvo entre Piedra Clara y el puente.
-- Continuación del sendero al otro lado del río y un camino secundario hacia las lomas.
-- Distribución fija del entorno para que las pruebas sean comparables.
+- Árboles de distintas copas y tamaños, distribuidos de forma reproducible.
+- Arbustos bajos y manchas de hierba para dar variedad a las praderas.
+- Rocas colocadas fuera de caminos, aldea y cauce.
+- Vegetación apartada de la plaza, las casas, el puente y los senderos.
+- Uso de `InstancedMesh` para agrupar elementos repetidos y reducir llamadas de dibujo.
+- Casas con cimientos de piedra, vigas de madera, postigos, aleros y chimeneas alternadas.
 
 ## Controles
 
 - **W, A, S, D** o flechas: movimiento.
-- **Mouse:** girar la cámara mientras el puntero está capturado.
+- **Mouse:** girar la cámara.
 - **Shift:** correr.
-- **Clic en la escena:** recuperar el control de cámara si se libera.
-
-## Alcance y limitaciones
-
-Todavía no son modelos artísticos finales ni hay colisiones físicas completas con edificios, árboles y límites del puente. Tampoco hay NPC interactivos, criaturas, combate, inventario, misiones, guardado, cuentas o servidor persistente.
+- **Clic en la escena:** recuperar la cámara.
 
 ## Prueba recomendada
 
-Recorre el camino desde la plaza hasta el puente y continúa unos metros por la otra orilla. Observa si el terreno, el camino y el agua se ven correctamente y si el movimiento sigue siendo fluido. Si aparece un error, envía el texto de la consola del navegador (F12 → Console) y una descripción de lo que ves.
+Recorre la plaza y los caminos. Comprueba que las casas se distingan mejor, que la vegetación no invada el sendero ni tape el puente y que el rendimiento siga siendo fluido.
+
+Si aparece un error, envía el texto de F12 → Console y describe qué aparece en pantalla.

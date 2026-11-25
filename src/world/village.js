@@ -95,7 +95,7 @@ function createCurvedBridge(scene, heightAt) {
     for (const sign of [-1, 1]) {
       const x = p.x + side.x * halfWidth * sign;
       const z = p.z + side.z * halfWidth * sign;
-      vertices.push(x, heightAt(x, z) + 0.68, z);
+      vertices.push(x, heightAt(x, z) + 0.68 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z);
     }
     if (i < divisions) {
       const a = i * 2;
@@ -117,7 +117,7 @@ function createCurvedBridge(scene, heightAt) {
       const side = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
       const x = p.x + side.x * (halfWidth * 0.92) * sideSign;
       const z = p.z + side.z * (halfWidth * 0.92) * sideSign;
-      railPoints.push(new THREE.Vector3(x, heightAt(x, z) + 1.48, z));
+      railPoints.push(new THREE.Vector3(x, heightAt(x, z) + 1.48 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z));
     }
     const rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPoints), divisions, 0.13, 5, false), railMat);
     scene.add(rail);
@@ -125,7 +125,7 @@ function createCurvedBridge(scene, heightAt) {
   // Accesos de piedra bajos en ambas orillas.
   for (const z of [-37.2, -16.8]) {
     const landing = new THREE.Mesh(new THREE.BoxGeometry(8.5, 0.48, 2.2), mats.stone);
-    landing.position.set(z < -25 ? 8.2 : 9.2, heightAt(z < -25 ? 8.2 : 9.2, z) + 0.38, z);
+    landing.position.set(z < -25 ? 8.2 : 9.2, heightAt(z < -25 ? 8.2 : 9.2, z) + 0.38 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z);
     scene.add(landing);
   }
 }

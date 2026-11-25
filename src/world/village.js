@@ -77,52 +77,85 @@ function addFence(scene, heightAt, x, z, w, d, openingSide = "south") {
 }
 
 function createWatchBridge(scene, heightAt) {
-  // Puente recto en planta, con un único arco elevado sobre el cauce.
-  const startZ = -37.2, endZ = -16.8, centerX = 8.2;
-  const halfWidth = 4.1, archHeight = 3.65, divisions = 48;
-  const deckY = (t, x) => heightAt(x, startZ + (endZ - startZ) * t) + .48 + archHeight * Math.sin(Math.PI * t);
-  const vertices = [], indices = [];
-  for (let i = 0; i <= divisions; i++) {
-    const t = i / divisions, z = startZ + (endZ - startZ) * t;
-    vertices.push(centerX - halfWidth, deckY(t, centerX - halfWidth), z);
-    vertices.push(centerX + halfWidth, deckY(t, centerX + halfWidth), z);
-    if (i < divisions) {
-      const a = i * 2;
-      indices.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
+  // Puente romano-medieval de mampostería: arco único, tablero de dovelas
+  // y pretiles gemelos. Cada tramo sigue exactamente la misma curva.
+  const startZ=-37.2,endZ=-16.8,centerX=8.2,halfWidth=4.1;
+  const archHeight=3.65,segments=34;
+  const stoneA=new THREE.MeshStandardMaterial({color:0x77796f,roughness:.96,flatShading:true});
+  const stoneB=new THREE.MeshStandardMaterial({color:0x918d80,roughness:.98,flatShading:true});
+  const capMat=new THREE.MeshStandardMaterial({color:0xa19b8b,roughness:.94,flatShading:true});
+  const deckY=(t,x)=>heightAt(x,startZ+(endZ-startZ)*t)+.48+archHeight*Math.sin(Math.PI*t);
+  // Dovelas anchas a lo largo de todo el tablero; las juntas hacen visible la piedra.
+  for(let i=0;i<segments;i++){
+    const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
+    const slope=(deckY(Math.min(1,t+.002),centerX)-deckY(Math.max(0,t-.002),centerX))/
+      ((endZ-startZ)*.004);
+    const slab=new THREE.Mesh(new THREE.BoxGeometry(8.15,.58,(endZ-startZ)/segments+.055),i%3===0?stoneB:stoneA);
+    slab.position.set(centerX,deckY(t,centerX)-.27,z);
+    slab.rotation.x=Math.atan(slope);
+    slab.castShadow=true;slab.receiveShadow=true;scene.add(slab);
+  }
+  // Pretiles de piedra idénticos a ambos lados, con bloques y albardilla.
+  for(const side of [-1,1]){
+    for(let i=0;i<segments;i++){
+      const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
+      const x=centerX+side*3.78,y=deckY(t,x);
+      const block=new THREE.Mesh(new THREE.BoxGeometry(.62,1.05,(endZ-startZ)/segments+.04),i%4===0?stoneB:stoneA);
+      block.position.set(x,y+.34,z);
+      const slope=(deckY(Math.min(1,t+.002),x)-deckY(Math.max(0,t-.002),x))/((endZ-startZ)*.004);
+      block.rotation.x=Math.atan(slope);block.castShadow=true;block.receiveShadow=true;scene.add(block);
+      const cap=new THREE.Mesh(new THREE.BoxGeometry(.78,.2,(endZ-startZ)/segments+.08),capMat);
+      cap.position.set(x,y+.96,z);cap.rotation.x=Math.atan(slope);cap.castShadow=true;scene.add(cap);
     }
   }
-  const deckGeo = new THREE.BufferGeometry();
-  deckGeo.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
-  deckGeo.setIndex(indices); deckGeo.computeVertexNormals();
-  const deckMat = new THREE.MeshStandardMaterial({ color: 0x77796f, roughness: .88, side: THREE.DoubleSide });
-  const deck = new THREE.Mesh(deckGeo, deckMat); deck.receiveShadow = true; deck.castShadow = true; scene.add(deck);
-
-  const railMat = mats.fence;
-  for (const side of [-1, 1]) {
-    const railPoints = [];
-    for (let i = 0; i <= divisions; i++) {
-      const t = i / divisions, z = startZ + (endZ - startZ) * t;
-      const x = centerX + side * (halfWidth - .18);
-      const y = deckY(t, x);
-      if (i % 4 === 0 || i === divisions) {
-        const post = new THREE.Mesh(new THREE.BoxGeometry(.2, 1.18, .2), railMat);
-        post.position.set(x, y + .59, z); scene.add(post);
-      }
-      railPoints.push(new THREE.Vector3(x, y + 1.02, z));
-    }
-    const topRail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPoints), divisions, .12, 6, false), railMat);
-    scene.add(topRail);
-    const lowerPoints = railPoints.map(p => new THREE.Vector3(p.x, p.y - .43, p.z));
-    scene.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lowerPoints), divisions, .075, 5, false), railMat));
-  }
-  // Entradas de piedra que funden el tablero con ambos caminos.
-  for (const z of [startZ + .7, endZ - .7]) {
-    const t = (z - startZ) / (endZ - startZ);
-    const landing = new THREE.Mesh(new THREE.BoxGeometry(8.5, .34, 2.1), mats.stone);
-    landing.position.set(centerX, deckY(t, centerX) - .12, z); scene.add(landing);
+  // Entradas ensanchadas y simétricas, asentadas en el camino.
+  for(const z of [startZ+.42,endZ-.42]){
+    const t=(z-startZ)/(endZ-startZ),landing=new THREE.Mesh(new THREE.BoxGeometry(8.7,.5,1.15),stoneB);
+    landing.position.set(centerX,deckY(t,centerX)-.22,z);landing.castShadow=true;landing.receiveShadow=true;scene.add(landing);
   }
 }
 
+function createRiverDock(scene,heightAt) {
+  // Muelle de madera sobre la orilla norte, perpendicular al cauce.
+  const wood=new THREE.MeshStandardMaterial({color:0x705238,roughness:1});
+  const wornWood=new THREE.MeshStandardMaterial({color:0x92704a,roughness:1});
+  const iron=new THREE.MeshStandardMaterial({color:0x343b38,metalness:.25,roughness:.8});
+  const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=-2.85;
+  const shoreY=heightAt(x,shoreZ)+.12;
+  const deckY=t=>shoreY+(waterY+.3-shoreY)*t;
+  // Dos largueros inferiores siguen la ligera pendiente del muelle.
+  for(const side of [-1,1]){
+    const rail=new THREE.Mesh(new THREE.BoxGeometry(.22,.28,7.15),wood);
+    rail.position.set(x+side*1.72,(shoreY+waterY+.3)*.5-.22,(shoreZ+endZ)*.5);
+    rail.rotation.x=Math.atan2(waterY+.3-shoreY,endZ-shoreZ);scene.add(rail);
+  }
+  // Tablones transversales con pequeñas separaciones.
+  for(let i=0;i<18;i++){
+    const t=i/17,z=shoreZ+(endZ-shoreZ)*t,y=deckY(t);
+    const plank=new THREE.Mesh(new THREE.BoxGeometry(4.05,.2,.34),i%4===0?wornWood:wood);
+    plank.position.set(x,y,z);plank.rotation.x=Math.atan2(waterY+.3-shoreY,endZ-shoreZ);
+    plank.castShadow=true;plank.receiveShadow=true;scene.add(plank);
+  }
+  // Pilotes de apoyo, visibles bajo la plataforma.
+  for(const px of [-1.72,1.72]) for(const t of [.48,.78,1]){
+    const z=shoreZ+(endZ-shoreZ)*t,y=deckY(t)-1.35;
+    const post=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,2.7,7),wood);
+    post.position.set(x+px,y,z);post.rotation.z=(px<0?-.025:.025);post.castShadow=true;scene.add(post);
+    const collar=new THREE.Mesh(new THREE.CylinderGeometry(.24,.24,.14,7),iron);
+    collar.position.set(x+px,deckY(t)-.05,z);scene.add(collar);
+  }
+  // Bolardos gemelos y una escalera corta que baja al agua.
+  for(const px of [-1.72,1.72]){
+    const bollard=new THREE.Mesh(new THREE.CylinderGeometry(.13,.17,.85,7),wornWood);
+    bollard.position.set(x+px,deckY(1)+.5,endZ);scene.add(bollard);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.12,7),wood);
+    cap.position.set(x+px,deckY(1)+.94,endZ);scene.add(cap);
+  }
+  for(let i=0;i<4;i++){
+    const step=new THREE.Mesh(new THREE.BoxGeometry(1.5,.16,.42),stoneB);
+    step.position.set(x,shoreY-.12-i*.2,shoreZ-.55-i*.42);scene.add(step);
+  }
+}
 function createWatchKeep(scene, heightAt) {
   // Un solo edificio: casa de guardia de piedra con torre integrada en una esquina.
   const group = new THREE.Group();
@@ -200,4 +233,5 @@ export function createVillage(scene, heightAt) {
 
   createWatchKeep(scene, heightAt);
   createWatchBridge(scene, heightAt);
+  createRiverDock(scene, heightAt);
 }

@@ -1,24 +1,26 @@
 # Prototipo 3D de Eldoria
-## Versión 0.5 — Geografía y agua
+## Versión 0.6 — Conexión de caminos y superficies de agua
 
-Esta versión corrige la geografía del Valle de Eldoria tras detectar problemas de continuidad en los caminos y pérdida de profundidad del río.
+Esta revisión corrige la continuidad de los caminos alrededor del puente y mejora la forma de las lagunas.
 
 ### Cambios
-- Cauce del río excavado en el terreno, con lecho varios metros por debajo de las orillas.
-- Superficie de agua más estrecha y definida, con bancos de transición.
-- Dos lagunas incorporadas al relieve, con depresiones y orillas.
-- Caminos principales redibujados para conectar la plaza, el puente y las salidas del valle.
-- Acceso sobre el puente elevado para quedar por encima del nuevo nivel del agua.
-- Vegetación excluida del cauce y de las zonas de lagunas.
+- Eliminada la cinta de camino duplicada que se superponía al acceso del puente.
+- El camino norte termina en la cabecera norte del puente.
+- El camino sur comienza en la cabecera opuesta.
+- Añadidas rampas graduales en ambos accesos para conectar el terreno con el tablero elevado.
+- El tablero del puente queda como única superficie de cruce sobre el río.
+- Las lagunas ahora usan superficies elípticas, en lugar de planos rectangulares.
+- Se conserva el relieve excavado del río y de las cuencas.
 
 ### Ejecutar
 Descargar la rama `desarrollo-lore`, extraer el ZIP, abrir `index.html` con Live Server en Visual Studio Code. Requiere conexión para cargar Three.js desde jsDelivr.
 
 ### Pruebas visuales pendientes
-1. Confirmar que el río se vea hundido respecto de las orillas y que el agua no cubra la tierra.
-2. Cruzar el puente y verificar que el tablero quede por encima del agua y conecte ambas orillas.
-3. Seguir los caminos desde la plaza hasta ambos extremos del puente y las salidas del valle.
-4. Revisar las dos lagunas: que estén contenidas en sus depresiones y no parezcan superficies flotantes.
-5. Comprobar rendimiento en el equipo objetivo.
+1. Comprobar que el río tenga agua visible y un lecho claramente más bajo que las orillas.
+2. Recorrer el camino desde la plaza hasta el puente y confirmar que llega a la cabecera norte.
+3. Cruzar el puente y comprobar la continuidad con el camino de salida sur.
+4. Revisar que las lagunas tengan forma ovalada y estén contenidas en sus depresiones.
+5. Comprobar que no aparezcan caminos duplicados ni superficies superpuestas.
+6. Comprobar el rendimiento en el equipo objetivo.
 
-Los cambios están guardados en GitHub; necesitan validación en navegador real.
+Esta versión todavía requiere validación en el navegador del usuario; no se considera probada hasta completar esas verificaciones.

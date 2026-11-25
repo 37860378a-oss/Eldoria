@@ -50,14 +50,7 @@ export function createPaths(scene,heightAt){
     [-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[9.2,-17]
   ],4.8,road,{ramp:northBridgeRamp});
 
-  // El camino continúa desde la cabecera sur y sale del valle hacia el suroeste.
-  ribbon(scene,heightAt,[
-    [8.2,-37],[8.2,-41],[12,-44],[19,-48],[28,-52],[38,-55],[48,-57],[59,-59]
-  ],4.8,road,{ramp:southBridgeRamp});
+  // No se dibujan salidas exteriores hasta que exista una zona de destino.
+  // Así, todos los caminos visibles pertenecen a un recorrido conectado y útil.
 
-  // Sendero oriental conectado al circuito de la plaza; termina en una zona abierta
-  // preparada para ampliar el mapa, no en mitad de la aldea.
-  ribbon(scene,heightAt,[
-    [-18,6],[-12,8],[-7,11],[-2,14],[4,17],[11,21],[18,26],[28,31],[39,34],[50,35],[61,34]
-  ],3.4,road);
 }

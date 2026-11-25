@@ -22,7 +22,7 @@ const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerH
 const world = createWorld(scene);
 // walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
 const player = createPlayerController(scene, camera, world.walkHeightAt);
-const hud = createHud(player);
+const hud = createHud(player, world);
 
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);
 scene.add(ambient);

@@ -7,6 +7,7 @@ import { createVillageBuildings } from "./villageBuildings.js";
 import { createExploration } from "./exploration.js";
 import { createActors } from "./actors.js";
 import { createEnvironment } from "./environment.js";
+import { createWaterway } from "./waterway.js";
 
 const BRIDGE_START_Z = -37.2;
 const BRIDGE_END_Z = -16.8;
@@ -19,6 +20,7 @@ function bridgeHeightAt(x,z,heightAt) {
 
 export function createWorld(scene) {
   const terrain = createTerrain(scene);
+  const waterway = createWaterway(scene, terrain.heightAt);
   createPaths(scene, terrain.heightAt);
   createVillage(scene, terrain.heightAt);
   createVillageDetails(scene, terrain.heightAt);
@@ -33,5 +35,5 @@ export function createWorld(scene) {
     return bridgeHeightAt(x,z,terrain.heightAt) ?? terrain.heightAt(x,z);
   }
 
-  return { ...terrain, nature, environment, buildings, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); environment.update(time); buildings?.update?.(time); } };
+  return { ...terrain, waterway, nature, environment, buildings, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); waterway.update(time); exploration.update(time); environment.update(time); buildings?.update?.(time); } };
 }

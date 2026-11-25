@@ -55,7 +55,7 @@ export function createTerrain(scene){
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
   const waterGeo=new THREE.PlaneGeometry(240,12.8,220,16);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
-  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,-2.85,-25);scene.add(river);
+  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,0,-25);scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];
@@ -85,10 +85,10 @@ export function createTerrain(scene){
     update(time){
       for(let i=0;i<waterPositions.count;i++){
         const x=baseWater[i*3],z=baseWater[i*3+2];
-        waterPositions[i*3+1]=baseWater[i*3+1]+Math.sin(x*.075+time*1.15)*.045+Math.cos(z*.8+time*.8)*.025;
+        waterPositions[i*3+1]=terrainHeight(x,-25)+1.65+Math.sin(x*.075+time*1.15)*.045+Math.cos(z*.8+time*.8)*.025;
       }
       waterGeo.attributes.position.needsUpdate=true;waterGeo.computeVertexNormals();
-      currentData.forEach((p,i)=>{const x=((p.x+112+time*2.8+p.phase*2)%228)-112;currentDummy.position.set(x,river.position.y+.18+Math.sin(x*.075+time*1.15)*.045,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
+      currentData.forEach((p,i)=>{const x=((p.x+112+time*2.8+p.phase*2)%228)-112;currentDummy.position.set(x,terrainHeight(x,-25)+1.83+Math.sin(x*.075+time*1.15)*.045,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
       current.instanceMatrix.needsUpdate=true;
     }
   };

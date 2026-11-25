@@ -51,6 +51,7 @@ function animate() {
   const delta = Math.min(clock.getDelta(), 0.04);
   player.update(delta);
   world.nature?.update?.(elapsed);
+  world.update?.(elapsed);
   // Variación lenta de luz y color para dar sensación de cielo vivo sin cielos HDR pesados.
   const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
   const sky = skyHorizon.clone().lerp(skyDay, daylight);

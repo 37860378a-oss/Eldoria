@@ -2,6 +2,7 @@ import { createTerrain } from "./terrain.js";
 import { createVillage } from "./village.js";
 import { createNature } from "./nature.js";
 import { createPaths } from "./paths.js";
+import { createVillageDetails } from "./villageDetails.js";
 
 const BRIDGE_LINE = [
   { z: -37, x: 8.2 },
@@ -26,6 +27,7 @@ export function createWorld(scene) {
   const terrain = createTerrain(scene);
   createPaths(scene, terrain.heightAt);
   createVillage(scene, terrain.heightAt);
+  createVillageDetails(scene, terrain.heightAt);
   const nature = createNature(scene, terrain.heightAt);
 
   // El personaje usa el tablero como suelo cuando está dentro del puente.

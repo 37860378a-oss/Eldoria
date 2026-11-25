@@ -31,10 +31,10 @@ export function createVillageDetails(scene,heightAt){
   addInstances(scene,new THREE.CylinderGeometry(.13,.19,2.5,5),wood,posts);
   addInstances(scene,new THREE.BoxGeometry(1,1,1),lanternGlow,lamps);
 
-  const barrels=[[-54,18,.9],[-31,23,.82],[-61,-1,.88],[-3,18,.78],[-2,-17,.82]]
+  const barrels=[[-54,18,.9],[-31,23,.82],[-3,18,.78],[-2,-17,.82]]
     .map(([x,z,scale])=>({x,y:heightAt(x,z)+.48*scale,z,sx:scale,sy:scale,sz:scale,ry:(x*13+z*7)%6}));
   addInstances(scene,new THREE.CylinderGeometry(.38,.43,.96,8),barrelMat,barrels);
-  const crates=[[-56,13],[-29,25],[-61,-3],[-1,14]].map(([x,z],i)=>{
+  const crates=[[-56,13],[-29,25],[-1,14]].map(([x,z],i)=>{
     const scale=i%2?.82:.95;return{x,y:heightAt(x,z)+.43*scale,z,sx:scale,sy:scale,sz:scale,ry:i*.47};
   });
   addInstances(scene,new THREE.BoxGeometry(.9,.86,.9),crateMat,crates);

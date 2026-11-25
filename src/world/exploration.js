@@ -94,16 +94,39 @@ function createWhisperGrove(scene,heightAt){
     motes.forEach((e,i)=>{dummy.position.set(e.x+Math.sin(time*.4+e.phase)*.35,e.y+Math.sin(time*.8+e.phase)*.5,e.z+Math.cos(time*.35+e.phase)*.35);dummy.updateMatrix();moteMesh.setMatrixAt(i,dummy.matrix);});moteMesh.instanceMatrix.needsUpdate=true;
   }};
 }
+function createCave(scene,heightAt,x,z,rotation=0){
+  const group=new THREE.Group();
+  const rock=new THREE.MeshStandardMaterial({color:0x66675f,roughness:1,flatShading:true});
+  const rim=new THREE.MeshStandardMaterial({color:0x898578,roughness:1,flatShading:true});
+  const darkness=new THREE.MeshBasicMaterial({color:0x101715,side:THREE.DoubleSide});
+  const opening=new THREE.Mesh(new THREE.CircleGeometry(2.75,32),darkness);
+  opening.position.set(0,2.25,-.24);group.add(opening);
+  const arch=new THREE.Mesh(new THREE.TorusGeometry(2.65,.82,8,28,Math.PI),rim);
+  arch.position.set(0,2.45,0);group.add(arch);
+  for(const side of [-1,1]){
+    const pillar=new THREE.Mesh(new THREE.DodecahedronGeometry(1.35,1),rock);
+    pillar.position.set(side*2.7,1.15,0);pillar.scale.set(1.05,1.55,1.2);pillar.rotation.z=side*.12;pillar.castShadow=true;group.add(pillar);
+    const rubble=new THREE.Mesh(new THREE.DodecahedronGeometry(.9,0),rim);
+    rubble.position.set(side*3.2,.35,.7);rubble.scale.set(1.5,.6,1.1);group.add(rubble);
+  }
+  const crown=new THREE.Mesh(new THREE.DodecahedronGeometry(2.3,1),rock);
+  crown.position.set(0,4.65,-.1);crown.scale.set(1.55,.72,1.15);crown.castShadow=true;group.add(crown);
+  const inner=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.8,1.8,12,1,true),darkness);
+  inner.rotation.x=Math.PI/2;inner.position.set(0,1.8,-1.1);group.add(inner);
+  group.position.set(x,heightAt(x,z),z);group.rotation.y=rotation;scene.add(group);
+  return group;
+}
 export function createExploration(scene,heightAt){
   const mainTrail=[[8.2,-37.2],[12,-45],[17,-51],[24,-58],[32,-66],[41,-74]];
   const forestTrail=[[17,-51],[8,-58],[-5,-62],[-20,-64],[-36,-67],[-53,-70],[-65,-72]];
   makeTrail(scene,heightAt,mainTrail,4.3,true);makeTrail(scene,heightAt,forestTrail,3.6);
   const ruins=createRuins(scene,heightAt),grove=createWhisperGrove(scene,heightAt);
+  const caves=[createCave(scene,heightAt,-210,-132,.4),createCave(scene,heightAt,205,156,Math.PI),createCave(scene,heightAt,18,232,-.5)];
   const regionAt=(x,z)=>{
     if(Math.hypot((x-43)/19,(z+76)/17)<1.35)return "Santuario de las Primeras Brasas";
     if(Math.hypot((x+65)/31,(z+70)/27)<1.05)return "Bosque de los Susurros";
     if(z>-43&&x>-78&&x<30)return "Piedra Clara";
     return "Tierras de la Marca";
   };
-  return {regionAt,update(time){grove.update(time);ruins.crystal.position.y=ruins.baseY+Math.sin(time*1.4)*.12;ruins.crystal.rotation.y=time*.22;ruins.glow.intensity=1.35+Math.sin(time*2)*.35;}};
+  return {regionAt,caves,update(time){grove.update(time);ruins.crystal.position.y=ruins.baseY+Math.sin(time*1.4)*.12;ruins.crystal.rotation.y=time*.22;ruins.glow.intensity=1.35+Math.sin(time*2)*.35;}};
 }

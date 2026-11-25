@@ -66,7 +66,8 @@ export function createTerrain(scene){
     colors.push(color.r,color.g,color.b);
   }
   geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.computeVertexNormals();
-  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1,bumpMap:groundTexture(),bumpScale:.075}));
+  const surfaceTexture=groundTexture();
+  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:surfaceTexture,vertexColors:true,roughness:1,bumpMap:surfaceTexture,bumpScale:.075}));
   ground.receiveShadow=true;scene.add(ground);
   return {heightAt:terrainHeight,update(){}};
 }

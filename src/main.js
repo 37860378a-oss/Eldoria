@@ -20,7 +20,8 @@ scene.fog = new THREE.Fog(skyDay.clone(), 105, 245);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
 const world = createWorld(scene);
-const player = createPlayerController(scene, camera, world.heightAt);
+// walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
+const player = createPlayerController(scene, camera, world.walkHeightAt);
 const hud = createHud(player);
 
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);

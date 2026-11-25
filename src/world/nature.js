@@ -27,7 +27,7 @@ const trails = [
 const houseClearZones = [
   {x:-56,z:24,rx:11.5,rz:10.5},
   {x:-25,z:31,rx:10.5,rz:10},
-  {x:-65,z:-8,rx:11,rz:10},
+  {x:-65,z:-3,rx:11,rz:10},
   {x:8,z:25,rx:9.8,rz:10},
   {x:-2,z:-4,rx:9.8,rz:9.8}
 ];

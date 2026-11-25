@@ -30,9 +30,17 @@ La primera aventura comienza en el Valle de Eldoria, en la aldea de Piedra Clara
 
 El proyecto se construirá por etapas pequeñas y verificables. Primero se establecerán los cimientos visuales y técnicos; después se incorporarán regiones, personajes, criaturas, sistemas de juego y finalmente la infraestructura online.
 
+## Prototipo actual
+
+Ya existe una primera escena 3D modular del Valle de Eldoria: terreno procedural, río, puente, vegetación, edificios iniciales de Piedra Clara, personaje de prueba, cámara de exploración e interfaz básica.
+
+Para ejecutarlo, descarga el repositorio y sirve la carpeta raíz mediante un servidor HTTP local (por ejemplo, la extensión Live Server de Visual Studio Code o `python -m http.server 8000`). Luego abre `http://localhost:8000`. Se requiere conexión a internet para cargar Three.js desde CDN.
+
+**Controles:** WASD o flechas para moverse, mouse para mirar y Shift para correr. Haz clic en «Entrar al valle» para comenzar y vuelve a hacer clic en la escena si necesitas recuperar el control de cámara.
+
 ## Estado
 
-**Etapa actual:** diseño del mundo y planificación de la primera región jugable. El siguiente hito es construir y probar un prototipo pequeño del Valle de Eldoria.
+**Etapa actual:** primer prototipo de exploración 3D. Pendiente de prueba en el equipo del usuario y ajuste visual/rendimiento.
 
 ---
 

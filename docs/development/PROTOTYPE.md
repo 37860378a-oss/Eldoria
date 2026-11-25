@@ -130,3 +130,10 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - El menú de pausa incorpora calidad gráfica, escala de renderizado, distancia de visión y pantalla completa.
 - Se añadió reloj del mundo, ciclo día/noche configurable, control de velocidad y ajuste manual de hora.
 - La escala de renderizado reduce la resolución interna del canvas; la resolución física de pantalla sigue dependiendo del navegador y del sistema operativo.
+
+
+## Versión 2.3 — Valle sin agua
+- Se retiraron por completo el río, las seis lagunas, la cascada, el remolino, las partículas de corriente y sus animaciones.
+- Se restauró el relieve continuo del terreno: ya no quedan zanjas ni depresiones artificiales bajo las antiguas masas de agua.
+- Se eliminaron las franjas de orilla y las exclusiones de vegetación que dependían del río y las lagunas.
+- Se mantienen los caminos, el puente, los edificios, las antorchas, los campamentos y el resto del paisaje.

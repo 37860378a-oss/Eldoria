@@ -144,3 +144,10 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - El cauce atraviesa la zona inferior del puente de piedra y llega hasta la punta del muelle, conservando ambas estructuras.
 - Se añaden piedras de orilla instanciadas y una franja de agua somera para integrar visualmente el borde.
 - Implementación aislada en `src/world/waterway.js`; el resto del terreno y los módulos existentes se mantienen.
+
+
+## Versión 2.5 — Texturas más definidas y cauce sin laguna
+- Se retiró la laguna y sus piedras perimetrales; se conserva únicamente el brazo de río que pasa bajo el puente y conecta con el muelle.
+- Se aumentó a 1024×1024 la resolución procedural del terreno y de los caminos, con grano fino, variaciones orgánicas y filtrado mipmap/anisótropo.
+- El terreno incorpora relieve de microdetalle mediante bump mapping suave para dar lectura a la superficie sin sumar geometría.
+- Se mantiene la generación procedural y el uso de módulos existentes para controlar el coste de renderizado.

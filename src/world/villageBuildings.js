@@ -3,30 +3,44 @@ import * as THREE from "three";
 // Materiales procedurales compartidos: detalle visible sin descargar imágenes externas.
 function surfaceTexture(seed,kind){
   const size=512,canvas=document.createElement("canvas");canvas.width=canvas.height=size;
-  const ctx=canvas.getContext("2d");ctx.fillStyle="#c4c4c4";ctx.fillRect(0,0,size,size);
-  let value=seed>>>0;
+  const ctx=canvas.getContext("2d");let value=seed>>>0;
   const rnd=()=>{value=(value*1664525+1013904223)>>>0;return value/4294967296;};
-  for(let i=0;i<12500;i++){
-    const v=Math.floor(166+rnd()*78),alpha=.08+rnd()*.22;
-    ctx.fillStyle="rgba("+v+","+v+","+v+","+alpha+")";
-    const x=rnd()*size,y=rnd()*size;
-    if(kind==="wood"){
-      ctx.fillRect(x,y,2+rnd()*35,.5+rnd()*1.8);
-    }else if(kind==="roof"){
-      ctx.fillRect(x,y,8+rnd()*18,2+rnd()*4);
-    }else{
-      const r=.5+rnd()*(kind==="stone"?5:2.5);
-      ctx.beginPath();ctx.ellipse(x,y,r*1.4,r,rnd()*3,0,Math.PI*2);ctx.fill();
+  const palettes={
+    stone:{base:"#888477",dark:"#625f58",light:"#c0b9a2"},
+    plaster:{base:"#d0b98c",dark:"#a88f68",light:"#f0d9a8"},
+    wood:{base:"#815b38",dark:"#503a29",light:"#bd8950"},
+    roof:{base:"#925c49",dark:"#633e36",light:"#c0805c"}
+  };
+  const p=palettes[kind]||palettes.stone;ctx.fillStyle=p.base;ctx.fillRect(0,0,size,size);
+  if(kind==="stone"){
+    const rows=9,cols=7,bh=size/rows,bw=size/cols;
+    for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
+      const px=x*bw-(y%2)*bw*.5,py=y*bh;
+      ctx.fillStyle=rnd()>.5?p.dark:p.light;ctx.globalAlpha=.22+rnd()*.22;ctx.fillRect(px+2,py+2,bw-4,bh-4);
+      ctx.globalAlpha=.35;ctx.strokeStyle=p.dark;ctx.lineWidth=3;ctx.strokeRect(px+2,py+2,bw-4,bh-4);
+      ctx.globalAlpha=.5;ctx.strokeStyle=p.light;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px+5,py+5);ctx.lineTo(px+bw-8,py+5);ctx.stroke();
+    }
+  }else if(kind==="wood"){
+    for(let y=0;y<size;y+=42){
+      ctx.fillStyle=rnd()>.5?p.dark:p.light;ctx.globalAlpha=.28;ctx.fillRect(0,y,size,3);
+      for(let x=12;x<size;x+=65){ctx.globalAlpha=.22;ctx.strokeStyle=p.dark;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+5);ctx.bezierCurveTo(x+12,y+13,x-8,y+23,x+5,y+34);ctx.stroke();}
+      ctx.globalAlpha=.28;ctx.strokeStyle=p.light;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y+7);ctx.lineTo(size,y+7);ctx.stroke();
+    }
+  }else if(kind==="roof"){
+    for(let y=0;y<size;y+=34)for(let x=(Math.floor(y/34)%2)*-22;x<size;x+=44){
+      ctx.globalAlpha=.32;ctx.fillStyle=p.dark;ctx.fillRect(x+2,y+2,40,28);
+      ctx.globalAlpha=.5;ctx.fillStyle=p.light;ctx.fillRect(x+3,y+3,36,4);
+      ctx.globalAlpha=.22;ctx.fillStyle=p.base;ctx.fillRect(x+5,y+9,32,16);
+    }
+  }else{
+    for(let i=0;i<950;i++){
+      const x=rnd()*size,y=rnd()*size,w=3+rnd()*18,h=2+rnd()*9;
+      ctx.globalAlpha=.12+rnd()*.18;ctx.fillStyle=rnd()>.5?p.light:p.dark;
+      ctx.beginPath();ctx.ellipse(x,y,w,h,rnd()*Math.PI,0,Math.PI*2);ctx.fill();
     }
   }
-  if(kind==="wood"){
-    for(let y=24;y<size;y+=48){ctx.strokeStyle="rgba(90,90,90,.18)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(150,y-5,330,y+5,size,y);ctx.stroke();}
-  }
-  if(kind==="roof"){
-    for(let y=0;y<size;y+=34){ctx.strokeStyle="rgba(70,70,70,.25)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(size,y);ctx.stroke();}
-  }
-  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1.5,1.5);
+  ctx.globalAlpha=1;const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(kind==="stone"?1.1:1.5,kind==="stone"?1.1:1.5);
   texture.anisotropy=8;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;
   texture.generateMipmaps=true;return texture;
 }

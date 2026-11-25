@@ -23,13 +23,35 @@ export function terrainHeight(x,z){
   return h;
 }
 function groundTexture(){
-  const c=document.createElement("canvas");c.width=c.height=512;
-  const ctx=c.getContext("2d"),img=ctx.createImageData(512,512);let seed=9137;
+  const size=1024,c=document.createElement("canvas");c.width=c.height=size;
+  const ctx=c.getContext("2d"),img=ctx.createImageData(size,size);let seed=9137;
   const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
-  for(let i=0;i<img.data.length;i+=4){const s=Math.floor(rnd()*38);img.data[i]=79+s;img.data[i+1]=105+s;img.data[i+2]=57+Math.floor(s*.5);img.data[i+3]=255;}
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const i=(y*size+x)*4;
+    const broad=Math.sin(x*.018+y*.011)*5+Math.cos(y*.023-x*.009)*4;
+    const fine=(rnd()-.5)*27,grain=(rnd()-.5)*13;
+    img.data[i]=Math.max(0,Math.min(255,91+broad+fine+grain));
+    img.data[i+1]=Math.max(0,Math.min(255,116+broad+fine+grain));
+    img.data[i+2]=Math.max(0,Math.min(255,66+broad*.55+fine*.48+grain*.5));
+    img.data[i+3]=255;
+  }
   ctx.putImageData(img,0,0);
-  for(let i=0;i<900;i++){const x=rnd()*512,y=rnd()*512,r=2+rnd()*18;ctx.fillStyle=rnd()>.5?"rgba(178,157,104,.17)":"rgba(31,77,39,.22)";ctx.beginPath();ctx.ellipse(x,y,r*1.8,r,rnd()*3,0,Math.PI*2);ctx.fill();}
-  const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(7,7);texture.anisotropy=4;return texture;
+  // Manchas de tierra, hierba corta y pequeñas variaciones orgánicas.
+  for(let i=0;i<5200;i++){
+    const x=rnd()*size,y=rnd()*size,r=1+rnd()*10;
+    const dark=rnd()>.52;
+    ctx.fillStyle=dark?"rgba(37,67,34,.19)":"rgba(183,164,111,.20)";
+    ctx.beginPath();ctx.ellipse(x,y,r*(1.1+rnd()*1.8),r*.55,rnd()*Math.PI,0,Math.PI*2);ctx.fill();
+  }
+  for(let i=0;i<2600;i++){
+    const x=rnd()*size,y=rnd()*size;
+    ctx.fillStyle=rnd()>.5?"rgba(29,54,28,.20)":"rgba(208,190,135,.16)";
+    ctx.fillRect(x,y,1+rnd()*2,1+rnd()*2);
+  }
+  const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(11,11);
+  texture.anisotropy=8;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps=true;return texture;
 }
 export function createTerrain(scene){
   const geometry=new THREE.PlaneGeometry(WORLD_SIZE,WORLD_SIZE,420,420);geometry.rotateX(-Math.PI/2);
@@ -44,7 +66,7 @@ export function createTerrain(scene){
     colors.push(color.r,color.g,color.b);
   }
   geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.computeVertexNormals();
-  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1}));
+  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1,bumpMap:groundTexture(),bumpScale:.075}));
   ground.receiveShadow=true;scene.add(ground);
   return {heightAt:terrainHeight,update(){}};
 }

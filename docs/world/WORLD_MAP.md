@@ -124,3 +124,10 @@ Los eventos tendrán estados y reglas de servidor; el cliente solo mostrará el 
 - Determinar el tamaño de chunk mediante pruebas en PC modesta y Android.
 
 Este documento es la referencia geográfica inicial. No debe convertirse todavía en una malla gigante ni en una escena única: primero se valida el Valle de Eldoria.
+
+
+## Extensión jugable del Valle de Eldoria — prototipo 1.8
+
+El área inicial se amplía hacia una región de 550 × 550 unidades. El valle central conserva su identidad y se rodea con una cordillera que integra los límites del terreno. La nueva geografía incluye mesetas, llanuras, lagunas, cuevas y tres campamentos menores.
+
+El río principal nace en una cascada occidental y recorre el valle de oeste a este. El nivel del agua debe permanecer por debajo de las plataformas del muelle y de las piedras de contención. Las montañas funcionan como límite visual y como futura transición a otras regiones, no como un muro artificial dentro de la zona jugable.

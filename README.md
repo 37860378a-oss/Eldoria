@@ -22,6 +22,8 @@ La primera aventura comienza en el Valle de Eldoria, en la aldea de Piedra Clara
 
 - [Pueblos jugables](docs/lore/PEOPLES.md): cinco pueblos con culturas y ventajas contextuales equilibradas.
 - [Clases y caminos de aventura](docs/lore/CLASSES.md): ocho clases iniciales, roles de grupo y orden de implementación.
+- [Geografía y estructura del mundo](docs/world/WORLD_MAP.md): regiones, conexiones, rutas y criterios de mundo persistente.
+- [Valle de Eldoria](docs/world/ELDORIA_VALLEY.md): diseño detallado de la primera región jugable.
 - [Índice de documentación](docs/README.md): acceso a los documentos principales.
 
 ## Estructura de desarrollo
@@ -30,7 +32,7 @@ El proyecto se construirá por etapas pequeñas y verificables. Primero se estab
 
 ## Estado
 
-**Etapa actual:** definición del universo narrativo y preparación de la arquitectura base.
+**Etapa actual:** diseño del mundo y planificación de la primera región jugable. El siguiente hito es construir y probar un prototipo pequeño del Valle de Eldoria.
 
 ---
 

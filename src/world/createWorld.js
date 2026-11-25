@@ -3,6 +3,7 @@ import { createVillage } from "./village.js";
 import { createNature } from "./nature.js";
 import { createPaths } from "./paths.js";
 import { createVillageDetails } from "./villageDetails.js";
+import { createExploration } from "./exploration.js";
 
 const BRIDGE_LINE = [
   { z: -37, x: 8.2 },
@@ -29,6 +30,7 @@ export function createWorld(scene) {
   createVillage(scene, terrain.heightAt);
   createVillageDetails(scene, terrain.heightAt);
   const nature = createNature(scene, terrain.heightAt);
+  const exploration = createExploration(scene, terrain.heightAt);
 
   // El personaje usa el tablero como suelo cuando está dentro del puente.
   // Fuera de su ancho vuelve a seguir la altura normal del terreno.
@@ -42,5 +44,5 @@ export function createWorld(scene) {
     return terrain.heightAt(x, z);
   }
 
-  return { ...terrain, nature, walkHeightAt };
+  return { ...terrain, nature, walkHeightAt, exploration, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); } };
 }

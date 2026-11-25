@@ -37,3 +37,20 @@ button:hover{filter:brightness(1.08);transform:translateY(-1px)}button span{marg
 .dialogue-footer{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:12px;border-top:1px solid #d9b87833;color:#bdb8a8;font-size:10px}
 .dialogue-footer button{padding:8px 12px;font-size:10px}
 @media(max-width:650px){.dialogue{bottom:12px;padding:17px}.dialogue p{font-size:12px}.interaction-hint{bottom:105px}}
+
+/* Menú de pausa y distancia de visión */
+.pause-menu{position:absolute;z-index:10;inset:0;display:grid;place-items:center;padding:20px;background:rgba(8,15,12,.72);backdrop-filter:blur(7px);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.pause-menu.visible{opacity:1;visibility:visible}
+.pause-card{width:min(440px,100%);padding:30px 32px;background:linear-gradient(145deg,rgba(30,42,33,.98),rgba(17,27,23,.98));border:1px solid #d9b87888;box-shadow:0 22px 70px #0009;text-align:center}
+.pause-eyebrow{margin:0;color:var(--gold);font-size:9px;font-weight:700;letter-spacing:2px}
+.pause-card h2{margin:12px 0 8px;color:#f2ead8;font:600 29px Cinzel,serif}
+.pause-description{margin:0 auto 25px;max-width:330px;color:#c9c9bb;font-size:12px;line-height:1.6}
+.vision-control{margin:0 0 25px;padding:17px;background:#ffffff09;border:1px solid #ffffff1c;text-align:left}
+.vision-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#e8e2d3;font-size:12px}
+.vision-heading strong{color:var(--gold);font-variant-numeric:tabular-nums}
+#vision-distance{display:block;width:100%;margin:19px 0 10px;accent-color:#d9b878;cursor:pointer}
+.vision-range{display:flex;justify-content:space-between;gap:10px;color:#aaa99d;font-size:9px}
+.pause-card>#resume-button{width:100%}
+.pause-text-button{display:block;margin:10px auto 0;padding:7px 12px;background:transparent;border:0;box-shadow:none;color:#c9c5b8;font-size:10px}
+.pause-footnote{margin-top:15px;color:#8f978c;font-size:9px}
+@media(max-width:650px){.pause-card{padding:25px 20px}.pause-card h2{font-size:25px}}

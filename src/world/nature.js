@@ -64,12 +64,13 @@ export function createNature(scene,heightAt) {
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
     const trunkRadius=.38+random()*.18,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
-    trunks.push({x,y:ground+height*.5*scale,z,sx:trunkRadius*scale,sy:height*.5*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
+    const embed=0.85*scale;
+    trunks.push({x,y:ground+(height*.5-.85)*scale,z,sx:trunkRadius*scale,sy:(height*.5+.85)*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
     // Raíces visibles que nacen al nivel del suelo y se abren alrededor del tronco.
     for(let r=0;r<3+Math.floor(random()*2);r++){
       const angle=(r/4)*Math.PI*2+random()*.35,length=(1.05+random()*.7)*scale;
       const dir=new THREE.Vector3(Math.cos(angle),.12+random()*.08,Math.sin(angle)).normalize();
-      const start=new THREE.Vector3(x,ground+.13*scale,z),end=start.clone().addScaledVector(dir,length);
+      const start=new THREE.Vector3(x,ground-.12*scale,z),end=start.clone().addScaledVector(dir,length);
       const mid=start.clone().add(end).multiplyScalar(.5);
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
       roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.24*scale,sy:length*.5,sz:.24*scale,q});

@@ -15,19 +15,38 @@ function distanceToSegment(px, pz, ax, az, bx, bz) {
   const t = len === 0 ? 0 : THREE.MathUtils.clamp(((px - ax) * dx + (pz - az) * dz) / len, 0, 1);
   return Math.hypot(px - (ax + dx * t), pz - (az + dz * t));
 }
+
+// Ejes de los senderos: deben coincidir con los recorridos dibujados en paths.js.
 const trails = [
-  [-42,1,-39,-4],[-39,-4,-34,-7],[-34,-7,-27,-8],[-27,-8,-20,-6],[-20,-6,-16,-2],[-16,-2,-16,4],[-16,4,-21,8],[-21,8,-29,10],[-29,10,-37,8],[-37,8,-42,1],
-  [-17,-3,-12,-7],[-12,-7,-8,-11],[-8,-11,-4,-15],[-4,-15,0,-19],[0,-19,4,-23],[4,-23,7.5,-27],[7.5,-27,8.2,-31],[8.2,-31,8.2,-36],
-  [8.2,-36,12,-40],[12,-40,18,-44],[18,-44,25,-48],[25,-48,33,-52],[33,-52,42,-55],
-  [-17,5,-12,8],[-12,8,-7,11],[-7,11,-2,14],[-2,14,4,17],[4,17,11,21]
+  [-49,2,-44,-3],[-44,-3,-39,-6],[-39,-6,-33,-7],[-33,-7,-27,-6],
+  [-27,-6,-22,-3],[-22,-3,-18,1],[-18,1,-18,6],[-18,6,-22,10],
+  [-22,10,-29,12],[-29,12,-37,10],[-37,10,-43,6],[-43,6,-49,2],
+  [-18,-3,-12,-7],[-12,-7,-7,-10],[-7,-10,-2,-12],[-2,-12,3,-13],
+  [3,-13,7,-14],[7,-14,9.2,-17],
+  [8.2,-37,8.2,-41],[8.2,-41,12,-44],[12,-44,19,-48],
+  [19,-48,28,-52],[28,-52,38,-55],[38,-55,48,-57],
+  [-18,6,-12,8],[-12,8,-7,11],[-7,11,-2,14],[-2,14,4,17],
+  [4,17,11,21],[11,21,18,26],[18,26,28,31],[28,31,39,34],[39,34,50,35]
 ];
-function nearTrail(x, z) { return trails.some(s => distanceToSegment(x,z,s[0],s[1],s[2],s[3]) < 4.4); }
+const houseClearZones = [
+  {x:-56,z:24,rx:11.5,rz:10.5},
+  {x:-25,z:31,rx:10.5,rz:10},
+  {x:-57,z:-20,rx:10.5,rz:10},
+  {x:8,z:25,rx:9.8,rz:10},
+  {x:-2,z:-4,rx:9.8,rz:9.8}
+];
+function nearTrail(x, z) {
+  return trails.some(s => distanceToSegment(x,z,s[0],s[1],s[2],s[3]) < 5.1);
+}
 function clearForNature(x, z) {
+  // Mantener despejados el cauce, las lagunas, el puente y sus accesos.
   if (Math.abs(z + 25) < 15) return false;
   if (Math.hypot((x + 69) / 17, (z - 38) / 12) < 1.5) return false;
   if (Math.hypot((x - 69) / 13, (z - 61) / 10) < 1.5) return false;
-  if (x > -59 && x < 1 && z > -24 && z < 25) return false;
-  if (x > 0 && x < 16 && z > -39 && z < -14) return false;
+  if (x > 0 && x < 16 && z > -40 && z < -14) return false;
+
+  // Parcelas y cercos: un margen adicional evita copas y arbustos sobre techos.
+  if (houseClearZones.some(p => ((x-p.x)/p.rx)**2 + ((z-p.z)/p.rz)**2 < 1)) return false;
   return !nearTrail(x, z);
 }
 function addInstances(scene, geometry, material, entries) {
@@ -45,7 +64,7 @@ function addInstances(scene, geometry, material, entries) {
 export function createNature(scene, heightAt) {
   const random = seeded(4812), trunks = [], crowns = leafMats.map(()=>[]), shrubs = shrubMats.map(()=>[]), rocks = [], grass = grassMats.map(()=>[]);
   let attempts = 0;
-  while (trunks.length < 112 && attempts++ < 1000) {
+  while (trunks.length < 112 && attempts++ < 1400) {
     const x=(random()-.5)*190,z=(random()-.5)*190; if(!clearForNature(x,z)) continue;
     const s=.72+random()*.68,y=heightAt(x,z),rot=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
     trunks.push({x,y:y+1.55*s,z,scale:s,ry:rot,sx:s,sy:s,sz:s});
@@ -55,7 +74,7 @@ export function createNature(scene, heightAt) {
   crowns.forEach((e,i)=>addInstances(scene,new THREE.IcosahedronGeometry(1.8,1),leafMats[i],e));
 
   let shrubCount=0; attempts=0;
-  while(shrubCount<92 && attempts++<850) {
+  while(shrubCount<92&&attempts++<1200) {
     const x=(random()-.5)*188,z=(random()-.5)*188;
     if(!clearForNature(x,z)||random()<.28) continue;
     const s=.48+random()*.55,i=Math.floor(random()*shrubMats.length);
@@ -72,7 +91,7 @@ export function createNature(scene, heightAt) {
 
   const bladeGeo=new THREE.ConeGeometry(.12,.62,3), grassMeshes=[];
   let grassCount=0; attempts=0;
-  while(grassCount<150&&attempts++<1200){
+  while(grassCount<150&&attempts++<1600){
     const x=(random()-.5)*180,z=(random()-.5)*180;if(!clearForNature(x,z)||random()<.42)continue;
     const s=.45+random()*.65,i=Math.floor(random()*grassMats.length);
     grass[i].push({x,y:heightAt(x,z)+.25*s,z,sx:s,sy:s,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});
@@ -80,7 +99,7 @@ export function createNature(scene, heightAt) {
   }
   grass.forEach((entries,i)=>{
     const mesh=addInstances(scene,bladeGeo,grassMats[i],entries);
-    if(mesh) grassMeshes.push({mesh,entries});
+    if(mesh)grassMeshes.push({mesh,entries});
   });
 
   const dummy=new THREE.Object3D();

@@ -15,7 +15,7 @@ sceneRoot.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
-scene.background = null;
+scene.background = new THREE.Color(0x91b8c1);
 scene.fog = new THREE.Fog(skyHorizon.clone(), 115, 270);
 
 // Cielo panorámico procedural: azul en altura, horizonte cálido, nubes y sol.
@@ -63,13 +63,8 @@ function createSkyTexture() {
   return texture;
 }
 const skyTexture = createSkyTexture();
-const skyDome = new THREE.Mesh(
-  new THREE.SphereGeometry(900, 48, 32),
-  new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide, depthWrite: false, fog: false })
-);
-skyDome.frustumCulled = false;
-skyDome.renderOrder = -1000;
-scene.add(skyDome);
+skyTexture.mapping = THREE.EquirectangularReflectionMapping;
+scene.background = skyTexture;
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500000);
 const world = createWorld(scene);
@@ -120,7 +115,6 @@ function animate() {
   const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
   const skyTint = skyHorizon.clone().lerp(skyDay, daylight);
   scene.fog.color.copy(skyTint);
-  skyDome.position.copy(camera.position);
   sun.position.set(-55 + Math.sin(elapsed * 0.018) * 22, 72 + daylight * 22, 35);
   sun.intensity = 1.55 + daylight * 0.8;
   ambient.intensity = 1.15 + daylight * 0.35;

@@ -76,58 +76,107 @@ function addFence(scene, heightAt, x, z, w, d, openingSide = "south") {
   scene.add(group);
 }
 
-function createCurvedBridge(scene, heightAt) {
-  // El cauce corre de este a oeste: el puente cruza de norte a sur.
-  const points = [
-    new THREE.Vector3(8.2, 0, -37),
-    new THREE.Vector3(7.2, 0, -32),
-    new THREE.Vector3(6.7, 0, -27),
-    new THREE.Vector3(7.5, 0, -22),
-    new THREE.Vector3(9.2, 0, -17)
-  ];
-  const curve = new THREE.CatmullRomCurve3(points);
-  const divisions = 32, halfWidth = 4.1;
+function createWatchBridge(scene, heightAt) {
+  // Puente recto en planta, con un único arco elevado sobre el cauce.
+  const startZ = -37.2, endZ = -16.8, centerX = 8.2;
+  const halfWidth = 4.1, archHeight = 3.65, divisions = 48;
+  const deckY = (t, x) => heightAt(x, startZ + (endZ - startZ) * t) + .48 + archHeight * Math.sin(Math.PI * t);
   const vertices = [], indices = [];
   for (let i = 0; i <= divisions; i++) {
-    const t = i / divisions;
-    const p = curve.getPoint(t), tangent = curve.getTangent(t).normalize();
-    const side = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
-    for (const sign of [-1, 1]) {
-      const x = p.x + side.x * halfWidth * sign;
-      const z = p.z + side.z * halfWidth * sign;
-      vertices.push(x, heightAt(x, z) + 0.68 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z);
-    }
+    const t = i / divisions, z = startZ + (endZ - startZ) * t;
+    vertices.push(centerX - halfWidth, deckY(t, centerX - halfWidth), z);
+    vertices.push(centerX + halfWidth, deckY(t, centerX + halfWidth), z);
     if (i < divisions) {
       const a = i * 2;
-      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      indices.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
     }
   }
   const deckGeo = new THREE.BufferGeometry();
   deckGeo.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
   deckGeo.setIndex(indices); deckGeo.computeVertexNormals();
-  const deck = new THREE.Mesh(deckGeo, mats.stone);
-  deck.material.side = THREE.DoubleSide;
-  scene.add(deck);
+  const deckMat = new THREE.MeshStandardMaterial({ color: 0x77796f, roughness: .88, side: THREE.DoubleSide });
+  const deck = new THREE.Mesh(deckGeo, deckMat); deck.receiveShadow = true; deck.castShadow = true; scene.add(deck);
 
   const railMat = mats.fence;
-  for (const sideSign of [-1, 1]) {
+  for (const side of [-1, 1]) {
     const railPoints = [];
     for (let i = 0; i <= divisions; i++) {
-      const t = i / divisions, p = curve.getPoint(t), tangent = curve.getTangent(t).normalize();
-      const side = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
-      const x = p.x + side.x * (halfWidth * 0.92) * sideSign;
-      const z = p.z + side.z * (halfWidth * 0.92) * sideSign;
-      railPoints.push(new THREE.Vector3(x, heightAt(x, z) + 1.48 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z));
+      const t = i / divisions, z = startZ + (endZ - startZ) * t;
+      const x = centerX + side * (halfWidth - .18);
+      const y = deckY(t, x);
+      if (i % 4 === 0 || i === divisions) {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(.2, 1.18, .2), railMat);
+        post.position.set(x, y + .59, z); scene.add(post);
+      }
+      railPoints.push(new THREE.Vector3(x, y + 1.02, z));
     }
-    const rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPoints), divisions, 0.13, 5, false), railMat);
-    scene.add(rail);
+    const topRail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPoints), divisions, .12, 6, false), railMat);
+    scene.add(topRail);
+    const lowerPoints = railPoints.map(p => new THREE.Vector3(p.x, p.y - .43, p.z));
+    scene.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lowerPoints), divisions, .075, 5, false), railMat));
   }
-  // Accesos de piedra bajos en ambas orillas.
-  for (const z of [-37.2, -16.8]) {
-    const landing = new THREE.Mesh(new THREE.BoxGeometry(8.5, 0.48, 2.2), mats.stone);
-    landing.position.set(z < -25 ? 8.2 : 9.2, heightAt(z < -25 ? 8.2 : 9.2, z) + 0.38 + 4.25 * Math.exp(-((z + 25) ** 2) / 43), z);
-    scene.add(landing);
+  // Entradas de piedra que funden el tablero con ambos caminos.
+  for (const z of [startZ + .7, endZ - .7]) {
+    const t = (z - startZ) / (endZ - startZ);
+    const landing = new THREE.Mesh(new THREE.BoxGeometry(8.5, .34, 2.1), mats.stone);
+    landing.position.set(centerX, deckY(t, centerX) - .12, z); scene.add(landing);
   }
+}
+
+function createWatchKeep(scene, heightAt) {
+  // Un solo edificio: casa de guardia de piedra con torre integrada en una esquina.
+  const group = new THREE.Group();
+  const stone = new THREE.MeshStandardMaterial({ color: 0x77766d, roughness: .96, flatShading: true });
+  const paleStone = new THREE.MeshStandardMaterial({ color: 0x9a9582, roughness: .95, flatShading: true });
+  const timber = new THREE.MeshStandardMaterial({ color: 0x493629, roughness: 1 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x59463a, roughness: 1, flatShading: true });
+  const iron = new THREE.MeshStandardMaterial({ color: 0x343b38, metalness: .35, roughness: .72 });
+  const windowMat = new THREE.MeshStandardMaterial({ color: 0xd8a85f, emissive: 0x6b3d16, emissiveIntensity: .35 });
+  const add = (geo, mat, x, y, z, sx=1, sy=1, sz=1) => {
+    const m = new THREE.Mesh(geo, mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); group.add(m); return m;
+  };
+  // Cuerpo principal de la casa de guardia.
+  add(new THREE.BoxGeometry(8.2,.55,7.1),stone,0,.28,0);
+  add(new THREE.BoxGeometry(7.5,4.25,6.4),paleStone,0,2.65,0);
+  add(new THREE.BoxGeometry(8.15,.22,6.95),timber,0,4.82,0);
+  const roof = add(new THREE.ConeGeometry(5.35,2.6,4),roofMat,0,6.05,0);
+  roof.rotation.y=Math.PI/4;
+  // Puerta y dintel orientados hacia el camino, al sur.
+  add(new THREE.BoxGeometry(1.35,2.45,.22),timber,0,1.52,3.27);
+  add(new THREE.BoxGeometry(1.05,2.12,.12),iron,0,1.48,3.4);
+  add(new THREE.BoxGeometry(1.8,.28,.42),stone,0,2.83,3.28);
+  add(new THREE.SphereGeometry(.09,8,6),windowMat,.38,1.48,3.49);
+  for(const x of [-2.35,2.35]){
+    add(new THREE.BoxGeometry(.72,1.12,.16),windowMat,x,3.05,3.27);
+    add(new THREE.BoxGeometry(.12,1.35,.2),timber,x,3.05,3.36);
+    add(new THREE.BoxGeometry(.85,.12,.2),timber,x,3.05,3.36);
+  }
+  // Torre octogonal integrada en la esquina posterior izquierda.
+  const tx=-3.05,tz=-2.05;
+  add(new THREE.CylinderGeometry(1.72,2.05,9.2,8),stone,tx,5.05,tz);
+  add(new THREE.CylinderGeometry(2.18,2.18,.48,8),paleStone,tx,9.72,tz);
+  add(new THREE.CylinderGeometry(1.92,2.12,1.35,8),roofMat,tx,10.55,tz);
+  // Almenas alrededor de la plataforma superior.
+  for(let i=0;i<8;i++){
+    const a=i*Math.PI/4, x=tx+Math.cos(a)*1.92, z=tz+Math.sin(a)*1.92;
+    const merlon=add(new THREE.BoxGeometry(.52,.82,.48),paleStone,x,10.72,z);
+    merlon.rotation.y=a;
+  }
+  // Ventanas estrechas de vigilancia.
+  for(const y of [4.4,7.2]){
+    for(const a of [0,Math.PI/2,Math.PI,Math.PI*1.5]){
+      const x=tx+Math.cos(a)*1.78,z=tz+Math.sin(a)*1.78;
+      const slit=add(new THREE.BoxGeometry(.18,.82,.12),iron,x,y,z);
+      slit.rotation.y=a;
+    }
+  }
+  // Bandera discreta sobre la torre.
+  const pole=add(new THREE.CylinderGeometry(.045,.055,2.4,6),timber,tx,12.35,tz);
+  const flag=add(new THREE.BoxGeometry(1.15,.62,.055),new THREE.MeshStandardMaterial({color:0x8c493b,roughness:1,side:THREE.DoubleSide}),tx+.55,12.72,tz);
+  flag.rotation.y=-.12;
+  group.position.set(-25,heightAt(-25,-8),-8);
+  group.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  scene.add(group);
 }
 
 export function createVillage(scene, heightAt) {
@@ -149,5 +198,6 @@ export function createVillage(scene, heightAt) {
   well.position.set(-29, heightAt(-29, 1) + 0.28, 1);
   scene.add(well);
 
-  createCurvedBridge(scene, heightAt);
+  createWatchKeep(scene, heightAt);
+  createWatchBridge(scene, heightAt);
 }

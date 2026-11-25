@@ -64,10 +64,10 @@ export function createTerrain(scene){
   const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1}));ground.receiveShadow=true;scene.add(ground);
 
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
-  const waterGeo=new THREE.PlaneGeometry(520,12.8,420,18);waterGeo.rotateX(-Math.PI/2);
+  const waterGeo=new THREE.PlaneGeometry(530,12.8,420,18);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
   const riverMat=waterMaterial(0x347f91);riverMat.depthWrite=false;
-  const river=new THREE.Mesh(waterGeo,riverMat);river.position.set(15,0,-25);river.renderOrder=2;scene.add(river);
+  const river=new THREE.Mesh(waterGeo,riverMat);river.position.set(10,0,-25);river.renderOrder=2;scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];
@@ -119,7 +119,7 @@ export function createTerrain(scene){
         waterPositions[i*3+1]=terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+Math.sin(x*.075+time*1.15)*.035+Math.cos(z*.8+time*.8)*.018;
       }
       waterGeo.attributes.position.needsUpdate=true;waterGeo.computeVertexNormals();
-      currentData.forEach((p,i)=>{const x=((p.x+245+time*2.8+p.phase*2)%520)-245;currentDummy.position.set(x,terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+.42+Math.sin(x*.075+time*1.15)*.035,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
+      currentData.forEach((p,i)=>{const x=((p.x+255+time*2.8+p.phase*2)%530)-255;currentDummy.position.set(x,terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+.42+Math.sin(x*.075+time*1.15)*.035,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
       current.instanceMatrix.needsUpdate=true;
       const fallAttr=fallGeo.attributes.position;
       for(let i=0;i<fallAttr.count;i++){

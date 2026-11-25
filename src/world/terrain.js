@@ -13,7 +13,7 @@ export function terrainHeight(x, z) {
   const hillB = 5.4 * Math.exp(-(((x + 66) ** 2) / 1550 + ((z - 56) ** 2) / 1200));
   const hillC = 3.8 * Math.exp(-(((x - 48) ** 2) / 1900 + ((z + 67) ** 2) / 1500));
   const villageFlat = Math.exp(-(((x + 28) ** 2) / 1050 + ((z - 1) ** 2) / 900));
-  const riverFlat = Math.exp(-((z + 25) ** 2) / 115);
+  const riverFlat = Math.exp(-((z + 25) ** 2) / 300);
   const hills = (broad + rolling + ridge + hillA + hillB + hillC) * (1 - villageFlat * 0.94);
   return hills * (1 - riverFlat * 0.995);
 }

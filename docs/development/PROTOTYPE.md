@@ -137,3 +137,10 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se restauró el relieve continuo del terreno: ya no quedan zanjas ni depresiones artificiales bajo las antiguas masas de agua.
 - Se eliminaron las franjas de orilla y las exclusiones de vegetación que dependían del río y las lagunas.
 - Se mantienen los caminos, el puente, los edificios, las antorchas, los campamentos y el resto del paisaje.
+
+
+## Versión 2.4 — Laguna y brazo de río
+- Se incorpora una laguna ovalada al sur del puente y un brazo sinuoso que conecta el espejo de agua con el muelle de madera.
+- El cauce atraviesa la zona inferior del puente de piedra y llega hasta la punta del muelle, conservando ambas estructuras.
+- Se añaden piedras de orilla instanciadas y una franja de agua somera para integrar visualmente el borde.
+- Implementación aislada en `src/world/waterway.js`; el resto del terreno y los módulos existentes se mantienen.

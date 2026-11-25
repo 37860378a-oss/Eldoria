@@ -136,7 +136,6 @@ export function createVillage(scene, heightAt) {
     { x: -49, z: 14, w: 9, d: 8, h: 5.1, r: 0.15 },
     { x: -28, z: 18, w: 8, d: 7, h: 4.6, r: 0 },
     { x: -49, z: -13, w: 8, d: 7, h: 4.4, r: Math.PI },
-    { x: -28, z: -15, w: 9, d: 8, h: 4.7, r: Math.PI },
     { x: -7, z: 12, w: 7, d: 7, h: 4.2, r: -0.25 },
     { x: -7, z: -10, w: 7, d: 7, h: 4.2, r: Math.PI + 0.2 }
   ];

@@ -121,9 +121,9 @@ function createRiverDock(scene,heightAt) {
   const wornWood=new THREE.MeshStandardMaterial({color:0x92704a,roughness:1});
   const iron=new THREE.MeshStandardMaterial({color:0x343b38,metalness:.25,roughness:.8});
   const stoneStep=new THREE.MeshStandardMaterial({color:0x888477,roughness:1,flatShading:true});
-  const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=heightAt(x,-25)+.55;
+  const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=heightAt(x,-25)+.35;
   const shoreY=heightAt(x,shoreZ)+.12;
-  const deckY=t=>shoreY+(waterY+.3-shoreY)*t;
+  const deckY=t=>shoreY+(waterY+.9-shoreY)*t;
   // Dos largueros inferiores siguen la ligera pendiente del muelle.
   for(const side of [-1,1]){
     const rail=new THREE.Mesh(new THREE.BoxGeometry(.22,.28,7.15),wood);

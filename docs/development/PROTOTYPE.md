@@ -56,3 +56,14 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - El diálogo presenta la Cicatriz del Alba, las Astillas y los primeros destinos de exploración, conectando el prototipo con el lore.
 - La lógica de personajes y diálogos vive en módulos separados para preparar futuras conversaciones, misiones, comerciantes y criaturas.
 - No se añadió todavía combate ni persistencia online; esta etapa establece la base de interacción local.
+
+
+## Versión 1.6 — Casa de guardia, puente y cauce integrados
+
+- Se añadió un único edificio medieval junto a Maelis: casa de guardia de piedra con torre octogonal de vigilancia, almenas, saeteras, puerta reforzada y estandarte.
+- El puente ahora cruza en línea recta y forma un arco elevado de medio punto en su perfil, con barandas a ambos lados y entradas de piedra.
+- El nivel del río se elevó y el cauce se ensanchó con transiciones de terreno más graduales.
+- Se añadieron indicadores de corriente que avanzan sobre el agua para comunicar visualmente su dirección.
+- Se suavizaron las transiciones de las orillas y se ajustó el camino para que conecte con la entrada del puente.
+- El perfil de altura del puente y la altura de desplazamiento del jugador comparten la misma curva para evitar que el personaje atraviese el tablero.
+- Requiere validación visual en navegador: comprobar el acceso a la torre, el nivel del agua, la unión de caminos y el paso sobre el puente.

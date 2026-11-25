@@ -33,6 +33,7 @@ function clearForNature(x,z) {
   if (Math.hypot((x + 158) / 20, (z - 118) / 15) < 1.5) return false;
   if (Math.hypot((x - 154) / 17, (z + 145) / 13) < 1.5) return false;
   if (Math.hypot((x - 174) / 15, (z - 142) / 12) < 1.5) return false;
+  if (Math.hypot((x + 48) / 16, (z - 168) / 12) < 1.5) return false;
   if (x > 0 && x < 16 && z > -40 && z < -14) return false;
   if (houseClearZones.some(p => ((x-p.x)/p.rx)**2 + ((z-p.z)/p.rz)**2 < 1)) return false;
   return !nearTrail(x,z);

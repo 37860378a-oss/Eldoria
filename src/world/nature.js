@@ -63,7 +63,7 @@ export function createNature(scene,heightAt) {
     const x=(random()-.5)*198,z=(random()-.5)*198;
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
-    const trunkRadius=.24+random()*.12,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
+    const trunkRadius=.38+random()*.18,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
     trunks.push({x,y:ground+height*.5*scale,z,sx:trunkRadius*scale,sy:height*.5*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
     // Raíces visibles que nacen al nivel del suelo y se abren alrededor del tronco.
     for(let r=0;r<3+Math.floor(random()*2);r++){
@@ -72,7 +72,7 @@ export function createNature(scene,heightAt) {
       const start=new THREE.Vector3(x,ground+.13*scale,z),end=start.clone().addScaledVector(dir,length);
       const mid=start.clone().add(end).multiplyScalar(.5);
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
-      roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.16*scale,sy:length*.5,sz:.16*scale,q});
+      roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.24*scale,sy:length*.5,sz:.24*scale,q});
     }
     const clusterCount=4+Math.floor(random()*3);
     for(let b=0;b<4+Math.floor(random()*2);b++){
@@ -81,7 +81,7 @@ export function createNature(scene,heightAt) {
       const dir=new THREE.Vector3(Math.sin(angle)*.82,.45+random()*.35,Math.cos(angle)*.82).normalize();
       const end=start.clone().addScaledVector(dir,length*scale),mid=start.clone().add(end).multiplyScalar(.5);
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
-      branches.push({x:mid.x,y:mid.y,z:mid.z,sx:.09*scale,sy:length*scale*.5,sz:.09*scale,q});
+      branches.push({x:mid.x,y:mid.y,z:mid.z,sx:.22*scale,sy:length*scale*.5,sz:.22*scale,q});
     }
     for(let c=0;c<clusterCount;c++){
       const angle=(c/clusterCount)*Math.PI*2+random()*.6;
@@ -93,17 +93,22 @@ export function createNature(scene,heightAt) {
     }
     treeCount++;
   }
-  addInstances(scene,new THREE.CylinderGeometry(.19,.49,1,8,1),trunkMat,trunks);
-  const rootMesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(.025,.19,1,6),trunkMat,roots.length),rootDummy=new THREE.Object3D();
+  const trunkMesh=addInstances(scene,new THREE.CylinderGeometry(.62,1.25,1,8,1),trunkMat,trunks);
+  if(trunkMesh)trunkMesh.castShadow=true;
+  const rootMesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(.08,.55,1,6),trunkMat,roots.length),rootDummy=new THREE.Object3D();
   roots.forEach((e,i)=>{rootDummy.position.set(e.x,e.y,e.z);rootDummy.quaternion.copy(e.q);rootDummy.scale.set(e.sx,e.sy,e.sz);rootDummy.updateMatrix();rootMesh.setMatrixAt(i,rootDummy.matrix);});
-  rootMesh.instanceMatrix.needsUpdate=true;scene.add(rootMesh);
-  const branchMesh=addInstances(scene,new THREE.CylinderGeometry(.055,.13,1,5),branchMat,branches);
+  rootMesh.instanceMatrix.needsUpdate=true;rootMesh.castShadow=true;scene.add(rootMesh);
+  const branchMesh=addInstances(scene,new THREE.CylinderGeometry(.12,.48,1,5),branchMat,branches);
   if(branchMesh){
     const dummy=new THREE.Object3D();
     branches.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.quaternion.copy(e.q);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();branchMesh.setMatrixAt(i,dummy.matrix);});
-    branchMesh.instanceMatrix.needsUpdate=true;
+    branchMesh.instanceMatrix.needsUpdate=true;branchMesh.castShadow=true;
   }
-  const crownGroups=crowns.map((entries,i)=>({mesh:addInstances(scene,new THREE.SphereGeometry(1,8,6),leafMats[i],entries),entries})).filter(group=>group.mesh);
+  const crownGroups=crowns.map((entries,i)=>{
+    const mesh=addInstances(scene,new THREE.SphereGeometry(1,8,6),leafMats[i],entries);
+    if(mesh)mesh.castShadow=true;
+    return {mesh,entries};
+  }).filter(group=>group.mesh);
 
   let shrubCount=0;attempts=0;
   while(shrubCount<150&&attempts++<2100){

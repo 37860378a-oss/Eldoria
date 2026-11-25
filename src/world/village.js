@@ -92,7 +92,7 @@ function createWatchBridge(scene, heightAt) {
       ((endZ-startZ)*.004);
     const slab=new THREE.Mesh(new THREE.BoxGeometry(8.15,.58,(endZ-startZ)/segments+.055),i%3===0?stoneB:stoneA);
     slab.position.set(centerX,deckY(t,centerX)-.27,z);
-    slab.rotation.x=Math.atan(slope);
+    slab.rotation.x=-Math.atan(slope);
     slab.castShadow=true;slab.receiveShadow=true;scene.add(slab);
   }
   // Pretiles de piedra idénticos a ambos lados, con bloques y albardilla.
@@ -103,9 +103,9 @@ function createWatchBridge(scene, heightAt) {
       const block=new THREE.Mesh(new THREE.BoxGeometry(.62,1.05,(endZ-startZ)/segments+.04),i%4===0?stoneB:stoneA);
       block.position.set(x,y+.34,z);
       const slope=(deckY(Math.min(1,t+.002),x)-deckY(Math.max(0,t-.002),x))/((endZ-startZ)*.004);
-      block.rotation.x=Math.atan(slope);block.castShadow=true;block.receiveShadow=true;scene.add(block);
+      block.rotation.x=-Math.atan(slope);block.castShadow=true;block.receiveShadow=true;scene.add(block);
       const cap=new THREE.Mesh(new THREE.BoxGeometry(.78,.2,(endZ-startZ)/segments+.08),capMat);
-      cap.position.set(x,y+.96,z);cap.rotation.x=Math.atan(slope);cap.castShadow=true;scene.add(cap);
+      cap.position.set(x,y+.96,z);cap.rotation.x=-Math.atan(slope);cap.castShadow=true;scene.add(cap);
     }
   }
   // Entradas ensanchadas y simétricas, asentadas en el camino.
@@ -120,6 +120,7 @@ function createRiverDock(scene,heightAt) {
   const wood=new THREE.MeshStandardMaterial({color:0x705238,roughness:1});
   const wornWood=new THREE.MeshStandardMaterial({color:0x92704a,roughness:1});
   const iron=new THREE.MeshStandardMaterial({color:0x343b38,metalness:.25,roughness:.8});
+  const stoneStep=new THREE.MeshStandardMaterial({color:0x888477,roughness:1,flatShading:true});
   const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=-2.85;
   const shoreY=heightAt(x,shoreZ)+.12;
   const deckY=t=>shoreY+(waterY+.3-shoreY)*t;
@@ -127,13 +128,13 @@ function createRiverDock(scene,heightAt) {
   for(const side of [-1,1]){
     const rail=new THREE.Mesh(new THREE.BoxGeometry(.22,.28,7.15),wood);
     rail.position.set(x+side*1.72,(shoreY+waterY+.3)*.5-.22,(shoreZ+endZ)*.5);
-    rail.rotation.x=Math.atan2(waterY+.3-shoreY,endZ-shoreZ);scene.add(rail);
+    rail.rotation.x=-Math.atan2(waterY+.3-shoreY,endZ-shoreZ);scene.add(rail);
   }
   // Tablones transversales con pequeñas separaciones.
   for(let i=0;i<18;i++){
     const t=i/17,z=shoreZ+(endZ-shoreZ)*t,y=deckY(t);
     const plank=new THREE.Mesh(new THREE.BoxGeometry(4.05,.2,.34),i%4===0?wornWood:wood);
-    plank.position.set(x,y,z);plank.rotation.x=Math.atan2(waterY+.3-shoreY,endZ-shoreZ);
+    plank.position.set(x,y,z);plank.rotation.x=-Math.atan2(waterY+.3-shoreY,endZ-shoreZ);
     plank.castShadow=true;plank.receiveShadow=true;scene.add(plank);
   }
   // Pilotes de apoyo, visibles bajo la plataforma.
@@ -152,7 +153,7 @@ function createRiverDock(scene,heightAt) {
     cap.position.set(x+px,deckY(1)+.94,endZ);scene.add(cap);
   }
   for(let i=0;i<4;i++){
-    const step=new THREE.Mesh(new THREE.BoxGeometry(1.5,.16,.42),stoneB);
+    const step=new THREE.Mesh(new THREE.BoxGeometry(1.5,.16,.42),stoneStep);
     step.position.set(x,shoreY-.12-i*.2,shoreZ-.55-i*.42);scene.add(step);
   }
 }

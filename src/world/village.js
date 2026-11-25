@@ -131,19 +131,7 @@ function createCurvedBridge(scene, heightAt) {
 }
 
 export function createVillage(scene, heightAt) {
-  // Cinco parcelas amplias, distribuidas en torno a la plaza con mayor distancia
-  // entre viviendas y cercos para que la aldea respire y cada casa tenga su patio.
-  const plots = [
-    { x: -56, z: 24, w: 9, d: 8, h: 5.1, r: 0.15 },
-    { x: -25, z: 31, w: 8, d: 7, h: 4.6, r: 0 },
-    { x: -65, z: -3, w: 8, d: 7, h: 4.4, r: Math.PI },
-    { x: 8, z: 25, w: 7, d: 7, h: 4.2, r: -0.25 },
-    { x: -2, z: -4, w: 7, d: 7, h: 4.2, r: Math.PI + 0.2 }
-  ];
-  plots.forEach((p, i) => {
-    makeHouse(scene, p.x, p.z, p.w, p.d, p.h, heightAt, i, p.r);
-    addFence(scene, heightAt, p.x, p.z, p.w + 5, p.d + 5, "south");
-  });
+  // Las viviendas y sus cercos fueron retirados para abrir el valle.
 
   const plaza = new THREE.Mesh(new THREE.CircleGeometry(8.2, 32), mats.stone);
   plaza.rotation.x = -Math.PI / 2;

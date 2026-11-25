@@ -9,7 +9,8 @@ const LAKES=[
   {x:69,z:61,rx:13,rz:10,offset:-.85},
   {x:-158,z:118,rx:20,rz:15,offset:-.75},
   {x:154,z:-145,rx:17,rz:13,offset:-.8},
-  {x:174,z:142,rx:15,rz:12,offset:-.7}
+  {x:174,z:142,rx:15,rz:12,offset:-.7},
+  {x:-48,z:168,rx:16,rz:12,offset:-.8}
 ];
 function noise(x,z,s,p=0){return Math.sin((x+p)*s)*Math.cos((z-p)*s*.83);}
 function baseHeight(x,z){
@@ -83,8 +84,8 @@ export function createTerrain(scene){
   for(let i=0;i<28;i++){currentData.push({x:-235+i*18.5,z:-28+(i%3)*2.7,phase:i*.43});}
   scene.add(current);
   // Cascada occidental: el río nace entre las montañas y cae directamente al cauce.
-  const fallTop=terrainHeight(-248,-25)+1.2;
-  const fallBottom=terrainHeight(-238,-25)+RIVER_LEVEL_OFFSET;
+  const fallTop=terrainHeight(-248,-25)+3.2;
+  const fallBottom=terrainHeight(-244,-25)+RIVER_LEVEL_OFFSET;
   const fallHeight=Math.max(8,fallTop-fallBottom);
   const fallGeo=new THREE.PlaneGeometry(13,fallHeight,8,34);
   const fallPositions=fallGeo.attributes.position,fallBase=fallPositions.array.slice();
@@ -100,7 +101,7 @@ export function createTerrain(scene){
     cliffRock.scale.set(2.2,3.8,3.2);cliffRock.rotation.set(.2,side*.25,.1);cliffRock.castShadow=true;scene.add(cliffRock);
   }
   const splash=new THREE.Mesh(new THREE.CircleGeometry(5.8,32),waterMaterial(0x70b7c2));
-  splash.rotation.x=-Math.PI/2;splash.position.set(-237,fallBottom+.05,-25);splash.scale.set(1.25,1,1);scene.add(splash);
+  splash.rotation.x=-Math.PI/2;splash.position.set(-243,fallBottom+.05,-25);splash.scale.set(1.25,1,1);scene.add(splash);
   const lakes=[];
   for(const lakeData of LAKES){
     const level=baseHeight(lakeData.x,lakeData.z)+lakeData.offset;

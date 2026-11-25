@@ -17,7 +17,7 @@ const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
 scene.background = new THREE.Color(0x91b8c1);
-scene.fog = new THREE.Fog(skyHorizon.clone(), 115, 270);
+scene.fog = new THREE.Fog(skyHorizon.clone(), 165, 430);
 
 // Cielo panorámico procedural: azul en altura, horizonte cálido, nubes y sol.
 function createSkyTexture() {

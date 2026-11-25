@@ -3,6 +3,7 @@ import { createVillage } from "./village.js";
 import { createNature } from "./nature.js";
 import { createPaths } from "./paths.js";
 import { createVillageDetails } from "./villageDetails.js";
+import { createVillageBuildings } from "./villageBuildings.js";
 import { createExploration } from "./exploration.js";
 import { createActors } from "./actors.js";
 import { createEnvironment } from "./environment.js";
@@ -21,6 +22,7 @@ export function createWorld(scene) {
   createPaths(scene, terrain.heightAt);
   createVillage(scene, terrain.heightAt);
   createVillageDetails(scene, terrain.heightAt);
+  createVillageBuildings(scene, terrain.heightAt);
   const nature = createNature(scene, terrain.heightAt);
   const exploration = createExploration(scene, terrain.heightAt);
   const actors = createActors(scene, terrain.heightAt);

@@ -1,23 +1,26 @@
 # Prototipo 3D de Eldoria
 
-## Versión 1.1 — Corrección de la aldea y trazado de caminos
+## Versión 1.2 — Paisaje integrado y vegetación viva
 
-### Correcciones de distribución
-- Se retiró la parcela que estaba demasiado cerca del cauce y se reubicó al oeste de Piedra Clara y se alejó de la franja del río y de sus bancos.
-- Se actualizaron las zonas de exclusión de vegetación para que coincidan con la nueva parcela.
-- Se eliminaron las dos salidas exteriores provisionales y los mojones asociados: no se mostrarán caminos que terminen sin conectar con una zona jugable.
-- Se conserva únicamente el circuito de la plaza y el acceso principal al puente, que forman un recorrido reconocible.
+### Terreno, caminos y agua
+- Se aumentó la resolución de la malla del terreno para conseguir un relieve más continuo.
+- El cauce del río ahora se excava mediante una depresión gradual en el propio terreno; se eliminaron los bordes rectos tipo caja.
+- La superficie del agua tiene subdivisiones y ondas suaves animadas.
+- Se añadieron piedras de orilla colocadas siguiendo el relieve.
+- Los caminos ahora siguen la altura del terreno y usan bandas laterales de transición de color para integrarse con la hierba en lugar de quedar como una cinta rígida.
 
-### Criterio para la próxima expansión
-Los caminos exteriores volverán cuando se construyan primero sus destinos (ruinas, granja, campamento o asentamiento) y puedan conectarse desde el origen hasta el destino. No se crearán senderos aislados como decoración.
+### Vegetación
+- Se reemplazaron las copas geométricas simples por árboles más altos con troncos, ramas y grupos de follaje con volumen.
+- Las copas se balancean suavemente con el viento.
+- Arbustos y hierbas tienen movimiento leve, sin animar cada objeto como una entidad independiente.
+- Se mantiene el uso de instancias para reducir llamadas de dibujo y cuidar el rendimiento.
 
-### Funcionamiento
-- Movimiento con WASD o flechas y Shift para correr.
-- Cámara en tercera persona con el mouse.
-- El controlador reconoce el tablero del puente como superficie transitable.
-- Los caminos son capas visuales sobre el terreno, no obstáculos físicos.
+### Base técnica
+- El ciclo principal actualiza el agua y la vegetación.
+- Se conserva Three.js y la carga por módulos; no se cambia de motor ni se descarta el trabajo existente.
+- El siguiente bloque de desarrollo deja de centrarse en decorar Piedra Clara: se ampliará el mundo jugable con destinos exteriores, regiones conectadas y sistemas propios de MMORPG.
 
 ### Ejecutar y validar
 Descargar la rama `desarrollo-lore`, extraer el ZIP y abrir `index.html` con Live Server. Se necesita conexión a internet para cargar Three.js desde jsDelivr.
 
-Validar la nueva posición de la casa oeste, la distancia al río, el circuito de la plaza y la continuidad hasta el puente. La revisión visual final debe hacerse en el navegador.
+Esta revisión está subida al repositorio, pero todavía requiere validación visual en el navegador, especialmente en la transición de los caminos, el nivel del agua, las copas de los árboles y el rendimiento en equipos modestos.

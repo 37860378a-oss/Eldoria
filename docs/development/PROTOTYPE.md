@@ -78,3 +78,16 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - La hierba utiliza hojas alargadas individuales y un balanceo suave con variación de fase y dirección.
 - El ciclo del mundo actualiza también la animación de la vegetación.
 - Pendiente: validar visualmente el nivel del agua junto a las piedras, el despeje bajo el arco, la unión del muelle con la orilla y la simetría del puente en navegador.
+
+
+## Versión 1.8 — Expansión geográfica y nacimiento del río
+
+- Se amplió el terreno de 220 a 550 unidades por lado (150 % más de extensión lineal respecto al tamaño anterior).
+- Se incorporó una cordillera perimetral de altura progresiva para cerrar visualmente los bordes del mapa y evitar que el paisaje termine en vacío.
+- El río nace ahora en una cascada occidental que cae desde la montaña y conecta con el cauce principal.
+- Se redujo la altura de la lámina de agua y se ajustó el muelle para que la cubierta quede claramente por encima del nivel del río.
+- Se añadieron mesetas, llanuras, cuatro lagunas adicionales integradas mediante depresiones suaves del terreno y tres accesos de cueva en la cordillera.
+- Se ampliaron las poblaciones de árboles, arbustos, rocas y hierbas. Se incorporaron árboles de follaje verde primaveral y tonos otoñales, además de pastos de distintas alturas.
+- Se añadieron tres campamentos con tiendas, mantas, leña, fogones, cajas, hierbas silvestres y acumulaciones de rocas.
+- Se extendieron los límites de movimiento del personaje para que pueda recorrer la nueva región.
+- Pendiente de prueba visual: continuidad cascada-río, altura real del agua junto al muelle, silueta de las montañas, entradas de cuevas y rendimiento en equipos modestos.

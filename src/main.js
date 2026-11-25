@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Sky } from "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/objects/Sky.js";
 import { createWorld } from "./world/createWorld.js";
 import { createPlayerController } from "./player/controller.js";
 import { createHud } from "./ui/hud.js";
@@ -16,21 +15,62 @@ sceneRoot.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
-scene.background = skyDay.clone();
-scene.fog = new THREE.Fog(skyDay.clone(), 115, 270);
+scene.background = null;
+scene.fog = new THREE.Fog(skyHorizon.clone(), 115, 270);
 
-// Cúpula atmosférica física: dispersión de Rayleigh, bruma y disco solar.
-const sky = new Sky();
-sky.scale.setScalar(450000);
-sky.material.uniforms.turbidity.value = 8;
-sky.material.uniforms.rayleigh.value = 2.2;
-sky.material.uniforms.mieCoefficient.value = 0.005;
-sky.material.uniforms.mieDirectionalG.value = 0.82;
-scene.add(sky);
-const sunDirection = new THREE.Vector3();
-const sunSpherical = new THREE.Spherical(1, THREE.MathUtils.degToRad(72), THREE.MathUtils.degToRad(215));
-sunDirection.setFromSpherical(sunSpherical).normalize();
-sky.material.uniforms.sunPosition.value.copy(sunDirection);
+// Cielo panorámico procedural: azul en altura, horizonte cálido, nubes y sol.
+function createSkyTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 2048; canvas.height = 1024;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, "#315d83");
+  gradient.addColorStop(.28, "#6798b5");
+  gradient.addColorStop(.55, "#a9c5c9");
+  gradient.addColorStop(.72, "#e0c9a6");
+  gradient.addColorStop(1, "#83969a");
+  ctx.fillStyle = gradient; ctx.fillRect(0, 0, w, h);
+
+  // Nubes suaves en capas, con variación de tamaño y transparencia.
+  let seed = 82471;
+  const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  for (let layer = 0; layer < 3; layer++) {
+    for (let i = 0; i < 115; i++) {
+      const x = random() * w, y = h * (.27 + random() * .34);
+      const rx = 24 + random() * (layer === 0 ? 105 : 165);
+      const ry = 8 + random() * 24;
+      const alpha = .025 + random() * .075;
+      ctx.save(); ctx.translate(x, y); ctx.scale(1, .7 + random() * .5);
+      ctx.filter = "blur(" + (10 + random() * 18) + "px)";
+      ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
+      ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, (random() - .5) * .18, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+  }
+  // Resplandor y disco solar cerca del horizonte.
+  const sx = w * .73, sy = h * .48;
+  const glow = ctx.createRadialGradient(sx, sy, 5, sx, sy, 190);
+  glow.addColorStop(0, "rgba(255,244,211,.65)");
+  glow.addColorStop(.25, "rgba(255,224,177,.23)");
+  glow.addColorStop(1, "rgba(255,224,177,0)");
+  ctx.fillStyle = glow; ctx.fillRect(sx - 200, sy - 200, 400, 400);
+  ctx.fillStyle = "#fff2cf"; ctx.beginPath(); ctx.arc(sx, sy, 19, 0, Math.PI * 2); ctx.fill();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.needsUpdate = true;
+  return texture;
+}
+const skyTexture = createSkyTexture();
+const skyDome = new THREE.Mesh(
+  new THREE.SphereGeometry(900, 48, 32),
+  new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide, depthWrite: false, fog: false })
+);
+skyDome.frustumCulled = false;
+skyDome.renderOrder = -1000;
+scene.add(skyDome);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500000);
 const world = createWorld(scene);
@@ -80,11 +120,9 @@ function animate() {
   // Variación lenta de luz y color para dar sensación de cielo vivo sin cielos HDR pesados.
   const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
   const skyTint = skyHorizon.clone().lerp(skyDay, daylight);
-  scene.background.copy(skyTint);
   scene.fog.color.copy(skyTint);
+  skyDome.position.copy(camera.position);
   sun.position.set(-55 + Math.sin(elapsed * 0.018) * 22, 72 + daylight * 22, 35);
-  sunDirection.set(sun.position.x, sun.position.y, sun.position.z).normalize();
-  sky.material.uniforms.sunPosition.value.copy(sunDirection);
   sun.intensity = 1.55 + daylight * 0.8;
   ambient.intensity = 1.15 + daylight * 0.35;
   renderer.render(scene, camera);

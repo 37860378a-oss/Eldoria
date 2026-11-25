@@ -34,7 +34,6 @@ function ribbon(scene,heightAt,points,width,material,options={}){
   const mesh=new THREE.Mesh(geometry,material);mesh.material.side=THREE.DoubleSide;mesh.renderOrder=2;scene.add(mesh);
 }
 const northBridgeRamp=z=>1-smooth01((z+17)/7);
-const southBridgeRamp=z=>1-smooth01((-z-37)/7);
 
 export function createPaths(scene,heightAt){
   const road=new THREE.MeshStandardMaterial({map:roadTexture(),roughness:1,side:THREE.DoubleSide});

@@ -20,7 +20,7 @@ function baseHeight(x,z){
   const c=3.8*Math.exp(-(((x-48)**2)/1900+((z+67)**2)/1500));
   const flat=Math.exp(-(((x+28)**2)/1050+((z-1)**2)/900));
   const edge=Math.max(Math.abs(x),Math.abs(z));
-  const rim=smooth01((edge-188)/87);
+  const rim=smooth01((edge-155)/120);
   const mountainRim=rim*rim*(27+10*Math.abs(Math.sin(x*.031+z*.019))+5*Math.abs(Math.sin(z*.057-x*.023)));
   const mesas=plateau(x,z,142,-108,25,13,7)+plateau(x,z,-145,132,22,10,6);
   return (broad+rolling+ridge+a+b+c)*(1-flat*.94)+mountainRim+mesas;
@@ -63,15 +63,15 @@ export function createTerrain(scene){
   const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:groundTexture(),vertexColors:true,roughness:1}));ground.receiveShadow=true;scene.add(ground);
 
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
-  const waterGeo=new THREE.PlaneGeometry(530,12.8,420,18);waterGeo.rotateX(-Math.PI/2);
+  const waterGeo=new THREE.PlaneGeometry(520,12.8,420,18);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
-  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(20,0,-25);scene.add(river);
+  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(15,0,-25);scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];
   for(const side of [-1,1]){
     const points=[];
-    for(let i=0;i<180;i++){const x=-245+i*2.95,z=-25+side*(7.0+Math.sin(i*.22)*.7);points.push(new THREE.Vector3(x,terrainHeight(x,z)+.04,z));}
+    for(let i=0;i<175;i++){const x=-245+i*2.95,z=-25+side*(7.0+Math.sin(i*.22)*.7);points.push(new THREE.Vector3(x,terrainHeight(x,z)+.04,z));}
     const stones=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),bankMat,points.length),dummy=new THREE.Object3D();
     points.forEach((p,i)=>{const s=.35+((i*17)%11)/15;dummy.position.copy(p);dummy.scale.set(s*1.8,s*.38,s*.7);dummy.rotation.y=i*.71;dummy.updateMatrix();stones.setMatrixAt(i,dummy.matrix);});
     scene.add(stones);bankGroups.push(stones);
@@ -117,7 +117,7 @@ export function createTerrain(scene){
         waterPositions[i*3+1]=terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+Math.sin(x*.075+time*1.15)*.035+Math.cos(z*.8+time*.8)*.018;
       }
       waterGeo.attributes.position.needsUpdate=true;waterGeo.computeVertexNormals();
-      currentData.forEach((p,i)=>{const x=((p.x+245+time*2.8+p.phase*2)%530)-245;currentDummy.position.set(x,terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+.18+Math.sin(x*.075+time*1.15)*.035,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
+      currentData.forEach((p,i)=>{const x=((p.x+245+time*2.8+p.phase*2)%520)-245;currentDummy.position.set(x,terrainHeight(x,-25)+RIVER_LEVEL_OFFSET+.18+Math.sin(x*.075+time*1.15)*.035,p.z);currentDummy.rotation.set(0,0,0);currentDummy.updateMatrix();current.setMatrixAt(i,currentDummy.matrix);});
       current.instanceMatrix.needsUpdate=true;
       const fallAttr=fallGeo.attributes.position;
       for(let i=0;i<fallAttr.count;i++){

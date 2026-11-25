@@ -73,6 +73,19 @@ export function createNature(scene,heightAt) {
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
       roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.24*scale,sy:length*.5,sz:.24*scale,q});
     }
+    const branchTips=[];
+    for(let b=0;b<7+Math.floor(random()*3);b++){
+      const angle=random()*Math.PI*2;
+      const branchY=height*(.38+random()*.4);
+      const length=(1.8+random()*1.35)*scale;
+      const start=new THREE.Vector3(x,ground+branchY*scale,z);
+      const direction=new THREE.Vector3(Math.sin(angle)*.82,.45+random()*.35,Math.cos(angle)*.82).normalize();
+      const end=start.clone().addScaledVector(direction,length);
+      const mid=start.clone().add(end).multiplyScalar(.5);
+      const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),direction);
+      branches.push({x:mid.x,y:mid.y,z:mid.z,sx:.2*scale,sy:length*.5,sz:.2*scale,q});
+      branchTips.push(end);
+    }
     // Cada grupo de hojas nace en la punta de una rama real: silueta abierta,
     // con huecos entre ramas y sin una esfera verde compacta.
     for(const tip of branchTips){

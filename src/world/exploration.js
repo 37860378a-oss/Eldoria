@@ -62,8 +62,8 @@ function createWhisperGrove(scene,heightAt){
   for(let i=0;i<34;i++){
     const a=random()*Math.PI*2,r=5+Math.sqrt(random())*21,x=center.x+Math.cos(a)*r,z=center.z+Math.sin(a)*r;
     const ground=heightAt(x,z),h=8+random()*4.5,scale=.8+random()*.5,rad=.27+random()*.15;
-    const embed=.8*scale;
-    trunks.push({x,y:ground+(h*.5-.8)*scale,z,sx:rad*scale,sy:(h*.5+.8)*scale,sz:rad*scale,ry:random()*6.28});
+    const embed=.4;
+    trunks.push({x,y:ground+(h*.5-embed*.5)*scale,z,sx:rad*scale,sy:(h+embed)*scale,sz:rad*scale,ry:random()*6.28});
     const type=Math.floor(random()*3),count=4+Math.floor(random()*3),phase=random()*6.28;
     for(let j=0;j<count;j++){
       const angle=j/count*Math.PI*2+random()*.5,spread=1.5+random()*1.3;

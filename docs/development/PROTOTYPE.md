@@ -180,3 +180,13 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Los edificios reutilizan el mismo generador para piedra, revoque, madera y tejados, manteniendo sus modelos, UV y distribución.
 - No se agregan imágenes externas ni geometría adicional; las texturas se generan localmente y se reutilizan por material.
 - La validación visual y de rendimiento queda pendiente de la prueba en navegador con Live Server.
+
+
+## Versión 2.8 — Biblioteca de texturas artísticas
+
+- Se agregan seis recursos SVG originales en `assets/textures/`: césped, tierra, piedra, revoque, madera y tejas.
+- Las texturas dejan de dibujarse en Canvas durante el arranque: `paintedMaterials.js` ahora carga archivos artísticos independientes mediante `THREE.TextureLoader`.
+- Se mantienen las funciones de integración existentes en terreno, caminos y edificios; los modelos y la distribución del valle no se modifican.
+- Las texturas se comparten por tipo para evitar duplicar recursos y reducir el coste de memoria.
+- La biblioteca usa patrones ilustrados con bloques, vetas, pinceladas, luces y sombras pintadas, con una paleta de fantasía inspirada en MMORPG clásicos.
+- Pendiente de validación visual y de rendimiento en el navegador del usuario. Si una textura no carga, el módulo informa el recurso concreto en la consola.

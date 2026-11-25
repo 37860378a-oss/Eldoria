@@ -91,3 +91,13 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se añadieron tres campamentos con tiendas, mantas, leña, fogones, cajas, hierbas silvestres y acumulaciones de rocas.
 - Se extendieron los límites de movimiento del personaje para que pueda recorrer la nueva región.
 - Pendiente de prueba visual: continuidad cascada-río, altura real del agua junto al muelle, silueta de las montañas, entradas de cuevas y rendimiento en equipos modestos.
+
+
+## Versión 1.9 — Agua, partículas y opciones gráficas
+
+- Se ajustó el renderizado del cauce para que las partículas de corriente se dibujen por encima de la lámina de agua y mantengan visibilidad durante el recorrido.
+- Se reforzó la continuidad visual de la cascada con el río y se ajustó la prioridad de dibujo de sus superficies.
+- Se incorporó un menú de pausa accesible con ESC, con control en tiempo real de la distancia de visión.
+- La distancia elegida modifica la niebla y el recorte de cámara para reducir la carga visual en equipos modestos.
+- El movimiento del personaje queda pausado mientras el menú está abierto.
+- Pendiente de prueba visual: verificar el nacimiento del río, la visibilidad de las partículas y el comportamiento del menú en navegador.

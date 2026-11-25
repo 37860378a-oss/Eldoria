@@ -18,6 +18,12 @@ La historia, geografía, culturas, magia y dirección artística del mundo está
 
 La primera aventura comienza en el Valle de Eldoria, en la aldea de Piedra Clara, donde una serie de sucesos extraños revela el despertar de una antigua cámara vinculada a la Cicatriz del Alba.
 
+## Diseño de personajes
+
+- [Pueblos jugables](docs/lore/PEOPLES.md): cinco pueblos con culturas y ventajas contextuales equilibradas.
+- [Clases y caminos de aventura](docs/lore/CLASSES.md): ocho clases iniciales, roles de grupo y orden de implementación.
+- [Índice de documentación](docs/README.md): acceso a los documentos principales.
+
 ## Estructura de desarrollo
 
 El proyecto se construirá por etapas pequeñas y verificables. Primero se establecerán los cimientos visuales y técnicos; después se incorporarán regiones, personajes, criaturas, sistemas de juego y finalmente la infraestructura online.

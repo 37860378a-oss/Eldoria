@@ -8,12 +8,12 @@ function roadTexture(){
   const colors=["#b99a6b","#92764f","#c4a477","#806746","#d0b184","#9e8058"];
   for(let i=0;i<2100;i++){
     const x=rnd()*size,y=rnd()*size,w=5+rnd()*36,h=2+rnd()*10;
-    ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*.32);ctx.globalAlpha=.18+rnd()*.28;
+    ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*.32);ctx.globalAlpha=.28+rnd()*.38;
     ctx.fillStyle=colors[Math.floor(rnd()*colors.length)];ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   for(let i=0;i<3600;i++){
     const x=rnd()*size,y=rnd()*size,len=2+rnd()*12;
-    ctx.strokeStyle=rnd()>.5?"rgba(224,197,148,.48)":"rgba(83,62,39,.32)";
+    ctx.strokeStyle=rnd()>.5?"rgba(242,213,162,.72)":"rgba(70,48,29,.58)";
     ctx.lineWidth=.8+rnd()*2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y+(rnd()-.5)*3);ctx.stroke();
   }
   for(let i=0;i<650;i++){
@@ -30,7 +30,7 @@ function ribbon(scene,heightAt,points,width,material,options={}){
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
   const segments=Math.max(90,points.length*30),vertices=[],uv=[],indices=[],colors=[];
   const bands=[-1.45,-1.12,-1,-.88,.88,1,1.12,1.45];
-  const grass=new THREE.Color(0x78985b),dust=new THREE.Color(0x9b835e);
+  const grass=new THREE.Color(0xb2c47c),dust=new THREE.Color(0xffffff);
   for(let i=0;i<=segments;i++){
     const t=i/segments,p=curve.getPoint(t),tangent=curve.getTangent(t).normalize();
     const side=new THREE.Vector3(-tangent.z,0,tangent.x).normalize();
@@ -50,7 +50,7 @@ function ribbon(scene,heightAt,points,width,material,options={}){
 }
 const northBridgeRamp=()=>0;
 export function createPaths(scene,heightAt){
-  const road=new THREE.MeshStandardMaterial({map:roadTexture(),vertexColors:true,roughness:1,side:THREE.DoubleSide});
+  const road=new THREE.MeshStandardMaterial({color:0xffffff,map:roadTexture(),roughness:1,side:THREE.DoubleSide});
   ribbon(scene,heightAt,[[-49,2],[-44,-3],[-39,-6],[-33,-7],[-27,-6],[-22,-3],[-18,1],[-18,6],[-22,10],[-29,12],[-37,10],[-43,6],[-49,2]],4.2,road);
   ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road,{ramp:z=>smooth((-13-z)/3.8)});
 }

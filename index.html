@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#18251e">
+  <title>Eldoria — Valle de Eldoria</title>
+  <link rel="stylesheet" href="./styles/main.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="game">
+    <div id="scene" aria-label="Mundo 3D de Eldoria"></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">✦</span><span>ELDORIA</span><small>VALLE DE ELDORIA</small></div>
+      <div class="location"><span class="location-dot"></span> Tierras de la Marca <span class="separator">/</span> Piedra Clara</div>
+    </header>
+    <section class="intro" id="intro">
+      <div class="intro-card">
+        <p class="eyebrow">PROTOTIPO DE EXPLORACIÓN · 0.1</p>
+        <h1>El Valle despierta</h1>
+        <p>Un mundo antiguo aguarda más allá de los caminos.</p>
+        <button id="start-button" type="button">Entrar al valle <span>→</span></button>
+        <div class="controls-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> para moverte <i></i> Mouse para mirar</div>
+      </div>
+    </section>
+    <aside class="quest-card">
+      <div class="quest-label">REGIÓN INICIAL</div>
+      <strong>Piedra Clara</strong>
+      <p>Un refugio junto al viejo camino.</p>
+      <div class="quest-divider"></div>
+      <div class="quest-objective"><span class="objective-icon">◇</span><span>Explora los alrededores de la aldea.</span></div>
+    </aside>
+    <div class="bottom-hud">
+      <div class="status"><span class="status-dot"></span><span id="status-text">Esperando al viajero</span></div>
+      <div class="coordinates" id="coordinates">X 0 · Z 0</div>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <noscript>Este prototipo necesita JavaScript activado.</noscript>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

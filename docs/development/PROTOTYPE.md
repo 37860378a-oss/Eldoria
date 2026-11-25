@@ -162,3 +162,12 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se conservan geometría, distribución, módulos, puente y brazo del río. No se incorporan masas de agua nuevas.
 - La generación sigue siendo procedural y no requiere descargas de texturas externas.
 - Pendiente de validación visual y de rendimiento en el equipo objetivo.
+
+
+## Ajuste 2.6.1 — Lectura visual de las pinceladas
+- Se corrigió la multiplicación excesiva entre los mapas de color y los tintes oscuros de los materiales.
+- El terreno ahora muestra los mapas pintados sin vertex colors que apaguen sus tonos.
+- Se ampliaron las manchas y pinceladas para que sigan siendo visibles desde la cámara de juego.
+- Los caminos usan pinceladas más grandes y contraste más claro; la vegetación lateral conserva su transición.
+- Se mantiene el enfoque de rendimiento: CanvasTextures pequeñas, materiales compartidos y sin mapas de alta resolución externos.
+- Pendiente de confirmación visual en el navegador del usuario.

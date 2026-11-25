@@ -1,132 +1,80 @@
-import * as THREE from "three";
+# Prototipo 3D de Eldoria
 
-const stoneMat=new THREE.MeshStandardMaterial({color:0x77796f,roughness:.96,flatShading:true});
-const wornMat=new THREE.MeshStandardMaterial({color:0x938b73,roughness:1,flatShading:true});
-const darkStone=new THREE.MeshStandardMaterial({color:0x4c5a52,roughness:1});
-const crystalMat=new THREE.MeshStandardMaterial({color:0x6dc8bd,emissive:0x236e69,emissiveIntensity:1.1,roughness:.24});
-const barkMat=new THREE.MeshStandardMaterial({color:0x51402d,roughness:1});
-const leafMats=[0x355b3e,0x416d47,0x587a4a].map(color=>new THREE.MeshStandardMaterial({color,roughness:.94}));
-const roadMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,vertexColors:true,side:THREE.DoubleSide});
+## Versión 1.2 — Paisaje integrado y vegetación viva
 
-function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-function makeTrail(scene,heightAt,points,width,bridgeExit=false){
-  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
-  const segments=160,verts=[],colors=[],indices=[],uv=[];
-  const edge=new THREE.Color(0x71865a),center=new THREE.Color(0x927b59);
-  for(let i=0;i<=segments;i++){
-    const t=i/segments,p=curve.getPoint(t),tan=curve.getTangent(t).normalize(),side=new THREE.Vector3(-tan.z,0,tan.x);
-    for(let j=0;j<7;j++){
-      const f=-1.28+j*(2.56/6),x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
-      const blend=THREE.MathUtils.smoothstep(Math.abs(f),.82,1.28);
-      const col=center.clone().lerp(edge,blend);
-      const bridgeBlend=bridgeExit?THREE.MathUtils.smoothstep(z,-44,-37.2):0;
-      verts.push(x,heightAt(x,z)+.055+bridgeBlend*.78,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
-      if(i<segments&&j<6){const a=i*7+j;indices.push(a,a+1,a+7,a+1,a+8,a+7);}
-    }
-  }
-  const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));geo.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geo.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();
-  const mesh=new THREE.Mesh(geo,roadMat);mesh.receiveShadow=true;scene.add(mesh);
-}
-function addStone(scene,geo,material,x,y,z,sx,sy,sz,rotation=0){
-  const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.rotation.y=rotation;scene.add(m);return m;
-}
-function createRuins(scene,heightAt){
-  const x=43,z=-76,ground=heightAt(x,z),group=new THREE.Group();
-  const base=new THREE.Mesh(new THREE.CylinderGeometry(8.6,9.2,.65,12),darkStone);base.position.y=.28;group.add(base);
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(7.2,.24,6,48),wornMat);ring.rotation.x=Math.PI/2;ring.position.y=.68;group.add(ring);
-  const pillarGeo=new THREE.BoxGeometry(1.15,1,1.15);
-  const pillars=[[-6.2,0,-4.4],[-6.6,0,2.8],[-1.5,0,6.6],[5.3,0,4.8],[6.4,0,-2.7],[1.8,0,-6.2]];
-  pillars.forEach(([px,,pz],i)=>{
-    const h=2.8+(i%3)*.65;
-    const pillar=new THREE.Mesh(pillarGeo,stoneMat);pillar.position.set(px,h*.5+.62,pz);pillar.scale.set(1,h,1);pillar.rotation.y=i*.23;group.add(pillar);
-    const cap=new THREE.Mesh(new THREE.BoxGeometry(1.55,.34,1.5),wornMat);cap.position.set(px,h+.68,pz);cap.rotation.y=i*.23;group.add(cap);
-  });
-  // Un dintel caído y fragmentos alrededor cuentan que el santuario se quebró hace siglos.
-  const lintel=new THREE.Mesh(new THREE.BoxGeometry(7.8,.65,1.25),wornMat);lintel.position.set(-3.7,1.15,-4.4);lintel.rotation.z=-.28;lintel.rotation.y=.18;group.add(lintel);
-  const altar=new THREE.Mesh(new THREE.CylinderGeometry(1.7,2.1,1.15,8),wornMat);altar.position.set(0,1.02,0);group.add(altar);
-  const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.85,1),crystalMat);crystal.position.set(0,2.45,0);group.add(crystal);
-  const glow=new THREE.PointLight(0x6dc8bd,1.7,16);glow.position.set(0,3.2,0);group.add(glow);
-  const rubbleGeo=new THREE.DodecahedronGeometry(1,0);
-  const random=seeded(773);
-  for(let i=0;i<28;i++){
-    const a=random()*Math.PI*2,r=8.5+random()*4,s=.35+random()*.9;
-    const rock=new THREE.Mesh(rubbleGeo,i%3===0?wornMat:stoneMat);
-    rock.position.set(Math.cos(a)*r,.25+s*.25,Math.sin(a)*r);rock.scale.set(s*1.4,s*.55,s);rock.rotation.set(random(),random()*3,random());group.add(rock);
-  }
-  group.position.set(x,ground,z);scene.add(group);
-  return {group,crystal,glow,baseY:crystal.position.y};
-}
-function createWhisperGrove(scene,heightAt){
-  const random=seeded(1917),trunks=[],crowns=[[],[],[]],motes=[];
-  const center={x:-65,z:-70};
-  for(let i=0;i<34;i++){
-    const a=random()*Math.PI*2,r=5+Math.sqrt(random())*21,x=center.x+Math.cos(a)*r,z=center.z+Math.sin(a)*r;
-    const ground=heightAt(x,z),h=8+random()*4.5,scale=.8+random()*.5,rad=.27+random()*.15;
-    const embed=.4;
-    trunks.push({x,y:ground+(h*.5-embed*.5)*scale,z,sx:rad*scale,sy:(h+embed)*scale,sz:rad*scale,ry:random()*6.28});
-    const type=Math.floor(random()*3),count=4+Math.floor(random()*3),phase=random()*6.28;
-    for(let j=0;j<count;j++){
-      const angle=j/count*Math.PI*2+random()*.5,spread=1.5+random()*1.3;
-      crowns[type].push({x:x+Math.cos(angle)*spread,y:ground+h*scale*(.68+random()*.25),z:z+Math.sin(angle)*spread,
-        sx:spread*(.9+random()*.5),sy:spread*(.9+random()*.45),sz:spread*(.9+random()*.5),phase,wind:.7+random()*.8});
-    }
-  }
-  const trunkMesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(.14,.36,1,7),barkMat,trunks.length),dummy=new THREE.Object3D();
-  trunks.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.rotation.y=e.ry;dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();trunkMesh.setMatrixAt(i,dummy.matrix);});scene.add(trunkMesh);
-  const crownGroups=crowns.map((entries,i)=>{
-    if(!entries.length)return null;
-    const mesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,8,6),leafMats[i],entries.length);
-    entries.forEach((e,j)=>{dummy.position.set(e.x,e.y,e.z);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();mesh.setMatrixAt(j,dummy.matrix);});scene.add(mesh);return {mesh,entries};
-  }).filter(Boolean);
-  const fernGeo=new THREE.ConeGeometry(.28,1.15,5),fernMat=new THREE.MeshStandardMaterial({color:0x547a4a,roughness:1});
-  const ferns=new THREE.InstancedMesh(fernGeo,fernMat,80);
-  for(let i=0;i<80;i++){
-    const a=random()*Math.PI*2,r=4+random()*24,x=center.x+Math.cos(a)*r,z=center.z+Math.sin(a)*r,s=.45+random()*.7;
-    dummy.position.set(x,heightAt(x,z)+s*.48,z);dummy.rotation.set((random()-.5)*.25,random()*6.28,(random()-.5)*.25);dummy.scale.set(s,s,s);dummy.updateMatrix();ferns.setMatrixAt(i,dummy.matrix);
-    motes.push({x,y:heightAt(x,z)+1.5+random()*3,z,phase:random()*6.28});
-  }
-  scene.add(ferns);
-  const moteGeo=new THREE.SphereGeometry(.075,6,5),moteMat=new THREE.MeshBasicMaterial({color:0xb9dba0});
-  const moteMesh=new THREE.InstancedMesh(moteGeo,moteMat,motes.length);
-  motes.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.scale.setScalar(.5+random());dummy.updateMatrix();moteMesh.setMatrixAt(i,dummy.matrix);});scene.add(moteMesh);
-  return {crownGroups,motes,moteMesh,update(time){
-    crownGroups.forEach(g=>{g.entries.forEach((e,i)=>{dummy.position.set(e.x+Math.sin(time*.55+e.phase)*.15*e.wind,e.y,e.z+Math.cos(time*.5+e.phase)*.12*e.wind);dummy.rotation.z=Math.sin(time*.6+e.phase)*.025;dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();g.mesh.setMatrixAt(i,dummy.matrix);});g.mesh.instanceMatrix.needsUpdate=true;});
-    motes.forEach((e,i)=>{dummy.position.set(e.x+Math.sin(time*.4+e.phase)*.35,e.y+Math.sin(time*.8+e.phase)*.5,e.z+Math.cos(time*.35+e.phase)*.35);dummy.updateMatrix();moteMesh.setMatrixAt(i,dummy.matrix);});moteMesh.instanceMatrix.needsUpdate=true;
-  }};
-}
-function createCave(scene,heightAt,x,z,rotation=0){
-  const group=new THREE.Group();
-  const rock=new THREE.MeshStandardMaterial({color:0x66675f,roughness:1,flatShading:true});
-  const rim=new THREE.MeshStandardMaterial({color:0x898578,roughness:1,flatShading:true});
-  const darkness=new THREE.MeshBasicMaterial({color:0x101715,side:THREE.DoubleSide});
-  const opening=new THREE.Mesh(new THREE.CircleGeometry(2.75,32),darkness);
-  opening.position.set(0,2.25,-.24);group.add(opening);
-  const arch=new THREE.Mesh(new THREE.TorusGeometry(2.65,.82,8,28,Math.PI),rim);
-  arch.position.set(0,2.45,0);group.add(arch);
-  for(const side of [-1,1]){
-    const pillar=new THREE.Mesh(new THREE.DodecahedronGeometry(1.35,1),rock);
-    pillar.position.set(side*2.7,1.15,0);pillar.scale.set(1.05,1.55,1.2);pillar.rotation.z=side*.12;pillar.castShadow=true;group.add(pillar);
-    const rubble=new THREE.Mesh(new THREE.DodecahedronGeometry(.9,0),rim);
-    rubble.position.set(side*3.2,.35,.7);rubble.scale.set(1.5,.6,1.1);group.add(rubble);
-  }
-  const crown=new THREE.Mesh(new THREE.DodecahedronGeometry(2.3,1),rock);
-  crown.position.set(0,4.65,-.1);crown.scale.set(1.55,.72,1.15);crown.castShadow=true;group.add(crown);
-  const inner=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.8,1.8,12,1,true),darkness);
-  inner.rotation.x=Math.PI/2;inner.position.set(0,1.8,-1.1);group.add(inner);
-  group.position.set(x,heightAt(x,z),z);group.rotation.y=rotation;scene.add(group);
-  return group;
-}
-export function createExploration(scene,heightAt){
-  const mainTrail=[[8.2,-37.2],[12,-45],[17,-51],[24,-58],[32,-66],[41,-74]];
-  const forestTrail=[[17,-51],[8,-58],[-5,-62],[-20,-64],[-36,-67],[-53,-70],[-65,-72]];
-  makeTrail(scene,heightAt,mainTrail,4.3,true);makeTrail(scene,heightAt,forestTrail,3.6);
-  const ruins=createRuins(scene,heightAt),grove=createWhisperGrove(scene,heightAt);
-  const caves=[createCave(scene,heightAt,-210,-132,.4),createCave(scene,heightAt,205,156,Math.PI),createCave(scene,heightAt,18,232,-.5)];
-  const regionAt=(x,z)=>{
-    if(Math.hypot((x-43)/19,(z+76)/17)<1.35)return "Santuario de las Primeras Brasas";
-    if(Math.hypot((x+65)/31,(z+70)/27)<1.05)return "Bosque de los Susurros";
-    if(z>-43&&x>-78&&x<30)return "Piedra Clara";
-    return "Tierras de la Marca";
-  };
-  return {regionAt,caves,update(time){grove.update(time);ruins.crystal.position.y=ruins.baseY+Math.sin(time*1.4)*.12;ruins.crystal.rotation.y=time*.22;ruins.glow.intensity=1.35+Math.sin(time*2)*.35;}};
-}
+### Terreno, caminos y agua
+- Se aumentó la resolución de la malla del terreno para conseguir un relieve más continuo.
+- El cauce del río ahora se excava mediante una depresión gradual en el propio terreno; se eliminaron los bordes rectos tipo caja.
+- La superficie del agua tiene subdivisiones y ondas suaves animadas.
+- Se añadieron piedras de orilla colocadas siguiendo el relieve.
+- Los caminos ahora siguen la altura del terreno y usan bandas laterales de transición de color para integrarse con la hierba en lugar de quedar como una cinta rígida.
+
+### Vegetación
+- Se reemplazaron las copas geométricas simples por árboles más altos con troncos, ramas y grupos de follaje con volumen.
+- Las copas se balancean suavemente con el viento.
+- Arbustos y hierbas tienen movimiento leve, sin animar cada objeto como una entidad independiente.
+- Se mantiene el uso de instancias para reducir llamadas de dibujo y cuidar el rendimiento.
+
+### Base técnica
+- El ciclo principal actualiza el agua y la vegetación.
+- Se conserva Three.js y la carga por módulos; no se cambia de motor ni se descarta el trabajo existente.
+- El siguiente bloque de desarrollo deja de centrarse en decorar Piedra Clara: se ampliará el mundo jugable con destinos exteriores, regiones conectadas y sistemas propios de MMORPG.
+
+### Ejecutar y validar
+Descargar la rama `desarrollo-lore`, extraer el ZIP y abrir `index.html` con Live Server. Se necesita conexión a internet para cargar Three.js desde jsDelivr.
+
+Esta revisión está subida al repositorio, pero todavía requiere validación visual en el navegador, especialmente en la transición de los caminos, el nivel del agua, las copas de los árboles y el rendimiento en equipos modestos.
+
+ 
+## Versión 1.3 — Primera expansión del mundo
+
+- Se añadió un camino exterior que cruza el puente y se bifurca hacia dos destinos.
+- El Bosque de los Susurros incorpora un pequeño claro, árboles de mayor escala, helechos y motas luminosas animadas.
+- El Santuario de las Primeras Brasas contiene pilares quebrados, dinteles caídos, escombros, altar y una astilla cristalina animada.
+- El HUD muestra el nombre de la región según la posición del personaje.
+- Las zonas están integradas en el terreno existente y preparan puntos de interés para futuras criaturas, recursos, misiones y eventos.
+- La expansión está construida como un módulo independiente para poder añadir nuevas regiones sin cargar la lógica en un único archivo.
+
+Pendiente de validación: comprobar la conexión del camino con el extremo del puente, el relieve de las dos rutas, la visibilidad de los puntos de interés y el rendimiento en el equipo objetivo. Los destinos son zonas explorables visuales; todavía no incluyen colisiones, criaturas ni misiones.
+
+
+## Versión 1.4 — Vegetación, raíces y atmósfera
+
+- Los árboles del terreno tienen troncos más anchos, raíces expuestas que se abren sobre el suelo y variación de altura y copa.
+- Se aumentó la presencia de árboles, arbustos, piedras y hierba manteniendo el uso de instancias para limitar el coste de renderizado.
+- Se incorporó una cúpula de cielo atmosférico con dispersión de luz, bruma y disco solar; la luz direccional aporta sombras.
+- Se mantienen zonas de exclusión para no cubrir caminos, casas ni el área del puente.
+- Las texturas detalladas de corteza, hojas, hierba, tierra y piedra quedan para una pasada posterior de materiales, una vez validada la escala y distribución de la vegetación.
+- Esta versión requiere prueba visual y de rendimiento en el equipo objetivo; las sombras y la densidad vegetal podrán ajustarse según el resultado.
+
+
+## Versión 1.5 — Primer habitante e interacción
+
+- Se incorporó a Maelis, guardiana de Piedra Clara, como primer personaje no jugador del mundo.
+- El personaje tiene un modelo 3D de bajo coste, un indicador visual animado y una luz tenue para facilitar su localización.
+- Al acercarse aparece la indicación para interactuar. La tecla **E** inicia y avanza un diálogo; **Esc** permite cerrarlo.
+- El diálogo presenta la Cicatriz del Alba, las Astillas y los primeros destinos de exploración, conectando el prototipo con el lore.
+- La lógica de personajes y diálogos vive en módulos separados para preparar futuras conversaciones, misiones, comerciantes y criaturas.
+- No se añadió todavía combate ni persistencia online; esta etapa establece la base de interacción local.
+
+
+## Versión 1.6 — Casa de guardia, puente y cauce integrados
+
+- Se añadió un único edificio medieval junto a Maelis: casa de guardia de piedra con torre octogonal de vigilancia, almenas, saeteras, puerta reforzada y estandarte.
+- El puente ahora cruza en línea recta y forma un arco elevado de medio punto en su perfil, con barandas a ambos lados y entradas de piedra.
+- El nivel del río se elevó y el cauce se ensanchó con transiciones de terreno más graduales.
+- Se añadieron indicadores de corriente que avanzan sobre el agua para comunicar visualmente su dirección.
+- Se suavizaron las transiciones de las orillas y se ajustó el camino para que conecte con la entrada del puente.
+- El perfil de altura del puente y la altura de desplazamiento del jugador comparten la misma curva para evitar que el personaje atraviese el tablero.
+- Requiere validación visual en navegador: comprobar el acceso a la torre, el nivel del agua, la unión de caminos y el paso sobre el puente.
+
+
+## Versión 1.7 — Muelle, puente pétreo y vegetación orgánica
+
+- Se incorporó un muelle de madera con tablones separados, pilotes, bolardos y acceso escalonado desde la orilla.
+- Se bajó el nivel del agua para mantenerlo por debajo de las piedras de ambas márgenes y evitar que la lámina invada el terreno.
+- El puente se reconstruyó como un arco de mampostería: dovelas de piedra, pretiles laterales y albardillas simétricas siguiendo una curva común.
+- Los árboles ahora distribuyen el follaje en grupos separados sobre las ramas, con siluetas menos esféricas y más irregulares.
+- La hierba utiliza hojas alargadas individuales y un balanceo suave con variación de fase y dirección.
+- El ciclo del mundo actualiza también la animación de la vegetación.
+- Pendiente: validar visualmente el nivel del agua junto a las piedras, el despeje bajo el arco, la unión del muelle con la orilla y la simetría del puente en navegador.

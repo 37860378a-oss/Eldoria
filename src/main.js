@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { createWorld } from "./world/createWorld.js";
 import { createPlayerController } from "./player/controller.js";
 import { createHud } from "./ui/hud.js";
+import { createDialogue } from "./ui/dialogue.js";
 
 const sceneRoot = document.querySelector("#scene");
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "low-power" });
@@ -71,6 +72,7 @@ const world = createWorld(scene);
 // walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
 const player = createPlayerController(scene, camera, world.walkHeightAt);
 const hud = createHud(player, world);
+const dialogue = createDialogue(player, world.actors, hud);
 
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);
 scene.add(ambient);
@@ -111,6 +113,8 @@ function animate() {
   player.update(delta);
   world.nature?.update?.(elapsed);
   world.update?.(elapsed);
+  world.actors.update(elapsed, player.getPosition());
+  dialogue.update();
   // Variación lenta de luz y color para dar sensación de cielo vivo sin cielos HDR pesados.
   const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
   const skyTint = skyHorizon.clone().lerp(skyDay, daylight);

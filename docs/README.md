@@ -9,6 +9,9 @@
 - [Pueblos jugables](lore/PEOPLES.md)
 - [Clases y caminos de aventura](lore/CLASSES.md)
 
+## Prototipo y desarrollo
+- [Primer prototipo 3D](development/PROTOTYPE.md): ejecución, controles, alcance actual y pruebas pendientes.
+
 ## Criterios del proyecto
 Eldoria se construye por etapas pequeñas y verificables. Las decisiones narrativas, geográficas y jugables se documentan antes de implementarse para evitar rehacer sistemas centrales.
 

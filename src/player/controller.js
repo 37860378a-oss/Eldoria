@@ -46,6 +46,7 @@ export function createPlayerController(scene, camera, heightAt) {
   return {
     object: player,
     start() { started = true; },
+    isStarted() { return started; },
     update(delta) {
       if (!started) {
         desired.set(player.position.x, player.position.y + 1.1, player.position.z);

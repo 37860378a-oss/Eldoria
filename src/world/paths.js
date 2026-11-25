@@ -85,30 +85,21 @@ export function createPaths(scene,heightAt){
     [-37,10],[-43,6]
   ],4.2,road);
 
-  // Acceso norte: termina en la cabecera del puente.
-  // La elevación aumenta gradualmente para encontrarse con el tablero.
+  // Acceso norte: la elevación acompaña la pendiente del tablero.
   ribbon(scene,heightAt,[
     [-18,-3],[-12,-7],[-7,-10],[-2,-12],
     [3,-13],[7,-14],[9.2,-17]
   ],4.8,road,{ramp:northBridgeRamp});
 
-  // El tablero del puente es la única superficie que cruza el cauce.
-  // No se dibuja una segunda cinta de camino sobre el río.
-
-  // Salida sur: comienza exactamente en la cabecera opuesta del puente.
+  // Salida sur: baja gradualmente desde el extremo opuesto del puente.
   ribbon(scene,heightAt,[
     [8.2,-37],[8.2,-41],[12,-44],[19,-48],
     [28,-52],[38,-55],[48,-57]
   ],4.8,road,{ramp:southBridgeRamp});
 
-  // Sendero hacia las colinas del este.
+  // Sendero de las colinas: conecta con el acceso norte a nivel del terreno.
   ribbon(scene,heightAt,[
-    [-18,6],[-12,10],[-7,15],[-1,19],
-    [6,23],[14,27],[23,30]
-  ],3.2,road);
-
-  ribbon(scene,heightAt,[
-    [9.2,-17],[14,-20],[20,-24],[27,-28],
-    [36,-31],[45,-34],[54,-36]
-  ],3.6,road,{ramp:northBridgeRamp});
+    [5,-13],[10,-11],[17,-9],[25,-8],
+    [34,-9],[43,-12],[51,-17]
+  ],3.4,road);
 }

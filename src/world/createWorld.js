@@ -22,7 +22,7 @@ export function createWorld(scene) {
   createPaths(scene, terrain.heightAt);
   createVillage(scene, terrain.heightAt);
   createVillageDetails(scene, terrain.heightAt);
-  createVillageBuildings(scene, terrain.heightAt);
+  const buildings = createVillageBuildings(scene, terrain.heightAt);
   const nature = createNature(scene, terrain.heightAt);
   const exploration = createExploration(scene, terrain.heightAt);
   const actors = createActors(scene, terrain.heightAt);
@@ -33,5 +33,5 @@ export function createWorld(scene) {
     return bridgeHeightAt(x,z,terrain.heightAt) ?? terrain.heightAt(x,z);
   }
 
-  return { ...terrain, nature, environment, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); environment.update(time); } };
+  return { ...terrain, nature, environment, buildings, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); exploration.update(time); environment.update(time); buildings?.update?.(time); } };
 }

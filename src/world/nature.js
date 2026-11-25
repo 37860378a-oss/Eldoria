@@ -89,7 +89,7 @@ export function createNature(scene,heightAt) {
     branches.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.quaternion.copy(e.q);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();branchMesh.setMatrixAt(i,dummy.matrix);});
     branchMesh.instanceMatrix.needsUpdate=true;
   }
-  const crownMeshes=crowns.map((entries,i)=>addInstances(scene,new THREE.SphereGeometry(1,8,6),leafMats[i],entries)).filter(Boolean);
+  const crownGroups=crowns.map((entries,i)=>({mesh:addInstances(scene,new THREE.SphereGeometry(1,8,6),leafMats[i],entries),entries})).filter(group=>group.mesh);
 
   let shrubCount=0;attempts=0;
   while(shrubCount<105&&attempts++<1500){
@@ -97,7 +97,7 @@ export function createNature(scene,heightAt) {
     const s=.5+random()*.65,i=Math.floor(random()*shrubMats.length);
     shrubs[i].push({x,y:heightAt(x,z)+s*.42,z,sx:s*1.25,sy:s*.8,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});shrubCount++;
   }
-  const shrubMeshes=shrubs.map((e,i)=>addInstances(scene,new THREE.IcosahedronGeometry(.78,1),shrubMats[i],e)).filter(Boolean);
+  const shrubGroups=shrubs.map((entries,i)=>({mesh:addInstances(scene,new THREE.IcosahedronGeometry(.78,1),shrubMats[i],entries),entries})).filter(group=>group.mesh);
   const rockGeo=new THREE.DodecahedronGeometry(1,0);
   for(let i=0;i<44;i++){const x=(random()-.5)*194,z=(random()-.5)*188;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
   addInstances(scene,rockGeo,rockMat,rocks);
@@ -118,11 +118,23 @@ export function createNature(scene,heightAt) {
         group.entries.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.rotation.set(0,e.ry,Math.sin(time*1.25+e.phase)*.18);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();group.mesh.setMatrixAt(i,dummy.matrix);});
         group.mesh.instanceMatrix.needsUpdate=true;
       }
-      for(const mesh of crownMeshes) {
-        // Balanceo sutil de las copas; el tronco y las ramas conservan su silueta.
-        const entries=mesh.userData.windEntries;
+      // Las copas se desplazan apenas alrededor del tronco, como ramas movidas por el viento.
+      for(const group of crownGroups){
+        group.entries.forEach((e,i)=>{
+          const sway=Math.sin(time*.72+e.phase)*.13*e.wind;
+          dummy.position.set(e.x+sway,e.y+Math.sin(time*.9+e.phase)*.035,e.z+Math.cos(time*.68+e.phase)*.1*e.wind);
+          dummy.rotation.set(0,sway*.35,Math.sin(time*.72+e.phase)*.035);
+          dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();group.mesh.setMatrixAt(i,dummy.matrix);
+        });
+        group.mesh.instanceMatrix.needsUpdate=true;
       }
-      crownMeshes.forEach(mesh=>{mesh.instanceMatrix.needsUpdate=true;});
+      for(const group of shrubGroups){
+        group.entries.forEach((e,i)=>{
+          dummy.position.set(e.x,e.y,e.z);dummy.rotation.set(0,e.ry,Math.sin(time*.95+e.phase)*.045);
+          dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();group.mesh.setMatrixAt(i,dummy.matrix);
+        });
+        group.mesh.instanceMatrix.needsUpdate=true;
+      }
     }
   };
 }

@@ -7,7 +7,7 @@ function roadTexture(){
 }
 function ribbon(scene,heightAt,points,width,mat,lift=.2){
  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal"),n=Math.max(48,points.length*20),v=[],uv=[],idx=[];
- for(let i=0;i<=n;i++){const t=i/n,p=curve.getPoint(t),tan=curve.getTangent(t).normalize(),side=new THREE.Vector3(-tan.z,0,tan.x).normalize();for(const sign of [-1,1]){const x=p.x+side.x*width*.5*sign,z=p.z+side.z*width*.5*sign;v.push(x,heightAt(x,z)+lift,z);uv.push(t*8,sign*.5+.5);}if(i<n){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
+ for(let i=0;i<=n;i++){const t=i/n,p=curve.getPoint(t),tan=curve.getTangent(t).normalize(),side=new THREE.Vector3(-tan.z,0,tan.x).normalize();for(const sign of [-1,1]){const x=p.x+side.x*width*.5*sign,z=p.z+side.z*width*.5*sign;v.push(x,heightAt(x,z)+lift+(lift>.7?4.25*Math.exp(-((z+25)**2)/43):0),z);uv.push(t*8,sign*.5+.5);}if(i<n){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(v,3));g.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();const mesh=new THREE.Mesh(g,mat);mesh.material.side=THREE.DoubleSide;mesh.renderOrder=2;scene.add(mesh);
 }
 export function createPaths(scene,heightAt){

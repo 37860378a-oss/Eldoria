@@ -30,6 +30,7 @@ function gable(parent, w, h, z, material) {
   const geo = new THREE.ShapeGeometry(shape);
   const m = mesh(parent,geo,material,0,0,z);
   m.material.side = THREE.DoubleSide;
+  return m;
 }
 function addRoof(parent,w,d,eave,ridge,material) {
   const angle=Math.atan2(ridge-eave,w/2);

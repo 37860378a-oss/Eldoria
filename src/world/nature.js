@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
-const trunkMat = new THREE.MeshStandardMaterial({ color: 0x59432f, roughness: 1 });
-const branchMat = new THREE.MeshStandardMaterial({ color: 0x674a32, roughness: 1 });
-const leafMats = [0x3f6844,0x527b49,0x66894f,0x91a967,0xb56d3f,0xc58a45].map(color=>new THREE.MeshStandardMaterial({color,roughness:.92}));
-const shrubMats = [0x55794b, 0x718b50, 0x3e6846].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1 }));
-const rockMat = new THREE.MeshStandardMaterial({ color: 0x888875, roughness: 1, flatShading: true });
-const grassMats = [0x8b9b5b, 0xa1a66a, 0x718c51].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, side: THREE.DoubleSide }));
+const trunkMat = new THREE.MeshStandardMaterial({ color: 0x765037, roughness: 1, flatShading: true });
+const branchMat = new THREE.MeshStandardMaterial({ color: 0x89603d, roughness: 1, flatShading: true });
+const leafMats = [0x426f43,0x5b8748,0x789b50,0xa0ad63,0xb96f43,0xd0954b].map(color=>new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true}));
+const shrubMats = [0x527e45, 0x87a653, 0x3b6941].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, flatShading: true }));
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x99917b, roughness: 1, flatShading: true });
+const grassMats = [0x91a957, 0xb1b66a, 0x668c49].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, side: THREE.DoubleSide, flatShading: true }));
 
 function seeded(seed) {
   let value = seed >>> 0;

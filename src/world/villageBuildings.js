@@ -36,12 +36,12 @@ function addRoof(parent,w,d,eave,ridge,material) {
   const angle=Math.atan2(ridge-eave,w/2);
   const length=Math.hypot(w/2,ridge-eave)+.45;
   for(const side of [-1,1]) {
-    const slab=box(parent,material,side*w*.25,(ridge+eave)/2,d/2,
+    const slab=box(parent,material,side*w*.25,(ridge+eave)/2,0,
       length,.24,d+.7,0,0,side*angle);
     slab.castShadow=true;
   }
   // Cumbrera de madera y aleros.
-  box(parent,timber,0,ridge+.08,d/2,w*.13,.18,d+.9);
+  box(parent,timber,0,ridge+.08,0,w*.13,.18,d+.9);
 }
 function addDoor(parent,w,wallY,frontZ) {
   // Marco de altura humana y hoja entreabierta: el interior queda visible.
@@ -49,9 +49,25 @@ function addDoor(parent,w,wallY,frontZ) {
   box(parent,timber,-.66,doorH/2,frontZ,.16,doorH,.22);
   box(parent,timber,.66,doorH/2,frontZ,.16,doorH,.22);
   box(parent,timber,0,doorH+.08,frontZ,1.48,.18,.22);
-  const door=box(parent,darkWood,-.53,doorH/2,frontZ-.15,.92,doorH-.12,.12);
-  door.rotation.y=-.82;
+  const hinge = new THREE.Group();
+  hinge.position.set(-.46, 0, frontZ - .15);
+  parent.add(hinge);
+  box(hinge,darkWood,.46,doorH/2,0,.92,doorH-.12,.12);
+  hinge.rotation.y = -0.82;
 }
+
+function addTorch(parent,x,y,z) {
+  const mount = new THREE.Group();
+  mount.position.set(x,y,z);
+  parent.add(mount);
+  mesh(mount,new THREE.CylinderGeometry(.045,.055,.48,6),iron,0,-.08,-.08,Math.PI/2,0,0);
+  mesh(mount,new THREE.CylinderGeometry(.12,.16,.22,7),darkWood,0,.12,0);
+  const flame = mesh(mount,new THREE.ConeGeometry(.13,.42,6),new THREE.MeshBasicMaterial({color:0xffa33f}),0,.43,0);
+  const glow = new THREE.PointLight(0xffa45a,1.25,9,2);
+  glow.position.set(0,.45,.12); mount.add(glow);
+  return {flame,glow,phase:x*1.7+z};
+}
+
 function buildHouse(scene,heightAt,{x,z,w=8,d=7,h=4.2,roof=0,rotation=0,type="home"}) {
   const g=new THREE.Group(), front=d/2;
   // Cimientos, suelo y paredes segmentadas: fachada con acceso abierto.
@@ -102,17 +118,27 @@ function buildHouse(scene,heightAt,{x,z,w=8,d=7,h=4.2,roof=0,rotation=0,type="ho
   // Umbral pétreo y dos peldaños.
   box(g,stone,0,.32,front+.52,2.2,.3,.8);
   box(g,stone,0,.17,front+.95,2.4,.22,.48);
+  const torches = [addTorch(g,-w*.32,2.75,front-.38), addTorch(g,w*.32,2.75,front-.38)];
   g.rotation.y=rotation;
   g.position.set(x,heightAt(x,z),z);
   g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   scene.add(g);
-  return g;
+  return {group:g, torches};
 }
 const crateMaterial=new THREE.MeshStandardMaterial({color:0x987247,roughness:1});
 
 export function createVillageBuildings(scene,heightAt) {
   // Anillo exterior de la plaza: deja libre el pozo y el eje de circulación.
-  buildHouse(scene,heightAt,{x:-53,z:-4,w:8.5,d:7.5,h:4.1,roof:0,rotation:.12,type:"home"});
-  buildHouse(scene,heightAt,{x:-3,z:3,w:8,d:7,h:4.5,roof:1,rotation:-.16,type:"blacksmith"});
-  buildHouse(scene,heightAt,{x:-53,z:34,w:9,d:7.8,h:4.2,roof:2,rotation:.08,type:"store"});
+  const buildings = [
+    buildHouse(scene,heightAt,{x:-53,z:-4,w:8.5,d:7.5,h:4.1,roof:0,rotation:.12,type:"home"}),
+    buildHouse(scene,heightAt,{x:-3,z:3,w:8,d:7,h:4.5,roof:1,rotation:-.16,type:"blacksmith"}),
+    buildHouse(scene,heightAt,{x:-53,z:34,w:9,d:7.8,h:4.2,roof:2,rotation:.08,type:"store"})
+  ];
+  return {update(time) {
+    for (const building of buildings) for (const torch of building.torches) {
+      const flicker = .92 + Math.sin(time*8+torch.phase)*.08 + Math.sin(time*13+torch.phase)*.035;
+      torch.flame.scale.set(1,flicker,1);
+      torch.glow.intensity = 1.1 + flicker*.25;
+    }
+  }};
 }

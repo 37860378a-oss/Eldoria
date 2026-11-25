@@ -34,9 +34,9 @@ function ribbon(scene,heightAt,points,width,material,options={}){
   geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();
   const mesh=new THREE.Mesh(geometry,material);mesh.material.side=THREE.DoubleSide;mesh.receiveShadow=true;scene.add(mesh);
 }
-const northBridgeRamp=z=>1-smooth((z+17)/7);
+const northBridgeRamp=()=>0;
 export function createPaths(scene,heightAt){
   const road=new THREE.MeshStandardMaterial({map:roadTexture(),vertexColors:true,roughness:1,side:THREE.DoubleSide});
   ribbon(scene,heightAt,[[-49,2],[-44,-3],[-39,-6],[-33,-7],[-27,-6],[-22,-3],[-18,1],[-18,6],[-22,10],[-29,12],[-37,10],[-43,6],[-49,2]],4.2,road);
-  ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[9.2,-17]],4.8,road,{ramp:northBridgeRamp});
+  ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road);
 }

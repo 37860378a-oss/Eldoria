@@ -6,7 +6,7 @@ const darkStone=new THREE.MeshStandardMaterial({color:0x4c5a52,roughness:1});
 const crystalMat=new THREE.MeshStandardMaterial({color:0x6dc8bd,emissive:0x236e69,emissiveIntensity:1.1,roughness:.24});
 const barkMat=new THREE.MeshStandardMaterial({color:0x51402d,roughness:1});
 const leafMats=[0x355b3e,0x416d47,0x587a4a].map(color=>new THREE.MeshStandardMaterial({color,roughness:.94}));
-const roadMat=new THREE.MeshStandardMaterial({color:0x8c7859,roughness:1,vertexColors:true,side:THREE.DoubleSide});
+const roadMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,vertexColors:true,side:THREE.DoubleSide});
 
 function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 function makeTrail(scene,heightAt,points,width,bridgeExit=false){

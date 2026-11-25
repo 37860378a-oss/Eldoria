@@ -62,7 +62,7 @@ export function createNature(scene,heightAt) {
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
     const trunkRadius=.24+random()*.12,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
-    trunks.push({x,y:ground+height*.5,z,sx:trunkRadius*scale,sy:height*.5*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
+    trunks.push({x,y:ground+height*.5*scale,z,sx:trunkRadius*scale,sy:height*.5*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
     const clusterCount=4+Math.floor(random()*3);
     for(let b=0;b<4+Math.floor(random()*2);b++){
       const angle=random()*Math.PI*2,branchY=height*(.42+random()*.34),length=1.25+random()*1.35;

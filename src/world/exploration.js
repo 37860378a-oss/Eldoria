@@ -9,7 +9,7 @@ const leafMats=[0x355b3e,0x416d47,0x587a4a].map(color=>new THREE.MeshStandardMat
 const roadMat=new THREE.MeshStandardMaterial({color:0x8c7859,roughness:1,vertexColors:true,side:THREE.DoubleSide});
 
 function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-function makeTrail(scene,heightAt,points,width){
+function makeTrail(scene,heightAt,points,width,bridgeExit=false){
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
   const segments=160,verts=[],colors=[],indices=[],uv=[];
   const edge=new THREE.Color(0x71865a),center=new THREE.Color(0x927b59);
@@ -19,7 +19,7 @@ function makeTrail(scene,heightAt,points,width){
       const f=-1.28+j*(2.56/6),x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
       const blend=THREE.MathUtils.smoothstep(Math.abs(f),.82,1.28);
       const col=center.clone().lerp(edge,blend);
-      verts.push(x,heightAt(x,z)+.055,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
+      const bridgeBlend=bridgeExit?THREE.MathUtils.smoothstep(z,-44,-37.2):0;\n      verts.push(x,heightAt(x,z)+.055+bridgeBlend*.78,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
       if(i<segments&&j<6){const a=i*7+j;indices.push(a,a+1,a+7,a+1,a+8,a+7);}
     }
   }
@@ -93,9 +93,9 @@ function createWhisperGrove(scene,heightAt){
   }};
 }
 export function createExploration(scene,heightAt){
-  const mainTrail=[[8.5,-38],[12,-45],[17,-51],[24,-58],[32,-66],[41,-74]];
+  const mainTrail=[[8.2,-37.2],[12,-45],[17,-51],[24,-58],[32,-66],[41,-74]];
   const forestTrail=[[17,-51],[8,-58],[-5,-62],[-20,-64],[-36,-67],[-53,-70],[-65,-72]];
-  makeTrail(scene,heightAt,mainTrail,4.3);makeTrail(scene,heightAt,forestTrail,3.6);
+  makeTrail(scene,heightAt,mainTrail,4.3,true);makeTrail(scene,heightAt,forestTrail,3.6);
   const ruins=createRuins(scene,heightAt),grove=createWhisperGrove(scene,heightAt);
   const regionAt=(x,z)=>{
     if(Math.hypot((x-43)/19,(z+76)/17)<1.35)return "Santuario de las Primeras Brasas";

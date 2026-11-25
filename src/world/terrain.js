@@ -27,17 +27,17 @@ function groundTexture(){
   const ctx=c.getContext("2d");let seed=9137;
   const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
   ctx.fillStyle="#718b50";ctx.fillRect(0,0,size,size);
-  const patches=["#82965b","#647f49","#91a568","#a19a67","#526f43","#b0a16e"];
+  const patches=["#91a965","#587b45","#a7b76b","#c0aa70","#45683c","#d0b77c"];
   for(let i=0;i<1700;i++){
     const x=rnd()*size,y=rnd()*size,w=10+rnd()*52,h=4+rnd()*17;
     ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*.9);
-    ctx.fillStyle=patches[Math.floor(rnd()*patches.length)];ctx.globalAlpha=.12+rnd()*.22;
+    ctx.fillStyle=patches[Math.floor(rnd()*patches.length)];ctx.globalAlpha=.24+rnd()*.30;
     ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   for(let i=0;i<9200;i++){
     const x=rnd()*size,y=rnd()*size,len=2+rnd()*13,th=.7+rnd()*2.2;
     ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*1.25);
-    ctx.strokeStyle=rnd()>.48?"rgba(190,190,125,.34)":"rgba(39,69,35,.27)";
+    ctx.strokeStyle=rnd()>.48?"rgba(220,211,151,.68)":"rgba(35,65,31,.52)";
     ctx.lineWidth=th;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-len*.5,0);ctx.quadraticCurveTo(0,-th,len*.5,0);ctx.stroke();ctx.restore();
   }
   for(let i=0;i<1250;i++){
@@ -46,7 +46,7 @@ function groundTexture(){
     ctx.beginPath();ctx.ellipse(x,y,r*1.7,r*.7,rnd()*Math.PI,0,Math.PI*2);ctx.fill();
   }
   const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
-  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(9,9);
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(4,4);
   texture.anisotropy=8;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;
   texture.generateMipmaps=true;return texture;
 }
@@ -64,7 +64,7 @@ export function createTerrain(scene){
   }
   geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.computeVertexNormals();
   const surfaceTexture=groundTexture();
-  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({map:surfaceTexture,vertexColors:true,roughness:1,bumpMap:surfaceTexture,bumpScale:.028}));
+  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xffffff,map:surfaceTexture,roughness:1}));
   ground.receiveShadow=true;scene.add(ground);
   return {heightAt:terrainHeight,update(){}};
 }

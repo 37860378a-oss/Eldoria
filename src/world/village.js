@@ -69,16 +69,5 @@ export function createVillage(scene, heightAt) {
     box(village, 0.55, 0.8, 18, parapetMat, 12.7, 1.45, -25);
   }
 
-  // Camino de tierra: piezas cortas siguiendo el acceso desde el pueblo al puente.
-  const pathMat = new THREE.MeshStandardMaterial({ color: 0xb19b70, roughness: 1 });
-  for (let i = 0; i < 22; i++) {
-    const t = i / 21;
-    const x = -23 + 31 * t;
-    const z = -4 - 21 * t;
-    const path = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.12, 2.5), pathMat);
-    path.position.set(x, baseY(x, z) + 0.09, z);
-    path.rotation.y = Math.atan2(21, 31);
-    village.add(path);
-  }
   scene.add(village);
 }

@@ -1,15 +1,47 @@
 import * as THREE from "three";
 
-// Edificios modulares de Piedra Clara. Geometría sencilla y materiales compartidos
-// para conservar un coste bajo en equipos modestos.
-const stone = new THREE.MeshStandardMaterial({ color: 0x817d70, roughness: 1, flatShading: true });
-const plaster = new THREE.MeshStandardMaterial({ color: 0xc8b58c, roughness: 1 });
-const timber = new THREE.MeshStandardMaterial({ color: 0x59412d, roughness: 1 });
-const darkWood = new THREE.MeshStandardMaterial({ color: 0x382b20, roughness: 1 });
+// Materiales procedurales compartidos: detalle visible sin descargar imágenes externas.
+function surfaceTexture(seed,kind){
+  const size=512,canvas=document.createElement("canvas");canvas.width=canvas.height=size;
+  const ctx=canvas.getContext("2d");ctx.fillStyle="#c4c4c4";ctx.fillRect(0,0,size,size);
+  let value=seed>>>0;
+  const rnd=()=>{value=(value*1664525+1013904223)>>>0;return value/4294967296;};
+  for(let i=0;i<12500;i++){
+    const v=Math.floor(166+rnd()*78),alpha=.08+rnd()*.22;
+    ctx.fillStyle="rgba("+v+","+v+","+v+","+alpha+")";
+    const x=rnd()*size,y=rnd()*size;
+    if(kind==="wood"){
+      ctx.fillRect(x,y,2+rnd()*35,.5+rnd()*1.8);
+    }else if(kind==="roof"){
+      ctx.fillRect(x,y,8+rnd()*18,2+rnd()*4);
+    }else{
+      const r=.5+rnd()*(kind==="stone"?5:2.5);
+      ctx.beginPath();ctx.ellipse(x,y,r*1.4,r,rnd()*3,0,Math.PI*2);ctx.fill();
+    }
+  }
+  if(kind==="wood"){
+    for(let y=24;y<size;y+=48){ctx.strokeStyle="rgba(90,90,90,.18)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(150,y-5,330,y+5,size,y);ctx.stroke();}
+  }
+  if(kind==="roof"){
+    for(let y=0;y<size;y+=34){ctx.strokeStyle="rgba(70,70,70,.25)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(size,y);ctx.stroke();}
+  }
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1.5,1.5);
+  texture.anisotropy=8;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps=true;return texture;
+}
+const stoneTexture=surfaceTexture(1201,"stone");
+const plasterTexture=surfaceTexture(2203,"plaster");
+const timberTexture=surfaceTexture(3307,"wood");
+const roofTexture=surfaceTexture(4409,"roof");
+const stone = new THREE.MeshStandardMaterial({ color: 0x817d70, map:stoneTexture, bumpMap:stoneTexture, bumpScale:.055, roughness:1, flatShading:true });
+const plaster = new THREE.MeshStandardMaterial({ color: 0xc8b58c, map:plasterTexture, bumpMap:plasterTexture, bumpScale:.025, roughness:1 });
+const timber = new THREE.MeshStandardMaterial({ color: 0x59412d, map:timberTexture, bumpMap:timberTexture, bumpScale:.045, roughness:1 });
+const darkWood = new THREE.MeshStandardMaterial({ color: 0x382b20, map:timberTexture, bumpMap:timberTexture, bumpScale:.04, roughness:1 });
 const roofMats = [
-  new THREE.MeshStandardMaterial({ color: 0x765044, roughness: 1, flatShading: true }),
-  new THREE.MeshStandardMaterial({ color: 0x806044, roughness: 1, flatShading: true }),
-  new THREE.MeshStandardMaterial({ color: 0x625044, roughness: 1, flatShading: true })
+  new THREE.MeshStandardMaterial({ color: 0x765044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true }),
+  new THREE.MeshStandardMaterial({ color: 0x806044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true }),
+  new THREE.MeshStandardMaterial({ color: 0x625044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true })
 ];
 const glass = new THREE.MeshStandardMaterial({ color: 0xe6b968, emissive: 0x9a642b, emissiveIntensity: 0.38 });
 const interior = new THREE.MeshStandardMaterial({ color: 0x49372a, roughness: 1 });

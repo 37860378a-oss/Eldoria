@@ -16,9 +16,17 @@ sceneRoot.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
+const skyNight = new THREE.Color(0x101a2b);
+const skyDusk = new THREE.Color(0xb87958);
+const skyCurrent = new THREE.Color(0x91b8c1);
 scene.background = new THREE.Color(0x91b8c1);
 scene.fog = new THREE.Fog(skyHorizon.clone(), 165, 430);
 let visionDistance = 430;
+let timeOfDay = 14;
+let dayCycleEnabled = true;
+let dayCycleSpeed = 1;
+let renderScale = 1;
+let graphicsQuality = "medium";
 
 // Cielo panorámico procedural: azul en altura, horizonte cálido, nubes y sol.
 function createSkyTexture() {
@@ -78,6 +86,15 @@ const dialogue = createDialogue(player, world.actors, hud);
 const pauseMenu = document.querySelector("#pause-menu");
 const visionSlider = document.querySelector("#vision-distance");
 const visionValue = document.querySelector("#vision-value");
+const timeSlider = document.querySelector("#time-of-day");
+const timeValue = document.querySelector("#time-value");
+const cycleToggle = document.querySelector("#day-cycle");
+const cycleSpeedSlider = document.querySelector("#cycle-speed");
+const cycleSpeedValue = document.querySelector("#cycle-speed-value");
+const resolutionSelect = document.querySelector("#render-scale");
+const qualitySelect = document.querySelector("#graphics-quality");
+const fullscreenButton = document.querySelector("#fullscreen-button");
+const clockDisplay = document.querySelector("#world-clock");
 let menuOpen = false;
 function setVisionDistance(value) {
   visionDistance = THREE.MathUtils.clamp(Number(value) || 430, 90, 430);
@@ -103,6 +120,40 @@ function closePauseMenu(resume = true) {
   if (resume && active) renderer.domElement.requestPointerLock?.();
 }
 visionSlider?.addEventListener("input", event => setVisionDistance(event.target.value));
+function formatWorldTime(hour) {
+  const h = Math.floor(hour) % 24;
+  const m = Math.floor((hour - Math.floor(hour)) * 60);
+  return String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0");
+}
+function setWorldTime(value) {
+  timeOfDay = THREE.MathUtils.euclideanModulo(Number(value) || 0,24);
+  if (timeSlider) timeSlider.value = String(timeOfDay);
+  if (timeValue) timeValue.textContent = formatWorldTime(timeOfDay);
+  if (clockDisplay) clockDisplay.textContent = formatWorldTime(timeOfDay);
+}
+function applyRenderSettings() {
+  const ratio = Math.min(window.devicePixelRatio || 1, 1.5) * renderScale;
+  renderer.setPixelRatio(ratio);
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.shadowMap.enabled = graphicsQuality !== "low";
+  renderer.shadowMap.type = graphicsQuality === "high" ? THREE.PCFSoftShadowMap : THREE.BasicShadowMap;
+  sun.shadow.mapSize.setScalar(graphicsQuality === "high" ? 1536 : graphicsQuality === "medium" ? 1024 : 512);
+  sun.shadow.needsUpdate = true;
+}
+timeSlider?.addEventListener("input",event=>setWorldTime(event.target.value));
+cycleToggle?.addEventListener("change",event=>{dayCycleEnabled=event.target.checked;});
+cycleSpeedSlider?.addEventListener("input",event=>{
+  dayCycleSpeed=Number(event.target.value);
+  if(cycleSpeedValue) cycleSpeedValue.textContent=dayCycleSpeed.toFixed(1)+"×";
+});
+resolutionSelect?.addEventListener("change",event=>{renderScale=Number(event.target.value)||1;applyRenderSettings();});
+qualitySelect?.addEventListener("change",event=>{graphicsQuality=event.target.value;applyRenderSettings();});
+fullscreenButton?.addEventListener("click",()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+});
+setWorldTime(14);
+applyRenderSettings();
 document.querySelector("#resume-button")?.addEventListener("click", () => closePauseMenu(true));
 document.querySelector("#pause-close-button")?.addEventListener("click", () => closePauseMenu(true));
 window.addEventListener("keydown", event => {
@@ -154,12 +205,18 @@ function animate() {
   world.actors.update(elapsed, player.getPosition());
   dialogue.update();
   // Variación lenta de luz y color para dar sensación de cielo vivo sin cielos HDR pesados.
-  const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
-  const skyTint = skyHorizon.clone().lerp(skyDay, daylight);
-  scene.fog.color.copy(skyTint);
-  sun.position.set(-55 + Math.sin(elapsed * 0.018) * 22, 72 + daylight * 22, 35);
-  sun.intensity = 1.55 + daylight * 0.8;
-  ambient.intensity = 1.15 + daylight * 0.35;
+  if (dayCycleEnabled) setWorldTime(timeOfDay + delta * 0.04 * dayCycleSpeed);
+  const solar = Math.sin((timeOfDay - 6) / 12 * Math.PI);
+  const daylight = THREE.MathUtils.clamp((solar + .12) / 1.12, 0, 1);
+  const duskFactor = 1 - Math.min(1,Math.abs(timeOfDay-6)/2,Math.abs(timeOfDay-19)/2);
+  skyCurrent.copy(skyNight).lerp(skyDusk,THREE.MathUtils.clamp(duskFactor,0,1)).lerp(skyDay,daylight);
+  scene.fog.color.copy(skyCurrent);
+  if (daylight > .12) scene.background = skyTexture;
+  else scene.background = skyCurrent;
+  sun.position.set(-55 + Math.cos((timeOfDay-12)/12*Math.PI)*22, 18 + daylight*82, 35);
+  sun.intensity = .08 + daylight * (graphicsQuality === "high" ? 2.25 : 1.9);
+  sun.color.setRGB(.48 + daylight*.52,.58 + daylight*.36,.82 + daylight*.12);
+  ambient.intensity = .22 + daylight * 1.45;
   renderer.render(scene, camera);
   hud.update();
 }
@@ -167,5 +224,5 @@ animate();
 
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25)); renderer.setSize(window.innerWidth, window.innerHeight);
+  applyRenderSettings();
 });

@@ -66,7 +66,8 @@ export function createTerrain(scene){
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
   const waterGeo=new THREE.PlaneGeometry(520,12.8,420,18);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
-  const riverMat=waterMaterial(0x347f91);riverMat.depthWrite=false;\n  const river=new THREE.Mesh(waterGeo,riverMat);river.position.set(15,0,-25);river.renderOrder=2;scene.add(river);
+  const riverMat=waterMaterial(0x347f91);riverMat.depthWrite=false;
+  const river=new THREE.Mesh(waterGeo,riverMat);river.position.set(15,0,-25);river.renderOrder=2;scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];

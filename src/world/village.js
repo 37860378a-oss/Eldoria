@@ -136,7 +136,7 @@ export function createVillage(scene, heightAt) {
   const plots = [
     { x: -56, z: 24, w: 9, d: 8, h: 5.1, r: 0.15 },
     { x: -25, z: 31, w: 8, d: 7, h: 4.6, r: 0 },
-    { x: -57, z: -20, w: 8, d: 7, h: 4.4, r: Math.PI },
+    { x: -65, z: -8, w: 8, d: 7, h: 4.4, r: Math.PI },
     { x: 8, z: 25, w: 7, d: 7, h: 4.2, r: -0.25 },
     { x: -2, z: -4, w: 7, d: 7, h: 4.2, r: Math.PI + 0.2 }
   ];

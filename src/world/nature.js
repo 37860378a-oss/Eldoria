@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 const trunkMat = new THREE.MeshStandardMaterial({ color: 0x59432f, roughness: 1 });
 const branchMat = new THREE.MeshStandardMaterial({ color: 0x674a32, roughness: 1 });
-const leafMats = [0x3f6844, 0x527b49, 0x66894f, 0x78965b].map(color => new THREE.MeshStandardMaterial({ color, roughness: .92 }));
+const leafMats = [0x3f6844,0x527b49,0x66894f,0x91a967,0xb56d3f,0xc58a45].map(color=>new THREE.MeshStandardMaterial({color,roughness:.92}));
 const shrubMats = [0x55794b, 0x718b50, 0x3e6846].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1 }));
 const rockMat = new THREE.MeshStandardMaterial({ color: 0x888875, roughness: 1, flatShading: true });
 const grassMats = [0x8b9b5b, 0xa1a66a, 0x718c51].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, side: THREE.DoubleSide }));
@@ -30,6 +30,9 @@ function clearForNature(x,z) {
   if (Math.abs(z + 25) < 15) return false;
   if (Math.hypot((x + 69) / 17, (z - 38) / 12) < 1.5) return false;
   if (Math.hypot((x - 69) / 13, (z - 61) / 10) < 1.5) return false;
+  if (Math.hypot((x + 158) / 20, (z - 118) / 15) < 1.5) return false;
+  if (Math.hypot((x - 154) / 17, (z + 145) / 13) < 1.5) return false;
+  if (Math.hypot((x - 174) / 15, (z - 142) / 12) < 1.5) return false;
   if (x > 0 && x < 16 && z > -40 && z < -14) return false;
   if (houseClearZones.some(p => ((x-p.x)/p.rx)**2 + ((z-p.z)/p.rz)**2 < 1)) return false;
   return !nearTrail(x,z);
@@ -56,11 +59,13 @@ export function createNature(scene,heightAt) {
   const random=seeded(4812), trunks=[],roots=[],branches=[],crowns=leafMats.map(()=>[]), shrubs=shrubMats.map(()=>[]),rocks=[],grass=grassMats.map(()=>[]);
   const treeLeaves=[];
   let attempts=0,treeCount=0;
-  while(treeCount<96&&attempts++<2200) {
-    const x=(random()-.5)*198,z=(random()-.5)*198;
+  while(treeCount<270&&attempts++<7800) {
+    const x=(random()-.5)*510,z=(random()-.5)*510;
     if(!clearForNature(x,z)) continue;
     const scale=.88+random()*.72,ground=heightAt(x,z),height=6.1+random()*2.8;
-    const trunkRadius=.38+random()*.18,phase=random()*Math.PI*2,type=Math.floor(random()*leafMats.length);
+    const trunkRadius=.38+random()*.18,phase=random()*Math.PI*2;
+    const autumn=(x>95&&z>20)||(x<-130&&z<-30);
+    const type=autumn?4+Math.floor(random()*2):Math.floor(random()*4);
     const embed=.4;
     // El cilindro mide 1 unidad de alto: sy representa su altura total.
     trunks.push({x,y:ground+(height*.5-embed*.5)*scale,z,sx:trunkRadius*scale,sy:(height+embed)*scale,sz:trunkRadius*scale,ry:random()*Math.PI});
@@ -125,14 +130,14 @@ export function createNature(scene,heightAt) {
   }).filter(group=>group.mesh);
 
   let shrubCount=0;attempts=0;
-  while(shrubCount<150&&attempts++<2100){
-    const x=(random()-.5)*194,z=(random()-.5)*194;if(!clearForNature(x,z)||random()<.25)continue;
+  while(shrubCount<420&&attempts++<7200){
+    const x=(random()-.5)*510,z=(random()-.5)*510;if(!clearForNature(x,z)||random()<.25)continue;
     const s=.5+random()*.65,i=Math.floor(random()*shrubMats.length);
     shrubs[i].push({x,y:heightAt(x,z)+s*.42,z,sx:s*1.25,sy:s*.8,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});shrubCount++;
   }
   const shrubGroups=shrubs.map((entries,i)=>({mesh:addInstances(scene,new THREE.IcosahedronGeometry(.78,1),shrubMats[i],entries),entries})).filter(group=>group.mesh);
   const rockGeo=new THREE.DodecahedronGeometry(1,0);
-  for(let i=0;i<64;i++){const x=(random()-.5)*194,z=(random()-.5)*188;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
+  for(let i=0;i<260;i++){const x=(random()-.5)*510,z=(random()-.5)*500;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
   addInstances(scene,rockGeo,rockMat,rocks);
 
   const bladeGeo=new THREE.BufferGeometry();
@@ -140,13 +145,13 @@ export function createNature(scene,heightAt) {
   bladeGeo.setIndex([0,1,2,1,3,2,2,3,4]);bladeGeo.computeVertexNormals();
   const grassMeshes=[];
   let grassCount=0;attempts=0;
-  while(grassCount<560&&attempts++<4200){
-    const x=(random()-.5)*190,z=(random()-.5)*190;if(!clearForNature(x,z)||random()<.35)continue;
+  while(grassCount<2400&&attempts++<15000){
+    const x=(random()-.5)*510,z=(random()-.5)*510;if(!clearForNature(x,z)||random()<.35)continue;
     const s=.5+random()*.75,i=Math.floor(random()*grassMats.length);
     for(let blade=0;blade<3;blade++){
       const a=random()*Math.PI*2,offset=.22+random()*.22;
       grass[i].push({x:x+Math.cos(a)*offset,y:heightAt(x,z),z:z+Math.sin(a)*offset,
-        sx:.7+random()*.55,sy:s*(.85+random()*.55),sz:1,ry:a,phase:random()*Math.PI*2});
+        sx:.7+random()*.55,sy:s*(random()>.58?1.55+random()*.7:.48+random()*.42),sz:1,ry:a,phase:random()*Math.PI*2});
     }
     grassCount++;
   }

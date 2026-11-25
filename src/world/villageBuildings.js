@@ -34,12 +34,12 @@ const stoneTexture=surfaceTexture(1201,"stone");
 const plasterTexture=surfaceTexture(2203,"plaster");
 const timberTexture=surfaceTexture(3307,"wood");
 const roofTexture=surfaceTexture(4409,"roof");
-const stone = new THREE.MeshStandardMaterial({ color: 0x817d70, map:stoneTexture, bumpMap:stoneTexture, bumpScale:.055, roughness:1, flatShading:true });
-const plaster = new THREE.MeshStandardMaterial({ color: 0xc8b58c, map:plasterTexture, bumpMap:plasterTexture, bumpScale:.025, roughness:1 });
-const timber = new THREE.MeshStandardMaterial({ color: 0x59412d, map:timberTexture, bumpMap:timberTexture, bumpScale:.045, roughness:1 });
-const darkWood = new THREE.MeshStandardMaterial({ color: 0x382b20, map:timberTexture, bumpMap:timberTexture, bumpScale:.04, roughness:1 });
+const stone = new THREE.MeshStandardMaterial({ color: 0x817d70, map:stoneTexture, bumpMap:stoneTexture, bumpScale:.018, roughness:1, flatShading:true });
+const plaster = new THREE.MeshStandardMaterial({ color: 0xc8b58c, map:plasterTexture, bumpMap:plasterTexture, bumpScale:.012, roughness:1 });
+const timber = new THREE.MeshStandardMaterial({ color: 0x59412d, map:timberTexture, bumpMap:timberTexture, bumpScale:.016, roughness:1 });
+const darkWood = new THREE.MeshStandardMaterial({ color: 0x382b20, map:timberTexture, bumpMap:timberTexture, bumpScale:.014, roughness:1 });
 const roofMats = [
-  new THREE.MeshStandardMaterial({ color: 0x765044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true }),
+  new THREE.MeshStandardMaterial({ color: 0x765044, map:roofTexture, bumpMap:roofTexture, bumpScale:.018, roughness:1, flatShading:true }),
   new THREE.MeshStandardMaterial({ color: 0x806044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true }),
   new THREE.MeshStandardMaterial({ color: 0x625044, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true })
 ];

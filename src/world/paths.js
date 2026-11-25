@@ -2,17 +2,24 @@ import * as THREE from "three";
 
 function roadTexture(){
   const size=1024,c=document.createElement("canvas");c.width=c.height=size;
-  const ctx=c.getContext("2d");ctx.fillStyle="#9c835d";ctx.fillRect(0,0,size,size);
-  let seed=7241;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
-  for(let i=0;i<14500;i++){
-    const v=Math.floor(76+rnd()*105),r=.45+rnd()*4.2;
-    ctx.fillStyle="rgba("+v+","+Math.floor(v*.79)+","+Math.floor(v*.55)+","+(0.10+rnd()*.25)+")";
-    ctx.beginPath();ctx.ellipse(rnd()*size,rnd()*size,r*1.8,r,rnd()*3,0,Math.PI*2);ctx.fill();
+  const ctx=c.getContext("2d");let seed=7241;
+  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+  ctx.fillStyle="#a88a60";ctx.fillRect(0,0,size,size);
+  const colors=["#b99a6b","#92764f","#c4a477","#806746","#d0b184","#9e8058"];
+  for(let i=0;i<2100;i++){
+    const x=rnd()*size,y=rnd()*size,w=5+rnd()*36,h=2+rnd()*10;
+    ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*.32);ctx.globalAlpha=.18+rnd()*.28;
+    ctx.fillStyle=colors[Math.floor(rnd()*colors.length)];ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();ctx.restore();
   }
-  for(let i=0;i<4200;i++){
-    const x=rnd()*size,y=rnd()*size;
-    ctx.fillStyle=rnd()>.5?"rgba(55,43,31,.22)":"rgba(190,158,108,.24)";
-    ctx.fillRect(x,y,1+rnd()*2,1+rnd()*2);
+  for(let i=0;i<3600;i++){
+    const x=rnd()*size,y=rnd()*size,len=2+rnd()*12;
+    ctx.strokeStyle=rnd()>.5?"rgba(224,197,148,.48)":"rgba(83,62,39,.32)";
+    ctx.lineWidth=.8+rnd()*2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y+(rnd()-.5)*3);ctx.stroke();
+  }
+  for(let i=0;i<650;i++){
+    const x=rnd()*size,y=rnd()*size,r=1+rnd()*3;
+    ctx.fillStyle="#77664f";ctx.beginPath();ctx.ellipse(x,y,r*1.5,r,rnd()*2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="rgba(235,211,167,.48)";ctx.beginPath();ctx.ellipse(x-r*.35,y-r*.35,r*.7,r*.35,0,0,Math.PI*2);ctx.fill();
   }
   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
   t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,1);t.anisotropy=8;

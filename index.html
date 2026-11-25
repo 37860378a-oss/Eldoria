@@ -48,7 +48,22 @@
       <p id="dialogue-text"></p>
       <div class="dialogue-footer"><span> E · Continuar &nbsp; Esc · Cerrar</span><button id="dialogue-close" type="button">Cerrar</button></div>
     </section>
-    <section id="pause-menu" class="pause-menu" role="dialog" aria-modal="true" aria-labelledby="pause-title" aria-hidden="true">\n      <div class="pause-card">\n        <p class="pause-eyebrow">ELDORIA · OPCIONES DE VIAJE</p>\n        <h2 id="pause-title">Juego en pausa</h2>\n        <p class="pause-description">Ajustá el alcance del paisaje para mejorar el rendimiento.</p>\n        <div class="vision-control">\n          <div class="vision-heading"><label for="vision-distance">Distancia de visión</label><strong id="vision-value">430 m</strong></div>\n          <input id="vision-distance" type="range" min="90" max="430" step="10" value="430">\n          <div class="vision-range"><span>Cerca · Más rendimiento</span><span>Lejos · Más detalle</span></div>\n        </div>\n        <button id="resume-button" type="button">Continuar explorando</button>\n        <button id="pause-close-button" class="pause-text-button" type="button">Cerrar menú</button>\n        <div class="pause-footnote">También podés pulsar ESC para volver al mundo.</div>\n      </div>\n    </section>\n    <div id="toast" class="toast" role="status"></div>
+    <section id="pause-menu" class="pause-menu" role="dialog" aria-modal="true" aria-labelledby="pause-title" aria-hidden="true">
+      <div class="pause-card">
+        <p class="pause-eyebrow">ELDORIA · OPCIONES DE VIAJE</p>
+        <h2 id="pause-title">Juego en pausa</h2>
+        <p class="pause-description">Ajustá el alcance del paisaje para mejorar el rendimiento.</p>
+        <div class="vision-control">
+          <div class="vision-heading"><label for="vision-distance">Distancia de visión</label><strong id="vision-value">430 m</strong></div>
+          <input id="vision-distance" type="range" min="90" max="430" step="10" value="430">
+          <div class="vision-range"><span>Cerca · Más rendimiento</span><span>Lejos · Más detalle</span></div>
+        </div>
+        <button id="resume-button" type="button">Continuar explorando</button>
+        <button id="pause-close-button" class="pause-text-button" type="button">Cerrar menú</button>
+        <div class="pause-footnote">También podés pulsar ESC para volver al mundo.</div>
+      </div>
+    </section>
+    <div id="toast" class="toast" role="status"></div>
     <noscript>Este prototipo necesita JavaScript activado.</noscript>
   </main>
   <script type="module" src="./src/main.js"></script>

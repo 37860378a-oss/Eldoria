@@ -153,7 +153,6 @@ fullscreenButton?.addEventListener("click",()=>{
   else document.exitFullscreen?.();
 });
 setWorldTime(14);
-applyRenderSettings();
 document.querySelector("#resume-button")?.addEventListener("click", () => closePauseMenu(true));
 document.querySelector("#pause-close-button")?.addEventListener("click", () => closePauseMenu(true));
 window.addEventListener("keydown", event => {
@@ -177,8 +176,9 @@ sun.shadow.camera.near = 1;
 sun.shadow.camera.far = 260;
 sun.shadow.bias = -0.00025;
 scene.add(sun);
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = graphicsQuality !== "low";
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+applyRenderSettings();
 
 let active = false;
 const intro = document.querySelector("#intro");

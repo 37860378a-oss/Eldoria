@@ -17,7 +17,7 @@ const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
 scene.background = new THREE.Color(0x91b8c1);
-scene.fog = new THREE.Fog(skyHorizon.clone(), 165, 430);
+scene.fog = new THREE.Fog(skyHorizon.clone(), 165, 430);\nlet visionDistance = 430;
 
 // Cielo panorámico procedural: azul en altura, horizonte cálido, nubes y sol.
 function createSkyTexture() {
@@ -72,7 +72,7 @@ const world = createWorld(scene);
 // walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
 const player = createPlayerController(scene, camera, world.walkHeightAt);
 const hud = createHud(player, world);
-const dialogue = createDialogue(player, world.actors, hud);
+const dialogue = createDialogue(player, world.actors, hud);\n\nconst pauseMenu = document.querySelector("#pause-menu");\nconst visionSlider = document.querySelector("#vision-distance");\nconst visionValue = document.querySelector("#vision-value");\nlet menuOpen = false;\nfunction setVisionDistance(value) {\n  visionDistance = THREE.MathUtils.clamp(Number(value) || 430, 90, 430);\n  scene.fog.near = Math.max(35, visionDistance * 0.38);\n  scene.fog.far = visionDistance;\n  camera.far = visionDistance + 80;\n  camera.updateProjectionMatrix();\n  if (visionSlider) visionSlider.value = String(visionDistance);\n  if (visionValue) visionValue.textContent = Math.round(visionDistance) + " m";\n}\nfunction openPauseMenu() {\n  if (menuOpen || !active) return;\n  menuOpen = true; player.setPaused(true);\n  if (document.pointerLockElement) document.exitPointerLock();\n  pauseMenu?.classList.add("visible");\n  pauseMenu?.setAttribute("aria-hidden", "false");\n}\nfunction closePauseMenu(resume = true) {\n  if (!menuOpen) return;\n  menuOpen = false; player.setPaused(false);\n  pauseMenu?.classList.remove("visible");\n  pauseMenu?.setAttribute("aria-hidden", "true");\n  if (resume && active) renderer.domElement.requestPointerLock?.();\n}\nvisionSlider?.addEventListener("input", event => setVisionDistance(event.target.value));\ndocument.querySelector("#resume-button")?.addEventListener("click", () => closePauseMenu(true));\ndocument.querySelector("#pause-close-button")?.addEventListener("click", () => closePauseMenu(true));\nwindow.addEventListener("keydown", event => {\n  if (event.code !== "Escape" || event.defaultPrevented || !active) return;\n  event.preventDefault();\n  if (menuOpen) closePauseMenu(true); else openPauseMenu();\n});\nsetVisionDistance(visionDistance);
 
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);
 scene.add(ambient);

@@ -131,13 +131,14 @@ function createCurvedBridge(scene, heightAt) {
 }
 
 export function createVillage(scene, heightAt) {
-  // Parcelas separadas alrededor de una plaza central; ninguna casa ocupa la plaza ni la calle.
+  // Cinco parcelas amplias, distribuidas en torno a la plaza con mayor distancia
+  // entre viviendas y cercos para que la aldea respire y cada casa tenga su patio.
   const plots = [
-    { x: -49, z: 14, w: 9, d: 8, h: 5.1, r: 0.15 },
-    { x: -28, z: 18, w: 8, d: 7, h: 4.6, r: 0 },
-    { x: -49, z: -13, w: 8, d: 7, h: 4.4, r: Math.PI },
-    { x: -7, z: 12, w: 7, d: 7, h: 4.2, r: -0.25 },
-    { x: -7, z: -10, w: 7, d: 7, h: 4.2, r: Math.PI + 0.2 }
+    { x: -56, z: 24, w: 9, d: 8, h: 5.1, r: 0.15 },
+    { x: -25, z: 31, w: 8, d: 7, h: 4.6, r: 0 },
+    { x: -57, z: -20, w: 8, d: 7, h: 4.4, r: Math.PI },
+    { x: 8, z: 25, w: 7, d: 7, h: 4.2, r: -0.25 },
+    { x: -2, z: -4, w: 7, d: 7, h: 4.2, r: Math.PI + 0.2 }
   ];
   plots.forEach((p, i) => {
     makeHouse(scene, p.x, p.z, p.w, p.d, p.h, heightAt, i, p.r);

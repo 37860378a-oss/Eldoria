@@ -67,3 +67,14 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se suavizaron las transiciones de las orillas y se ajustó el camino para que conecte con la entrada del puente.
 - El perfil de altura del puente y la altura de desplazamiento del jugador comparten la misma curva para evitar que el personaje atraviese el tablero.
 - Requiere validación visual en navegador: comprobar el acceso a la torre, el nivel del agua, la unión de caminos y el paso sobre el puente.
+
+
+## Versión 1.7 — Muelle, puente pétreo y vegetación orgánica
+
+- Se incorporó un muelle de madera con tablones separados, pilotes, bolardos y acceso escalonado desde la orilla.
+- Se bajó el nivel del agua para mantenerlo por debajo de las piedras de ambas márgenes y evitar que la lámina invada el terreno.
+- El puente se reconstruyó como un arco de mampostería: dovelas de piedra, pretiles laterales y albardillas simétricas siguiendo una curva común.
+- Los árboles ahora distribuyen el follaje en grupos separados sobre las ramas, con siluetas menos esféricas y más irregulares.
+- La hierba utiliza hojas alargadas individuales y un balanceo suave con variación de fase y dirección.
+- El ciclo del mundo actualiza también la animación de la vegetación.
+- Pendiente: validar visualmente el nivel del agua junto a las piedras, el despeje bajo el arco, la unión del muelle con la orilla y la simetría del puente en navegador.

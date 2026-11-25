@@ -73,22 +73,30 @@ export function createNature(scene,heightAt) {
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
       roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.24*scale,sy:length*.5,sz:.24*scale,q});
     }
-    const clusterCount=4+Math.floor(random()*3);
-    for(let b=0;b<4+Math.floor(random()*2);b++){
-      const angle=random()*Math.PI*2,branchY=height*(.42+random()*.34),length=1.25+random()*1.35;
-      const start=new THREE.Vector3(x,ground+branchY*scale,z);
-      const dir=new THREE.Vector3(Math.sin(angle)*.82,.45+random()*.35,Math.cos(angle)*.82).normalize();
-      const end=start.clone().addScaledVector(dir,length*scale),mid=start.clone().add(end).multiplyScalar(.5);
-      const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
-      branches.push({x:mid.x,y:mid.y,z:mid.z,sx:.22*scale,sy:length*scale*.5,sz:.22*scale,q});
-    }
+    // Follaje en grupos separados siguiendo las puntas de las ramas:
+    // evita la silueta de esfera compacta y deja respirar la estructura del árbol.
+    const clusterCount=7+Math.floor(random()*4);
     for(let c=0;c<clusterCount;c++){
-      const angle=(c/clusterCount)*Math.PI*2+random()*.6;
-      const y=ground+height*(.65+random()*.27)*scale;
-      const radius=(1.25+random()*.65)*scale;
-      const entry={x:x+Math.cos(angle)*radius*.48,y,z:z+Math.sin(angle)*radius*.48,
-        sx:radius*(.85+random()*.35),sy:radius*(.82+random()*.35),sz:radius*(.85+random()*.35),phase,wind:1+random()};
-      crowns[type].push(entry); treeLeaves.push({entry,baseX:entry.x,baseZ:entry.z,phase,wind:entry.wind});
+      const angle=(c/clusterCount)*Math.PI*2+random()*.48;
+      const branchY=height*(.42+random()*.36)*scale;
+      const length=(1.5+random()*1.45)*scale;
+      const spread=(1.15+random()*.8)*scale;
+      const centerX=x+Math.cos(angle)*length;
+      const centerZ=z+Math.sin(angle)*length;
+      const centerY=ground+branchY+length*(.25+random()*.22);
+      const radius=(.68+random()*.42)*scale;
+      const entry={x:centerX,y:centerY,z:centerZ,
+        sx:radius*(1.15+random()*.45),sy:radius*(.62+random()*.28),sz:radius*(.9+random()*.35),
+        phase:random()*Math.PI*2,wind:.65+random()*.7};
+      crowns[type].push(entry);treeLeaves.push({entry,baseX:entry.x,baseZ:entry.z,phase:entry.phase,wind:entry.wind});
+    }
+    // Pequeños brotes dispersos en el tercio superior, no una copa única.
+    for(let c=0;c<3;c++){
+      const angle=random()*Math.PI*2,r=(.45+random()*.65)*scale;
+      const entry={x:x+Math.cos(angle)*r,y:ground+height*(.78+random()*.2)*scale,
+        z:z+Math.sin(angle)*r,sx:.58*scale,sy:.48*scale,sz:.62*scale,
+        phase:random()*Math.PI*2,wind:.55+random()*.5};
+      crowns[type].push(entry);treeLeaves.push({entry,baseX:entry.x,baseZ:entry.z,phase:entry.phase,wind:entry.wind});
     }
     treeCount++;
   }
@@ -120,12 +128,20 @@ export function createNature(scene,heightAt) {
   for(let i=0;i<64;i++){const x=(random()-.5)*194,z=(random()-.5)*188;if(!clearForNature(x,z))continue;const s=.42+random()*.95;rocks.push({x,y:heightAt(x,z)+s*.28,z,sx:s*1.2,sy:s*.65,sz:s,rx:random(),ry:random()*3,rz:random()});}
   addInstances(scene,rockGeo,rockMat,rocks);
 
-  const bladeGeo=new THREE.ConeGeometry(.12,.72,3),grassMeshes=[];
+  const bladeGeo=new THREE.BufferGeometry();
+  bladeGeo.setAttribute("position",new THREE.Float32BufferAttribute([-.07,0,0,.07,0,0,-.045,.38,.025,.045,.38,.025,0,.78,.075],3));
+  bladeGeo.setIndex([0,1,2,1,3,2,2,3,4]);bladeGeo.computeVertexNormals();
+  const grassMeshes=[];
   let grassCount=0;attempts=0;
   while(grassCount<560&&attempts++<4200){
     const x=(random()-.5)*190,z=(random()-.5)*190;if(!clearForNature(x,z)||random()<.35)continue;
     const s=.5+random()*.75,i=Math.floor(random()*grassMats.length);
-    grass[i].push({x,y:heightAt(x,z)+.3*s,z,sx:s,sy:s,sz:s,ry:random()*Math.PI*2,phase:random()*Math.PI*2});grassCount++;
+    for(let blade=0;blade<3;blade++){
+      const a=random()*Math.PI*2,offset=.22+random()*.22;
+      grass[i].push({x:x+Math.cos(a)*offset,y:heightAt(x,z),z:z+Math.sin(a)*offset,
+        sx:.7+random()*.55,sy:s*(.85+random()*.55),sz:1,ry:a,phase:random()*Math.PI*2});
+    }
+    grassCount++;
   }
   grass.forEach((entries,i)=>{const mesh=addInstances(scene,bladeGeo,grassMats[i],entries);if(mesh)grassMeshes.push({mesh,entries});});
 
@@ -133,7 +149,7 @@ export function createNature(scene,heightAt) {
   return {
     update(time){
       for(const group of grassMeshes){
-        group.entries.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.rotation.set(0,e.ry,Math.sin(time*1.25+e.phase)*.18);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();group.mesh.setMatrixAt(i,dummy.matrix);});
+        group.entries.forEach((e,i)=>{dummy.position.set(e.x,e.y,e.z);dummy.rotation.set(Math.sin(time*.8+e.phase)*.12, e.ry+Math.sin(time*.35+e.phase)*.035, Math.cos(time*1.05+e.phase)*.24);dummy.scale.set(e.sx,e.sy,e.sz);dummy.updateMatrix();group.mesh.setMatrixAt(i,dummy.matrix);});
         group.mesh.instanceMatrix.needsUpdate=true;
       }
       // Las copas se desplazan apenas alrededor del tronco, como ramas movidas por el viento.

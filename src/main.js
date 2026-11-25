@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Sky } from "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/objects/Sky.js";
 import { createWorld } from "./world/createWorld.js";
 import { createPlayerController } from "./player/controller.js";
 import { createHud } from "./ui/hud.js";
@@ -16,7 +17,20 @@ const scene = new THREE.Scene();
 const skyDay = new THREE.Color(0x91b8c1);
 const skyHorizon = new THREE.Color(0xc2c7a9);
 scene.background = skyDay.clone();
-scene.fog = new THREE.Fog(skyDay.clone(), 105, 245);
+scene.fog = new THREE.Fog(skyDay.clone(), 115, 270);
+
+// Cúpula atmosférica física: dispersión de Rayleigh, bruma y disco solar.
+const sky = new Sky();
+sky.scale.setScalar(450000);
+sky.material.uniforms.turbidity.value = 8;
+sky.material.uniforms.rayleigh.value = 2.2;
+sky.material.uniforms.mieCoefficient.value = 0.005;
+sky.material.uniforms.mieDirectionalG.value = 0.82;
+scene.add(sky);
+const sunDirection = new THREE.Vector3();
+const sunSpherical = new THREE.Spherical(1, THREE.MathUtils.degToRad(72), THREE.MathUtils.degToRad(215));
+sunDirection.setFromSpherical(sunSpherical).normalize();
+sky.material.uniforms.sunPosition.value.copy(sunDirection);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
 const world = createWorld(scene);
@@ -26,9 +40,20 @@ const hud = createHud(player, world);
 
 const ambient = new THREE.HemisphereLight(0xe6f0d9, 0x6a624c, 1.45);
 scene.add(ambient);
-const sun = new THREE.DirectionalLight(0xffe2b1, 2.1);
-sun.position.set(-55, 90, 35);
+const sun = new THREE.DirectionalLight(0xffe5bf, 2.35);
+sun.position.copy(sunDirection).multiplyScalar(120);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.camera.left = -95;
+sun.shadow.camera.right = 95;
+sun.shadow.camera.top = 95;
+sun.shadow.camera.bottom = -95;
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 260;
+sun.shadow.bias = -0.00025;
 scene.add(sun);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 let active = false;
 const intro = document.querySelector("#intro");
@@ -54,12 +79,12 @@ function animate() {
   world.update?.(elapsed);
   // Variación lenta de luz y color para dar sensación de cielo vivo sin cielos HDR pesados.
   const daylight = 0.5 + 0.5 * Math.sin(elapsed * 0.018 + 0.6);
-  const sky = skyHorizon.clone().lerp(skyDay, daylight);
-  scene.background.copy(sky);
-  scene.fog.color.copy(sky);
+  const skyTint = skyHorizon.clone().lerp(skyDay, daylight);
+  scene.background.copy(skyTint);
+  scene.fog.color.copy(skyTint);
   sun.position.set(-55 + Math.sin(elapsed * 0.018) * 22, 72 + daylight * 22, 35);
-  sun.intensity = 1.45 + daylight * 0.75;
-  ambient.intensity = 1.2 + daylight * 0.3;
+  sun.intensity = 1.55 + daylight * 0.8;
+  ambient.intensity = 1.15 + daylight * 0.35;
   renderer.render(scene, camera);
   hud.update();
 }

@@ -73,29 +73,23 @@ export function createNature(scene,heightAt) {
       const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
       roots.push({x:mid.x,y:mid.y,z:mid.z,sx:.24*scale,sy:length*.5,sz:.24*scale,q});
     }
-    // Follaje en grupos separados siguiendo las puntas de las ramas:
-    // evita la silueta de esfera compacta y deja respirar la estructura del árbol.
-    const clusterCount=7+Math.floor(random()*4);
-    for(let c=0;c<clusterCount;c++){
-      const angle=(c/clusterCount)*Math.PI*2+random()*.48;
-      const branchY=height*(.42+random()*.36)*scale;
-      const length=(1.5+random()*1.45)*scale;
-      const spread=(1.15+random()*.8)*scale;
-      const centerX=x+Math.cos(angle)*length;
-      const centerZ=z+Math.sin(angle)*length;
-      const centerY=ground+branchY+length*(.25+random()*.22);
-      const radius=(.68+random()*.42)*scale;
-      const entry={x:centerX,y:centerY,z:centerZ,
-        sx:radius*(1.15+random()*.45),sy:radius*(.62+random()*.28),sz:radius*(.9+random()*.35),
-        phase:random()*Math.PI*2,wind:.65+random()*.7};
+    // Cada grupo de hojas nace en la punta de una rama real: silueta abierta,
+    // con huecos entre ramas y sin una esfera verde compacta.
+    for(const tip of branchTips){
+      const radius=(.62+random()*.38)*scale;
+      const entry={x:tip.x+(random()-.5)*.42*scale,
+        y:tip.y+(random()-.5)*.28*scale,
+        z:tip.z+(random()-.5)*.42*scale,
+        sx:radius*(1.25+random()*.42),sy:radius*(.58+random()*.32),sz:radius*(.95+random()*.38),
+        phase:random()*Math.PI*2,wind:.7+random()*.7};
       crowns[type].push(entry);treeLeaves.push({entry,baseX:entry.x,baseZ:entry.z,phase:entry.phase,wind:entry.wind});
     }
-    // Pequeños brotes dispersos en el tercio superior, no una copa única.
+    // Brotes aislados en la parte alta para romper la silueta sin cerrar la copa.
     for(let c=0;c<3;c++){
-      const angle=random()*Math.PI*2,r=(.45+random()*.65)*scale;
-      const entry={x:x+Math.cos(angle)*r,y:ground+height*(.78+random()*.2)*scale,
-        z:z+Math.sin(angle)*r,sx:.58*scale,sy:.48*scale,sz:.62*scale,
-        phase:random()*Math.PI*2,wind:.55+random()*.5};
+      const angle=random()*Math.PI*2,r=(.55+random()*.72)*scale;
+      const entry={x:x+Math.cos(angle)*r,y:ground+height*(.82+random()*.16)*scale,
+        z:z+Math.sin(angle)*r,sx:.52*scale,sy:.4*scale,sz:.56*scale,
+        phase:random()*Math.PI*2,wind:.55+random()*.55};
       crowns[type].push(entry);treeLeaves.push({entry,baseX:entry.x,baseZ:entry.z,phase:entry.phase,wind:entry.wind});
     }
     treeCount++;

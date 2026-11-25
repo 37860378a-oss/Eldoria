@@ -36,3 +36,13 @@ Esta revisión está subida al repositorio, pero todavía requiere validación v
 - La expansión está construida como un módulo independiente para poder añadir nuevas regiones sin cargar la lógica en un único archivo.
 
 Pendiente de validación: comprobar la conexión del camino con el extremo del puente, el relieve de las dos rutas, la visibilidad de los puntos de interés y el rendimiento en el equipo objetivo. Los destinos son zonas explorables visuales; todavía no incluyen colisiones, criaturas ni misiones.
+
+
+## Versión 1.4 — Vegetación, raíces y atmósfera
+
+- Los árboles del terreno tienen troncos más anchos, raíces expuestas que se abren sobre el suelo y variación de altura y copa.
+- Se aumentó la presencia de árboles, arbustos, piedras y hierba manteniendo el uso de instancias para limitar el coste de renderizado.
+- Se incorporó una cúpula de cielo atmosférico con dispersión de luz, bruma y disco solar; la luz direccional aporta sombras.
+- Se mantienen zonas de exclusión para no cubrir caminos, casas ni el área del puente.
+- Las texturas detalladas de corteza, hojas, hierba, tierra y piedra quedan para una pasada posterior de materiales, una vez validada la escala y distribución de la vegetación.
+- Esta versión requiere prueba visual y de rendimiento en el equipo objetivo; las sombras y la densidad vegetal podrán ajustarse según el resultado.

@@ -46,3 +46,13 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Se mantienen zonas de exclusión para no cubrir caminos, casas ni el área del puente.
 - Las texturas detalladas de corteza, hojas, hierba, tierra y piedra quedan para una pasada posterior de materiales, una vez validada la escala y distribución de la vegetación.
 - Esta versión requiere prueba visual y de rendimiento en el equipo objetivo; las sombras y la densidad vegetal podrán ajustarse según el resultado.
+
+
+## Versión 1.5 — Primer habitante e interacción
+
+- Se incorporó a Maelis, guardiana de Piedra Clara, como primer personaje no jugador del mundo.
+- El personaje tiene un modelo 3D de bajo coste, un indicador visual animado y una luz tenue para facilitar su localización.
+- Al acercarse aparece la indicación para interactuar. La tecla **E** inicia y avanza un diálogo; **Esc** permite cerrarlo.
+- El diálogo presenta la Cicatriz del Alba, las Astillas y los primeros destinos de exploración, conectando el prototipo con el lore.
+- La lógica de personajes y diálogos vive en módulos separados para preparar futuras conversaciones, misiones, comerciantes y criaturas.
+- No se añadió todavía combate ni persistencia online; esta etapa establece la base de interacción local.

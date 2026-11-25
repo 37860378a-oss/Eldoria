@@ -24,3 +24,16 @@ button:hover{filter:brightness(1.08);transform:translateY(-1px)}button span{marg
 .status,.coordinates{font-size:10px;letter-spacing:.4px;color:#e4e1d5;text-shadow:0 1px 5px #101810}.coordinates{font-variant-numeric:tabular-nums;color:#d1c7ac}
 .toast{position:absolute;z-index:5;left:50%;bottom:70px;transform:translate(-50%,10px);opacity:0;padding:9px 14px;background:#17251fe8;border:1px solid #d9b87866;color:#eee5d0;font-size:11px;transition:.25s;pointer-events:none}.toast.visible{opacity:1;transform:translate(-50%,0)}
 @media(max-width:650px){.topbar{height:62px;padding:0 16px}.brand{font-size:15px;letter-spacing:2px}.brand small{display:none}.location{font-size:10px}.quest-card{top:auto;right:12px;bottom:68px;width:190px;padding:12px}.intro-card{padding:26px 22px}.bottom-hud{padding:22px 14px 12px}}
+
+
+/* Interacción y diálogos de personajes */
+.interaction-hint{position:absolute;z-index:3;left:50%;bottom:112px;transform:translate(-50%,8px);padding:9px 14px;background:rgba(20,29,25,.86);border:1px solid #d9b87888;color:#f0dfb7;font-size:11px;letter-spacing:.3px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+.interaction-hint.visible{opacity:1;transform:translate(-50%,0)}
+.dialogue{position:absolute;z-index:6;left:50%;bottom:24px;transform:translate(-50%,18px);width:min(620px,calc(100% - 32px));padding:22px 25px 17px;background:linear-gradient(135deg,rgba(20,31,25,.97),rgba(34,39,30,.96));border:1px solid #d9b87888;box-shadow:0 14px 45px #0008;opacity:0;visibility:hidden;transition:opacity .2s,transform .2s,visibility .2s;pointer-events:none}
+.dialogue.visible{opacity:1;visibility:visible;transform:translate(-50%,0);pointer-events:auto}
+.dialogue-eyebrow{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:700}
+.dialogue h2{font:600 22px Cinzel,serif;color:#f2e8d2;margin:8px 0}
+.dialogue p{font-size:13px;line-height:1.75;color:#e1dfd3;margin:0;min-height:48px}
+.dialogue-footer{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:12px;border-top:1px solid #d9b87833;color:#bdb8a8;font-size:10px}
+.dialogue-footer button{padding:8px 12px;font-size:10px}
+@media(max-width:650px){.dialogue{bottom:12px;padding:17px}.dialogue p{font-size:12px}.interaction-hint{bottom:105px}}

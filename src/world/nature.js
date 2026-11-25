@@ -24,10 +24,7 @@ const trails = [
   [8.5,-38,12,-45],[12,-45,17,-51],[17,-51,24,-58],[24,-58,32,-66],[32,-66,41,-74],
   [17,-51,8,-58],[8,-58,-5,-62],[-5,-62,-20,-64],[-20,-64,-36,-67],[-36,-67,-53,-70],[-53,-70,-65,-72]
 ];
-const houseClearZones = [
-  {x:-56,z:24,rx:11.5,rz:10.5},{x:-25,z:31,rx:10.5,rz:10},
-  {x:-65,z:-3,rx:11,rz:10},{x:8,z:25,rx:9.8,rz:10},{x:-2,z:-4,rx:9.8,rz:9.8}
-];
+const houseClearZones = [];
 function nearTrail(x,z) { return trails.some(s => distanceToSegment(x,z,s[0],s[1],s[2],s[3]) < 6); }
 function clearForNature(x,z) {
   if (Math.abs(z + 25) < 15) return false;

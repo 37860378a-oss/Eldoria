@@ -31,13 +31,28 @@ export function createVillageDetails(scene,heightAt){
   addInstances(scene,new THREE.CylinderGeometry(.13,.19,2.5,5),wood,posts);
   addInstances(scene,new THREE.BoxGeometry(1,1,1),lanternGlow,lamps);
 
-  const barrels=[[-54,18,.9],[-31,23,.82],[-3,18,.78],[-2,-17,.82]]
-    .map(([x,z,scale])=>({x,y:heightAt(x,z)+.48*scale,z,sx:scale,sy:scale,sz:scale,ry:(x*13+z*7)%6}));
+  const barrelSpots=[[-54,18,.9],[-31,23,.82],[-3,18,.78],[-2,-17,.82],[-49,-17,.76],[-7,24,.8]];
+  const barrels=barrelSpots.map(([x,z,scale])=>({x,y:heightAt(x,z)+.48*scale,z,sx:scale,sy:scale,sz:scale,ry:(x*13+z*7)%6}));
   addInstances(scene,new THREE.CylinderGeometry(.38,.43,.96,8),barrelMat,barrels);
-  const crates=[[-56,13],[-29,25],[-1,14]].map(([x,z],i)=>{
+  // Aros metálicos en tres alturas para dar volumen y lectura de barril artesanal.
+  const hoops=[];
+  barrelSpots.forEach(([x,z,scale])=>{
+    for(const level of [-.29,0,.29])hoops.push({x,y:heightAt(x,z)+(.48+level*.96)*scale,z,sx:scale,sy:scale,sz:scale,rx:Math.PI/2});
+  });
+  addInstances(scene,new THREE.TorusGeometry(.39,.035,5,8),iron,hoops);
+
+  const crateSpots=[[-56,13],[-29,25],[-1,14],[-49,23],[-8,20]];
+  const crates=crateSpots.map(([x,z],i)=>{
     const scale=i%2?.82:.95;return{x,y:heightAt(x,z)+.43*scale,z,sx:scale,sy:scale,sz:scale,ry:i*.47};
   });
   addInstances(scene,new THREE.BoxGeometry(.9,.86,.9),crateMat,crates);
+  // Refuerzos de madera visibles en las esquinas de los cajones.
+  const crateBraces=[];
+  crateSpots.forEach(([x,z],i)=>{
+    const scale=i%2?.82:.95;
+    for(const side of [-1,1])crateBraces.push({x:x+side*.37*scale,y:heightAt(x,z)+.43*scale,z,sx:.075*scale,sy:.88*scale,sz:.075*scale,ry:i*.47});
+  });
+  addInstances(scene,new THREE.BoxGeometry(1,1,1),wood,crateBraces);
 
   const signMaterial=new THREE.MeshStandardMaterial({color:0x765334,roughness:1});
   for(const [x,z,rotation] of [[-44,-8,.18],[12,-16,-.25]]){

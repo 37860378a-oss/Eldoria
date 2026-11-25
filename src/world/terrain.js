@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 const WORLD_SIZE=550;
-const RIVER_LEVEL_OFFSET=.55;
+const RIVER_LEVEL_OFFSET=.35;
 function smooth01(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
 function plateau(x,z,cx,cz,radius,height,edge=5){const d=Math.hypot(x-cx,z-cz);return height*(1-smooth01((d-radius)/edge));}
 const LAKES=[

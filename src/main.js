@@ -53,7 +53,7 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
   const delta = Math.min(clock.getDelta(), 0.04);
-  if (active) player.update(delta);
+  player.update(delta);
   renderer.render(scene, camera);
   hud.update();
 }

@@ -25,16 +25,16 @@ function addWaystone(scene,heightAt,x,z,rotation=0){
 }
 export function createVillageDetails(scene,heightAt){
   // Faroles laterales: nunca en el centro de los senderos.
-  const lanterns=[[-47,-2],[-40,-8],[-32,-10],[-23,-6],[-16,3],[-22,14],[-36,14],[-44,9],[7,-15],[12,-41],[29,-51],[43,-56]];
+  const lanterns=[[-47,-2],[-40,-8],[-32,-10],[-23,-6],[-16,3],[-22,14],[-36,14],[-44,9],[7,-15]];
   const posts=lanterns.map(([x,z])=>({x,y:heightAt(x,z)+1.25,z,sx:.16,sy:1.25,sz:.16}));
   const lamps=lanterns.map(([x,z])=>({x,y:heightAt(x,z)+2.55,z,sx:.34,sy:.38,sz:.34}));
   addInstances(scene,new THREE.CylinderGeometry(.13,.19,2.5,5),wood,posts);
   addInstances(scene,new THREE.BoxGeometry(1,1,1),lanternGlow,lamps);
 
-  const barrels=[[-54,18,.9],[-31,23,.82],[-53,-18,.88],[-3,18,.78],[-2,-17,.82],[16,-43,.76]]
+  const barrels=[[-54,18,.9],[-31,23,.82],[-61,-1,.88],[-3,18,.78],[-2,-17,.82]]
     .map(([x,z,scale])=>({x,y:heightAt(x,z)+.48*scale,z,sx:scale,sy:scale,sz:scale,ry:(x*13+z*7)%6}));
   addInstances(scene,new THREE.CylinderGeometry(.38,.43,.96,8),barrelMat,barrels);
-  const crates=[[-56,13],[-29,25],[-50,-20],[-1,14],[19,-45]].map(([x,z],i)=>{
+  const crates=[[-56,13],[-29,25],[-61,-3],[-1,14]].map(([x,z],i)=>{
     const scale=i%2?.82:.95;return{x,y:heightAt(x,z)+.43*scale,z,sx:scale,sy:scale,sz:scale,ry:i*.47};
   });
   addInstances(scene,new THREE.BoxGeometry(.9,.86,.9),crateMat,crates);
@@ -48,7 +48,5 @@ export function createVillageDetails(scene,heightAt){
     sign.rotation.y=rotation;sign.position.set(x,heightAt(x,z),z);scene.add(sign);
   }
 
-  // Mojones de piedra que anuncian los dos caminos de salida y les dan un destino legible.
-  addWaystone(scene,heightAt,61,34,-.15);
-  addWaystone(scene,heightAt,59,-59,.2);
+
 }

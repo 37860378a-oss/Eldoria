@@ -19,7 +19,8 @@ function makeTrail(scene,heightAt,points,width,bridgeExit=false){
       const f=-1.28+j*(2.56/6),x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
       const blend=THREE.MathUtils.smoothstep(Math.abs(f),.82,1.28);
       const col=center.clone().lerp(edge,blend);
-      const bridgeBlend=bridgeExit?THREE.MathUtils.smoothstep(z,-44,-37.2):0;\n      verts.push(x,heightAt(x,z)+.055+bridgeBlend*.78,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
+      const bridgeBlend=bridgeExit?THREE.MathUtils.smoothstep(z,-44,-37.2):0;
+      verts.push(x,heightAt(x,z)+.055+bridgeBlend*.78,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
       if(i<segments&&j<6){const a=i*7+j;indices.push(a,a+1,a+7,a+1,a+8,a+7);}
     }
   }

@@ -64,8 +64,8 @@ export function createPlayerController(scene, camera, heightAt) {
           player.position.addScaledVector(move, speed * delta);
           player.rotation.y = Math.atan2(move.x, move.z);
         }
-        player.position.x = THREE.MathUtils.clamp(player.position.x, -103, 103);
-        player.position.z = THREE.MathUtils.clamp(player.position.z, -103, 103);
+        player.position.x = THREE.MathUtils.clamp(player.position.x, -265, 265);
+        player.position.z = THREE.MathUtils.clamp(player.position.z, -265, 265);
         // heightAt incluye el tablero del puente; los caminos siguen siendo
         // una capa visual y el personaje camina sobre el terreno que tienen debajo.
         player.position.y = heightAt(player.position.x, player.position.z);

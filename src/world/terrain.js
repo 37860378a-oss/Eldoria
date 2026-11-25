@@ -55,7 +55,7 @@ export function createTerrain(scene){
   // Agua en una malla subdividida: pequeñas ondas, sin una lámina plana rígida.
   const waterGeo=new THREE.PlaneGeometry(240,12.8,220,16);waterGeo.rotateX(-Math.PI/2);
   const waterPositions=waterGeo.attributes.position,baseWater=waterPositions.array.slice();
-  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,-.35,-25);scene.add(river);scene.add(current);
+  const river=new THREE.Mesh(waterGeo,waterMaterial(0x347f91));river.position.set(0,-.35,-25);scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x817d5e,roughness:1});
   // Orillas rocosas discontinuas que siguen el relieve en lugar de dos bordes rectos.
   const bankGroups=[];
@@ -71,6 +71,7 @@ export function createTerrain(scene){
   const current=new THREE.InstancedMesh(currentGeo,currentMat,22);current.frustumCulled=false;
   const currentData=[];const currentDummy=new THREE.Object3D();
   for(let i=0;i<22;i++){currentData.push({x:-112+i*10.4,z:-28+(i%3)*2.7,phase:i*.43});}
+  scene.add(current);
   const lakes=[];
   for(const lakeData of LAKES){
     const level=baseHeight(lakeData.x,lakeData.z)+lakeData.offset;

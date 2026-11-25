@@ -1,15 +1,22 @@
 import * as THREE from "three";
 
 function roadTexture(){
-  const c=document.createElement("canvas");c.width=c.height=512;
-  const ctx=c.getContext("2d");ctx.fillStyle="#9c835d";ctx.fillRect(0,0,512,512);
+  const size=1024,c=document.createElement("canvas");c.width=c.height=size;
+  const ctx=c.getContext("2d");ctx.fillStyle="#9c835d";ctx.fillRect(0,0,size,size);
   let seed=7241;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
-  for(let i=0;i<5200;i++){
-    const v=Math.floor(88+rnd()*88),r=.4+rnd()*3.4;
-    ctx.fillStyle="rgba("+v+","+Math.floor(v*.82)+","+Math.floor(v*.58)+","+(0.06+rnd()*.2)+")";
-    ctx.beginPath();ctx.ellipse(rnd()*512,rnd()*512,r*1.8,r,rnd()*3,0,Math.PI*2);ctx.fill();
+  for(let i=0;i<14500;i++){
+    const v=Math.floor(76+rnd()*105),r=.45+rnd()*4.2;
+    ctx.fillStyle="rgba("+v+","+Math.floor(v*.79)+","+Math.floor(v*.55)+","+(0.10+rnd()*.25)+")";
+    ctx.beginPath();ctx.ellipse(rnd()*size,rnd()*size,r*1.8,r,rnd()*3,0,Math.PI*2);ctx.fill();
   }
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(3,1);t.anisotropy=4;return t;
+  for(let i=0;i<4200;i++){
+    const x=rnd()*size,y=rnd()*size;
+    ctx.fillStyle=rnd()>.5?"rgba(55,43,31,.22)":"rgba(190,158,108,.24)";
+    ctx.fillRect(x,y,1+rnd()*2,1+rnd()*2);
+  }
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,1);t.anisotropy=8;
+  t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;return t;
 }
 function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
 function ribbon(scene,heightAt,points,width,material,options={}){

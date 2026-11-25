@@ -19,7 +19,7 @@
     <div id="scene" aria-label="Mundo 3D de Eldoria"></div>
     <header class="topbar">
       <div class="brand"><span class="brand-mark">✦</span><span>ELDORIA</span><small>VALLE DE ELDORIA</small></div>
-      <div class="location"><span class="location-dot"></span> <span id="current-region">Piedra Clara</span></div>
+      <div class="location"><span class="location-dot"></span> <span id="current-region">Piedra Clara</span><span class="separator">·</span><span id="world-clock">14:00</span></div>
     </header>
     <section class="intro" id="intro">
       <div class="intro-card">
@@ -53,10 +53,25 @@
         <p class="pause-eyebrow">ELDORIA · OPCIONES DE VIAJE</p>
         <h2 id="pause-title">Juego en pausa</h2>
         <p class="pause-description">Ajustá el alcance del paisaje para mejorar el rendimiento.</p>
-        <div class="vision-control">
-          <div class="vision-heading"><label for="vision-distance">Distancia de visión</label><strong id="vision-value">430 m</strong></div>
-          <input id="vision-distance" type="range" min="90" max="430" step="10" value="430">
-          <div class="vision-range"><span>Cerca · Más rendimiento</span><span>Lejos · Más detalle</span></div>
+        <div class="settings-grid">
+          <section class="settings-section">
+            <h3>Gráficos</h3>
+            <div class="setting-row"><label for="graphics-quality">Calidad</label><select id="graphics-quality"><option value="low">Baja · Más FPS</option><option value="medium" selected>Media</option><option value="high">Alta · Más detalle</option></select></div>
+            <div class="setting-row"><label for="render-scale">Resolución de renderizado</label><select id="render-scale"><option value="1">100% · Nativa</option><option value="0.85">85%</option><option value="0.7">70% · Rendimiento</option><option value="0.5">50% · Máximo rendimiento</option></select></div>
+            <div class="setting-row"><label for="vision-distance">Distancia de visión <strong id="vision-value">430 m</strong></label></div>
+            <input id="vision-distance" type="range" min="90" max="430" step="10" value="430">
+            <div class="vision-range"><span>Cerca</span><span>Lejos</span></div>
+            <button id="fullscreen-button" class="secondary-setting" type="button">Pantalla completa</button>
+          </section>
+          <section class="settings-section">
+            <h3>Mundo y horario</h3>
+            <label class="toggle-row"><span>Ciclo día / noche</span><input id="day-cycle" type="checkbox" checked></label>
+            <div class="setting-row"><label for="cycle-speed">Velocidad del ciclo</label><strong id="cycle-speed-value">1.0×</strong></div>
+            <input id="cycle-speed" type="range" min="0" max="4" step="0.5" value="1">
+            <div class="setting-row"><label for="time-of-day">Hora del mundo</label><strong id="time-value">14:00</strong></div>
+            <input id="time-of-day" type="range" min="0" max="23.99" step="0.25" value="14">
+            <div class="vision-range"><span>00:00 · Medianoche</span><span>12:00 · Mediodía</span></div>
+          </section>
         </div>
         <button id="resume-button" type="button">Continuar explorando</button>
         <button id="pause-close-button" class="pause-text-button" type="button">Cerrar menú</button>

@@ -83,6 +83,8 @@ function animate() {
   scene.background.copy(skyTint);
   scene.fog.color.copy(skyTint);
   sun.position.set(-55 + Math.sin(elapsed * 0.018) * 22, 72 + daylight * 22, 35);
+  sunDirection.set(sun.position.x, sun.position.y, sun.position.z).normalize();
+  sky.material.uniforms.sunPosition.value.copy(sunDirection);
   sun.intensity = 1.55 + daylight * 0.8;
   ambient.intensity = 1.15 + daylight * 0.35;
   renderer.render(scene, camera);

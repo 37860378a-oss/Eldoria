@@ -14,7 +14,7 @@ const PBR_SURFACES = {
     aoFile: "grass_02_amibent_occlusion_1k.png"
   },
   earth: {
-    folder: "ground_06_1k",
+    folder: "docs/ground_06_1k",
     prefix: "ground_06"
   }
 };

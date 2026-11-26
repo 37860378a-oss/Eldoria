@@ -92,7 +92,7 @@ new THREE.CubeTextureLoader().load([
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500000);
 const world = createWorld(scene);
-// walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.
+// El controlador sigue la altura real del terreno.
 const player = createPlayerController(scene, camera, world.walkHeightAt);
 const hud = createHud(player, world);
 const dialogue = createDialogue(player, world.actors, hud);

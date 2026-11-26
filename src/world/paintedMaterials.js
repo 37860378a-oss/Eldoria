@@ -89,7 +89,7 @@ export function createSurfaceMaterial(kind, {
     roughnessMap,
     roughness,
     aoMap,
-    aoMapIntensity,
+    aoMapIntensity: aoIntensity,
     metalness: 0
   });
   return material;

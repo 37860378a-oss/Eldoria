@@ -1,11 +1,6 @@
 import * as THREE from "three";
-import { createPaintedTexture } from "./paintedMaterials.js";
+import { createSurfaceMaterial } from "./paintedMaterials.js";
 
-function roadTexture(){
-  const texture=createPaintedTexture("earth",7241);
-  texture.repeat.set(4,1);
-  return texture;
-}
 function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
 function ribbon(scene,heightAt,points,width,material,options={}){
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
@@ -25,13 +20,24 @@ function ribbon(scene,heightAt,points,width,material,options={}){
       if(i<segments&&j<bands.length-1){const a=i*bands.length+j;indices.push(a,a+1,a+bands.length,a+1,a+bands.length+1,a+bands.length);}
     }
   }
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute(vertices,3));
-  geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();
-  const mesh=new THREE.Mesh(geometry,material);mesh.material.side=THREE.DoubleSide;mesh.receiveShadow=true;scene.add(mesh);
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute("position",new THREE.Float32BufferAttribute(vertices,3));
+  geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));
+  geometry.setAttribute("uv2",new THREE.Float32BufferAttribute(uv.slice(),2));
+  geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  const mesh=new THREE.Mesh(geometry,material);
+  mesh.material.side=THREE.DoubleSide;
+  mesh.receiveShadow=true;
+  scene.add(mesh);
 }
-const northBridgeRamp=()=>0;
+
 export function createPaths(scene,heightAt){
-  const road=new THREE.MeshStandardMaterial({color:0xffffff,map:roadTexture(),roughness:1,side:THREE.DoubleSide});
+  const road=createSurfaceMaterial("earth",{
+    repeatX:4,repeatY:1,roughness:1,normalScale:.32,aoIntensity:.48
+  });
+  road.side=THREE.DoubleSide;
   ribbon(scene,heightAt,[[-49,2],[-44,-3],[-39,-6],[-33,-7],[-27,-6],[-22,-3],[-18,1],[-18,6],[-22,10],[-29,12],[-37,10],[-43,6],[-49,2]],4.2,road);
   ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road,{ramp:z=>smooth((-13-z)/3.8)});
 }

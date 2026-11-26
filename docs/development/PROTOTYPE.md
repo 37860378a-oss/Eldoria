@@ -190,3 +190,13 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - Las texturas se comparten por tipo para evitar duplicar recursos y reducir el coste de memoria.
 - La biblioteca usa patrones ilustrados con bloques, vetas, pinceladas, luces y sombras pintadas, con una paleta de fantasía inspirada en MMORPG clásicos.
 - Pendiente de validación visual y de rendimiento en el navegador del usuario. Si una textura no carga, el módulo informa el recurso concreto en la consola.
+
+
+## Versión 2.9 — Integración de superficies PBR reales
+
+- Se integraron los mapas 1K de FreeStylized para césped (`grass_07_1k`) y tierra/caminos (`ground_06_1k`).
+- Three.js carga Base Color, Normal GL, Roughness y Ambient Occlusion desde sus carpetas originales en `docs/`; no se duplican los PNG de varios megabytes.
+- Los mapas se comparten mediante caché, con repetición UV configurable y filtrado anisotrópico.
+- El terreno y las cintas de caminos incorporan UV2 para el mapa de oclusión ambiental.
+- Las texturas SVG provisionales se mantienen para piedra, revoque, madera y tejados hasta incorporar sus recursos definitivos.
+- Pendiente: prueba visual en navegador y ajuste fino de escala/repetición según la cámara del juego.

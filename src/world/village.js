@@ -234,6 +234,5 @@ export function createVillage(scene, heightAt) {
   scene.add(well);
 
   createWatchKeep(scene, heightAt);
-  createWatchBridge(scene, heightAt);
   createRiverDock(scene, heightAt);
 }

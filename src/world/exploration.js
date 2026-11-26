@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createTrail, getRoadMaterial } from "./paths.js";
 
 const stoneMat=new THREE.MeshStandardMaterial({color:0x77796f,roughness:.96,flatShading:true});
 const wornMat=new THREE.MeshStandardMaterial({color:0x938b73,roughness:1,flatShading:true});
@@ -6,27 +7,8 @@ const darkStone=new THREE.MeshStandardMaterial({color:0x4c5a52,roughness:1});
 const crystalMat=new THREE.MeshStandardMaterial({color:0x6dc8bd,emissive:0x236e69,emissiveIntensity:1.1,roughness:.24});
 const barkMat=new THREE.MeshStandardMaterial({color:0x51402d,roughness:1});
 const leafMats=[0x355b3e,0x416d47,0x587a4a].map(color=>new THREE.MeshStandardMaterial({color,roughness:.94}));
-const roadMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,vertexColors:true,side:THREE.DoubleSide});
 
 function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-function makeTrail(scene,heightAt,points,width,bridgeExit=false){
-  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
-  const segments=160,verts=[],colors=[],indices=[],uv=[];
-  const edge=new THREE.Color(0x71865a),center=new THREE.Color(0x927b59);
-  for(let i=0;i<=segments;i++){
-    const t=i/segments,p=curve.getPoint(t),tan=curve.getTangent(t).normalize(),side=new THREE.Vector3(-tan.z,0,tan.x);
-    for(let j=0;j<7;j++){
-      const f=-1.28+j*(2.56/6),x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
-      const blend=THREE.MathUtils.smoothstep(Math.abs(f),.82,1.28);
-      const col=center.clone().lerp(edge,blend);
-      const bridgeBlend=bridgeExit?THREE.MathUtils.smoothstep(z,-44,-37.2):0;
-      verts.push(x,heightAt(x,z)+.055+bridgeBlend*.78,z);colors.push(col.r,col.g,col.b);uv.push(t*18,j/6);
-      if(i<segments&&j<6){const a=i*7+j;indices.push(a,a+1,a+7,a+1,a+8,a+7);}
-    }
-  }
-  const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));geo.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geo.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();
-  const mesh=new THREE.Mesh(geo,roadMat);mesh.receiveShadow=true;scene.add(mesh);
-}
 function addStone(scene,geo,material,x,y,z,sx,sy,sz,rotation=0){
   const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.rotation.y=rotation;scene.add(m);return m;
 }
@@ -119,7 +101,9 @@ function createCave(scene,heightAt,x,z,rotation=0){
 export function createExploration(scene,heightAt){
   const mainTrail=[[8.2,-37.2],[12,-45],[17,-51],[24,-58],[32,-66],[41,-74]];
   const forestTrail=[[17,-51],[8,-58],[-5,-62],[-20,-64],[-36,-67],[-53,-70],[-65,-72]];
-  makeTrail(scene,heightAt,mainTrail,4.3,true);makeTrail(scene,heightAt,forestTrail,3.6);
+  const roadMaterial = getRoadMaterial();
+  createTrail(scene,heightAt,mainTrail,4.3,{material:roadMaterial,bridgeExit:true});
+  createTrail(scene,heightAt,forestTrail,3.8,{material:roadMaterial});
   const ruins=createRuins(scene,heightAt),grove=createWhisperGrove(scene,heightAt);
   const caves=[createCave(scene,heightAt,-235,-132,Math.PI/2),createCave(scene,heightAt,235,156,-Math.PI/2),createCave(scene,heightAt,18,240,Math.PI)];
   const regionAt=(x,z)=>{

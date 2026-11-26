@@ -9,15 +9,6 @@ import { createActors } from "./actors.js";
 import { createEnvironment } from "./environment.js";
 import { createWaterway } from "./waterway.js";
 
-const BRIDGE_START_Z = -37.2;
-const BRIDGE_END_Z = -16.8;
-const BRIDGE_CENTER_X = 8.2;
-function bridgeHeightAt(x,z,heightAt) {
-  if(z<BRIDGE_START_Z||z>BRIDGE_END_Z||Math.abs(x-BRIDGE_CENTER_X)>4.05)return null;
-  const t=(z-BRIDGE_START_Z)/(BRIDGE_END_Z-BRIDGE_START_Z);
-  return heightAt(x,z)+.48+3.65*Math.sin(Math.PI*t);
-}
-
 export function createWorld(scene) {
   const terrain = createTerrain(scene);
   const waterway = createWaterway(scene, terrain.heightAt);
@@ -30,10 +21,7 @@ export function createWorld(scene) {
   const actors = createActors(scene, terrain.heightAt);
   const environment = createEnvironment(scene, terrain.heightAt);
 
-  // El personaje sigue el perfil del arco al cruzar el puente.
-  function walkHeightAt(x,z) {
-    return bridgeHeightAt(x,z,terrain.heightAt) ?? terrain.heightAt(x,z);
-  }
+  const walkHeightAt = terrain.heightAt;
 
   return { ...terrain, waterway, nature, environment, buildings, walkHeightAt, exploration, actors, regionAt: exploration.regionAt, update(time) { terrain.update(time); waterway.update(time); exploration.update(time); environment.update(time); buildings?.update?.(time); } };
 }

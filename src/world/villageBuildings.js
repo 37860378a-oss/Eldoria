@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPaintedTexture } from "./paintedMaterials.js";
+import { createPaintedTexture, createBuildingMaterial } from "./paintedMaterials.js";
 
 // Materiales procedurales compartidos: detalle visible sin descargar imágenes externas.
 function surfaceTexture(seed,kind){
@@ -9,14 +9,14 @@ const stoneTexture=surfaceTexture(1201,"stone");
 const plasterTexture=surfaceTexture(2203,"plaster");
 const timberTexture=surfaceTexture(3307,"wood");
 const roofTexture=surfaceTexture(4409,"roof");
-const stone = new THREE.MeshStandardMaterial({ color: 0xffffff, map:stoneTexture, bumpMap:stoneTexture, bumpScale:.018, roughness:1, flatShading:true });
-const plaster = new THREE.MeshStandardMaterial({ color: 0xffffff, map:plasterTexture, bumpMap:plasterTexture, bumpScale:.012, roughness:1 });
+const stone = createBuildingMaterial("stone",{repeatX:1.5,repeatY:1.4,normalScale:.34});
+const plaster = createBuildingMaterial("plaster",{repeatX:1.7,repeatY:1.35,normalScale:.3});
 const timber = new THREE.MeshStandardMaterial({ color: 0xffffff, map:timberTexture, bumpMap:timberTexture, bumpScale:.016, roughness:1 });
 const darkWood = new THREE.MeshStandardMaterial({ color: 0xb9a184, map:timberTexture, bumpMap:timberTexture, bumpScale:.014, roughness:1 });
 const roofMats = [
-  new THREE.MeshStandardMaterial({ color: 0xffffff, map:roofTexture, bumpMap:roofTexture, bumpScale:.018, roughness:1, flatShading:true }),
-  new THREE.MeshStandardMaterial({ color: 0xe8d1b5, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true }),
-  new THREE.MeshStandardMaterial({ color: 0xd5c2a5, map:roofTexture, bumpMap:roofTexture, bumpScale:.06, roughness:1, flatShading:true })
+  createBuildingMaterial("roof",{repeatX:2,repeatY:1.7,color:0xffffff,normalScale:.34}),
+  createBuildingMaterial("roof",{repeatX:2,repeatY:1.7,color:0xe8d1b5,normalScale:.34}),
+  createBuildingMaterial("roof",{repeatX:2,repeatY:1.7,color:0xd5c2a5,normalScale:.34})
 ];
 const glass = new THREE.MeshStandardMaterial({ color: 0xe6b968, emissive: 0x9a642b, emissiveIntensity: 0.38 });
 const interior = new THREE.MeshStandardMaterial({ color: 0x49372a, roughness: 1 });

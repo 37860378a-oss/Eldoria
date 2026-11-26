@@ -1,11 +1,12 @@
 import * as THREE from "three";
+import { createBuildingMaterial } from "./paintedMaterials.js";
 
 const mats = {
-  plaster: new THREE.MeshStandardMaterial({ color: 0xd1bd91, roughness: 1 }),
+  plaster: createBuildingMaterial("plaster", { repeatX: 1.8, repeatY: 1.4, normalScale: 0.32 }),
   timber: new THREE.MeshStandardMaterial({ color: 0x59432f, roughness: 1 }),
   dark: new THREE.MeshStandardMaterial({ color: 0x342c23, roughness: 1 }),
-  roof: [0x765044, 0x8b6247, 0x6e5140].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, flatShading: true })),
-  stone: new THREE.MeshStandardMaterial({ color: 0x888477, roughness: 1, flatShading: true }),
+  roof: [0x765044, 0x8b6247, 0x6e5140].map(color => createBuildingMaterial("roof", { repeatX: 2.2, repeatY: 1.8, color, normalScale: 0.38 })),
+  stone: createBuildingMaterial("stone", { repeatX: 1.6, repeatY: 1.6, normalScale: 0.38 }),
   window: new THREE.MeshStandardMaterial({ color: 0xe8bd69, emissive: 0x8c5724, emissiveIntensity: 0.22 }),
   fence: new THREE.MeshStandardMaterial({ color: 0x765b3c, roughness: 1 })
 };
@@ -81,9 +82,9 @@ function createWatchBridge(scene, heightAt) {
   // y pretiles gemelos. Cada tramo sigue exactamente la misma curva.
   const startZ=-37.2,endZ=-16.8,centerX=8.2,halfWidth=4.1;
   const archHeight=3.65,segments=34;
-  const stoneA=new THREE.MeshStandardMaterial({color:0x77796f,roughness:.96,flatShading:true});
-  const stoneB=new THREE.MeshStandardMaterial({color:0x918d80,roughness:.98,flatShading:true});
-  const capMat=new THREE.MeshStandardMaterial({color:0xa19b8b,roughness:.94,flatShading:true});
+  const stoneA=createBuildingMaterial("stone",{repeatX:1.8,repeatY:1.4,normalScale:.34});
+  const stoneB=createBuildingMaterial("stone",{repeatX:1.35,repeatY:1.2,color:0xd0c9b8,normalScale:.3});
+  const capMat=createBuildingMaterial("stone",{repeatX:2.1,repeatY:1.2,color:0xe0d8c5,normalScale:.28});
   const deckY=(t,x)=>heightAt(x,startZ+(endZ-startZ)*t)+.48+archHeight*Math.sin(Math.PI*t);
   // Dovelas anchas a lo largo de todo el tablero; las juntas hacen visible la piedra.
   for(let i=0;i<segments;i++){
@@ -120,7 +121,7 @@ function createRiverDock(scene,heightAt) {
   const wood=new THREE.MeshStandardMaterial({color:0x705238,roughness:1});
   const wornWood=new THREE.MeshStandardMaterial({color:0x92704a,roughness:1});
   const iron=new THREE.MeshStandardMaterial({color:0x343b38,metalness:.25,roughness:.8});
-  const stoneStep=new THREE.MeshStandardMaterial({color:0x888477,roughness:1,flatShading:true});
+  const stoneStep=createBuildingMaterial("stone",{repeatX:1.2,repeatY:1.4,normalScale:.3});
   const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=heightAt(x,-25)+.35;
   const shoreY=heightAt(x,shoreZ)+.12;
   const deckY=t=>shoreY+(waterY+.9-shoreY)*t;
@@ -160,10 +161,10 @@ function createRiverDock(scene,heightAt) {
 function createWatchKeep(scene, heightAt) {
   // Un solo edificio: casa de guardia de piedra con torre integrada en una esquina.
   const group = new THREE.Group();
-  const stone = new THREE.MeshStandardMaterial({ color: 0x77766d, roughness: .96, flatShading: true });
-  const paleStone = new THREE.MeshStandardMaterial({ color: 0x9a9582, roughness: .95, flatShading: true });
+  const stone = createBuildingMaterial("stone",{repeatX:1.8,repeatY:1.5,normalScale:.34});
+  const paleStone = createBuildingMaterial("stone",{repeatX:1.4,repeatY:1.3,color:0xd0c9b8,normalScale:.3});
   const timber = new THREE.MeshStandardMaterial({ color: 0x493629, roughness: 1 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x59463a, roughness: 1, flatShading: true });
+  const roofMat = createBuildingMaterial("roof",{repeatX:2,repeatY:1.6,normalScale:.34});
   const iron = new THREE.MeshStandardMaterial({ color: 0x343b38, metalness: .35, roughness: .72 });
   const windowMat = new THREE.MeshStandardMaterial({ color: 0xd8a85f, emissive: 0x6b3d16, emissiveIntensity: .35 });
   const add = (geo, mat, x, y, z, sx=1, sy=1, sz=1) => {

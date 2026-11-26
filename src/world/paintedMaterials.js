@@ -7,8 +7,11 @@ const textureCache = new Map();
 
 const PBR_SURFACES = {
   grass: {
-    folder: "grass_07_1k",
-    prefix: "grass_07"
+    folder: "grass_02_1k",
+    colorFile: "grass_02_base_1k.png",
+    normalFile: "grass_02_normal_gl_1k.png",
+    roughnessFile: "grass_02_roughness_1k.png",
+    aoFile: "grass_02_amibent_occlusion_1k.png"
   },
   earth: {
     folder: "ground_06_1k",
@@ -62,20 +65,12 @@ export function createSurfaceMaterial(kind, {
     return new THREE.MeshStandardMaterial({ color: 0xffffff, roughness });
   }
 
-  const base = `../../docs/${definition.folder}/${definition.prefix}`;
-  const colorMap = loadTexture(
-    new URL(`${base}_baseColor_1k.png`, import.meta.url).href,
-    true
-  );
-  const normalMap = loadTexture(
-    new URL(`${base}_normal_gl_1k.png`, import.meta.url).href
-  );
-  const roughnessMap = loadTexture(
-    new URL(`${base}_roughness_1k.png`, import.meta.url).href
-  );
-  const aoMap = loadTexture(
-    new URL(`${base}_ambientOcclusion_1k.png`, import.meta.url).href
-  );
+  const root = `../../${definition.folder}/`;
+  const fileUrl = file => new URL(root + file, import.meta.url).href;
+  const colorMap = loadTexture(fileUrl(definition.colorFile || `${definition.prefix}_baseColor_1k.png`), true);
+  const normalMap = loadTexture(fileUrl(definition.normalFile || `${definition.prefix}_normal_gl_1k.png`));
+  const roughnessMap = loadTexture(fileUrl(definition.roughnessFile || `${definition.prefix}_roughness_1k.png`));
+  const aoMap = loadTexture(fileUrl(definition.aoFile || `${definition.prefix}_ambientOcclusion_1k.png`));
 
   for (const texture of [colorMap, normalMap, roughnessMap, aoMap]) {
     setRepeat(texture, repeatX, repeatY);

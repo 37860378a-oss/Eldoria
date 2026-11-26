@@ -200,3 +200,14 @@ Pendiente de validación: comprobar la conexión del camino con el extremo del p
 - El terreno y las cintas de caminos incorporan UV2 para el mapa de oclusión ambiental.
 - Las texturas SVG provisionales se mantienen para piedra, revoque, madera y tejados hasta incorporar sus recursos definitivos.
 - Pendiente: prueba visual en navegador y ajuste fino de escala/repetición según la cámara del juego.
+
+
+## Versión 2.10 — Reconstrucción de caminos con Ground 06
+
+- Se reemplazó la geometría anterior de las sendas por un generador común de caminos orgánicos, con curvas suaves, bordes irregulares y altura adaptada al terreno.
+- Los caminos de Piedra Clara y las rutas exteriores hacia el Bosque de los Susurros y el Santuario ahora utilizan la textura PBR Ground 06: Base Color, Normal GL, Roughness y Ambient Occlusion.
+- Se eliminó el material antiguo con vertex colors que teñía la superficie y ocultaba parte del mapa de tierra.
+- Las coordenadas UV se calculan por distancia física para evitar repeticiones excesivas y mantener una escala coherente.
+- El material PBR se comparte entre todos los tramos para reducir consumo y llamadas de dibujo.
+- Se mantienen los trazados centrales y las zonas de exclusión de vegetación para conservar las conexiones existentes con el puente y los destinos.
+- Pendiente de validación visual: comprobar que las uniones con el puente y el terreno no floten ni se hundan, que la escala de Ground 06 sea legible y que no aparezcan huecos en las curvas.

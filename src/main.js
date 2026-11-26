@@ -76,6 +76,20 @@ const skyTexture = createSkyTexture();
 skyTexture.mapping = THREE.EquirectangularReflectionMapping;
 scene.background = skyTexture;
 
+// Cubemap recién incorporado: aporta iluminación ambiental sin reemplazar
+// el cielo visible procedural ni alterar el ciclo día/noche.
+new THREE.CubeTextureLoader().load([
+  new URL("../sky_108_cubemap_2k/px.png", import.meta.url).href,
+  new URL("../sky_108_cubemap_2k/nx.png", import.meta.url).href,
+  new URL("../sky_108_cubemap_2k/py.png", import.meta.url).href,
+  new URL("../sky_108_cubemap_2k/ny.png", import.meta.url).href,
+  new URL("../sky_108_cubemap_2k/pz.png", import.meta.url).href,
+  new URL("../sky_108_cubemap_2k/nz.png", import.meta.url).href
+], texture => {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  scene.environment = texture;
+}, undefined, error => console.error("[Eldoria] Error al cargar cubemap ambiental:", error));
+
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500000);
 const world = createWorld(scene);
 // walkHeightAt incluye el tablero del puente para que el personaje no pase por debajo.

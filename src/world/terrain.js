@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPaintedTexture } from "./paintedMaterials.js";
+import { createSurfaceMaterial } from "./paintedMaterials.js";
 
 const WORLD_SIZE=550;
 function smooth01(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
@@ -20,29 +20,31 @@ function baseHeight(x,z){
   return (broad+rolling+ridge+a+b+c)*(1-flat*.94)+mountainRim+mesas;
 }
 export function terrainHeight(x,z){
-  let h=baseHeight(x,z);
-  return h;
+  return baseHeight(x,z);
 }
-function groundTexture(){
-  const texture=createPaintedTexture("grass",9137);
-  texture.repeat.set(3.2,3.2);
-  return texture;
-}
+
 export function createTerrain(scene){
-  const geometry=new THREE.PlaneGeometry(WORLD_SIZE,WORLD_SIZE,420,420);geometry.rotateX(-Math.PI/2);
+  const geometry=new THREE.PlaneGeometry(WORLD_SIZE,WORLD_SIZE,420,420);
+  geometry.rotateX(-Math.PI/2);
   const positions=geometry.attributes.position,colors=[];
-  const meadow=new THREE.Color(0x78985b),light=new THREE.Color(0xa4ae72),earth=new THREE.Color(0x9a8966);
+  const meadow=new THREE.Color(0xffffff);
   for(let i=0;i<positions.count;i++){
     const x=positions.getX(i),z=positions.getZ(i),h=terrainHeight(x,z);
     positions.setY(i,h);
-    const variation=(Math.sin(x*.11)+Math.cos(z*.13))*.035;
-    const color=meadow.clone().lerp(light,THREE.MathUtils.clamp(.34+h*.028+variation,0,.8));
-    if(h>5)color.lerp(earth,.2);
+    // Variación suave de vértices sin teñir ni apagar el mapa artístico.
+    const variation=(Math.sin(x*.11)+Math.cos(z*.13))*.012;
+    const color=meadow.clone().multiplyScalar(1+variation);
     colors.push(color.r,color.g,color.b);
   }
-  geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));geometry.computeVertexNormals();
-  const surfaceTexture=groundTexture();
-  const ground=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xffffff,map:surfaceTexture,roughness:1}));
-  ground.receiveShadow=true;scene.add(ground);
+  geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
+  geometry.setAttribute("uv2",geometry.attributes.uv.clone());
+  geometry.computeVertexNormals();
+
+  const material=createSurfaceMaterial("grass",{
+    repeatX:3.2,repeatY:3.2,roughness:1,normalScale:.42,aoIntensity:.55
+  });
+  const ground=new THREE.Mesh(geometry,material);
+  ground.receiveShadow=true;
+  scene.add(ground);
   return {heightAt:terrainHeight,update(){}};
 }

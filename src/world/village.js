@@ -77,45 +77,6 @@ function addFence(scene, heightAt, x, z, w, d, openingSide = "south") {
   scene.add(group);
 }
 
-function createWatchBridge(scene, heightAt) {
-  // Puente romano-medieval de mampostería: arco único, tablero de dovelas
-  // y pretiles gemelos. Cada tramo sigue exactamente la misma curva.
-  const startZ=-37.2,endZ=-16.8,centerX=8.2,halfWidth=4.1;
-  const archHeight=3.65,segments=34;
-  const stoneA=createBuildingMaterial("stone",{repeatX:1.8,repeatY:1.4,normalScale:.34});
-  const stoneB=createBuildingMaterial("stone",{repeatX:1.35,repeatY:1.2,color:0xd0c9b8,normalScale:.3});
-  const capMat=createBuildingMaterial("stone",{repeatX:2.1,repeatY:1.2,color:0xe0d8c5,normalScale:.28});
-  const deckY=(t,x)=>heightAt(x,startZ+(endZ-startZ)*t)+.48+archHeight*Math.sin(Math.PI*t);
-  // Dovelas anchas a lo largo de todo el tablero; las juntas hacen visible la piedra.
-  for(let i=0;i<segments;i++){
-    const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
-    const slope=(deckY(Math.min(1,t+.002),centerX)-deckY(Math.max(0,t-.002),centerX))/
-      ((endZ-startZ)*.004);
-    const slab=new THREE.Mesh(new THREE.BoxGeometry(8.15,.58,(endZ-startZ)/segments+.055),i%3===0?stoneB:stoneA);
-    slab.position.set(centerX,deckY(t,centerX)-.27,z);
-    slab.rotation.x=-Math.atan(slope);
-    slab.castShadow=true;slab.receiveShadow=true;scene.add(slab);
-  }
-  // Pretiles de piedra idénticos a ambos lados, con bloques y albardilla.
-  for(const side of [-1,1]){
-    for(let i=0;i<segments;i++){
-      const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
-      const x=centerX+side*3.78,y=deckY(t,x);
-      const block=new THREE.Mesh(new THREE.BoxGeometry(.62,1.05,(endZ-startZ)/segments+.04),i%4===0?stoneB:stoneA);
-      block.position.set(x,y+.34,z);
-      const slope=(deckY(Math.min(1,t+.002),x)-deckY(Math.max(0,t-.002),x))/((endZ-startZ)*.004);
-      block.rotation.x=-Math.atan(slope);block.castShadow=true;block.receiveShadow=true;scene.add(block);
-      const cap=new THREE.Mesh(new THREE.BoxGeometry(.78,.2,(endZ-startZ)/segments+.08),capMat);
-      cap.position.set(x,y+.96,z);cap.rotation.x=-Math.atan(slope);cap.castShadow=true;scene.add(cap);
-    }
-  }
-  // Entradas ensanchadas y simétricas, asentadas en el camino.
-  for(const z of [startZ+.42,endZ-.42]){
-    const t=(z-startZ)/(endZ-startZ),landing=new THREE.Mesh(new THREE.BoxGeometry(8.7,.5,1.15),stoneB);
-    landing.position.set(centerX,deckY(t,centerX)-.22,z);landing.castShadow=true;landing.receiveShadow=true;scene.add(landing);
-  }
-}
-
 function createRiverDock(scene,heightAt) {
   // Muelle de madera sobre la orilla norte, perpendicular al cauce.
   const wood=new THREE.MeshStandardMaterial({color:0x705238,roughness:1});

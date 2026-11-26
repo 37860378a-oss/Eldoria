@@ -41,7 +41,7 @@ export function createTrail(scene, heightAt, points, width, options = {}) {
       const x = point.x + lateral.x * offset, z = point.z + lateral.z * offset;
       const bridgeLift = ramp ? 0.78 * ramp(z) : 0;
       vertices.push(x, heightAt(x, z) + 0.075 + bridgeLift, z);
-      uvs.push(distance / 5.2, (band + 1.16) * width / 4.6);
+      uvs.push(distance / 8.0, (band + 1.16) * width / 7.0);
       if (i < segments && j < bands.length - 1) {
         const a = i * bands.length + j;
         indices.push(a, a + 1, a + bands.length, a + 1, a + bands.length + 1, a + bands.length);

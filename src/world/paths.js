@@ -1,43 +1,76 @@
 import * as THREE from "three";
 import { createSurfaceMaterial } from "./paintedMaterials.js";
 
-function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);}
-function ribbon(scene,heightAt,points,width,material,options={}){
-  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,"centripetal");
-  const segments=Math.max(90,points.length*30),vertices=[],uv=[],indices=[],colors=[];
-  const bands=[-1.45,-1.12,-1,-.88,.88,1,1.12,1.45];
-  const grass=new THREE.Color(0xb2c47c),dust=new THREE.Color(0xffffff);
-  for(let i=0;i<=segments;i++){
-    const t=i/segments,p=curve.getPoint(t),tangent=curve.getTangent(t).normalize();
-    const side=new THREE.Vector3(-tangent.z,0,tangent.x).normalize();
-    for(let j=0;j<bands.length;j++){
-      const f=bands[j],x=p.x+side.x*width*.5*f,z=p.z+side.z*width*.5*f;
-      const edge=Math.abs(f),blend=smooth((edge-.88)/.57);
-      let y=heightAt(x,z)+.045+(options.ramp?(.48*options.ramp(z)):0);
-      y+=Math.sin(i*.31+j*.7)*.006;
-      vertices.push(x,y,z);uv.push(t*12,j/(bands.length-1));
-      const color=dust.clone().lerp(grass,blend);colors.push(color.r,color.g,color.b);
-      if(i<segments&&j<bands.length-1){const a=i*bands.length+j;indices.push(a,a+1,a+bands.length,a+1,a+bands.length+1,a+bands.length);}
-    }
+let sharedRoadMaterial = null;
+export function getRoadMaterial() {
+  if (!sharedRoadMaterial) {
+    sharedRoadMaterial = createSurfaceMaterial("earth", {
+      repeatX: 1, repeatY: 1, roughness: 1, normalScale: 0.28, aoIntensity: 0.42
+    });
+    sharedRoadMaterial.side = THREE.DoubleSide;
   }
-  const geometry=new THREE.BufferGeometry();
-  geometry.setAttribute("position",new THREE.Float32BufferAttribute(vertices,3));
-  geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));
-  geometry.setAttribute("uv2",new THREE.Float32BufferAttribute(uv.slice(),2));
-  geometry.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-  const mesh=new THREE.Mesh(geometry,material);
-  mesh.material.side=THREE.DoubleSide;
-  mesh.receiveShadow=true;
-  scene.add(mesh);
+  return sharedRoadMaterial;
 }
 
-export function createPaths(scene,heightAt){
-  const road=createSurfaceMaterial("earth",{
-    repeatX:4,repeatY:1,roughness:1,normalScale:.32,aoIntensity:.48
-  });
-  road.side=THREE.DoubleSide;
-  ribbon(scene,heightAt,[[-49,2],[-44,-3],[-39,-6],[-33,-7],[-27,-6],[-22,-3],[-18,1],[-18,6],[-22,10],[-29,12],[-37,10],[-43,6],[-49,2]],4.2,road);
-  ribbon(scene,heightAt,[[-18,-3],[-12,-7],[-7,-10],[-2,-12],[3,-13],[7,-14],[8.2,-16.8]],4.8,road,{ramp:z=>smooth((-13-z)/3.8)});
+export function createTrail(scene, heightAt, points, width, options = {}) {
+  const curve = new THREE.CatmullRomCurve3(
+    points.map(([x, z]) => new THREE.Vector3(x, 0, z)), false, "centripetal"
+  );
+  const segments = Math.max(150, points.length * 38);
+  const bands = [-1.16, -1, -0.78, -0.5, 0, 0.5, 0.78, 1, 1.16];
+  const vertices = [], uvs = [], indices = [];
+  const lateral = new THREE.Vector3();
+  const ramp = options.bridgeExit ? (z) => THREE.MathUtils.smoothstep(z, -44, -37.2) : null;
+  let distance = 0;
+  let previous = curve.getPoint(0);
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const point = curve.getPoint(t);
+    if (i > 0) distance += point.distanceTo(previous);
+    previous.copy(point);
+    const tangent = curve.getTangent(t).normalize();
+    lateral.set(-tangent.z, 0, tangent.x).normalize();
+    const wobble = Math.sin(distance * 0.47) * 0.055 + Math.sin(distance * 0.19 + 1.7) * 0.035;
+    const edgeNoise = Math.sin(distance * 1.13 + 0.8) * 0.10;
+
+    for (let j = 0; j < bands.length; j++) {
+      const band = bands[j], edgeFactor = Math.abs(band);
+      const irregularWidth = 1 + wobble + (edgeFactor > 0.78 ? edgeNoise : 0);
+      const offset = band * width * 0.5 * irregularWidth;
+      const x = point.x + lateral.x * offset, z = point.z + lateral.z * offset;
+      const bridgeLift = ramp ? 0.78 * ramp(z) : 0;
+      vertices.push(x, heightAt(x, z) + 0.075 + bridgeLift, z);
+      uvs.push(distance / 5.2, (band + 1.16) * width / 4.6);
+      if (i < segments && j < bands.length - 1) {
+        const a = i * bands.length + j;
+        indices.push(a, a + 1, a + bands.length, a + 1, a + bands.length + 1, a + bands.length);
+      }
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute("uv2", new THREE.Float32BufferAttribute(uvs.slice(), 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+
+  const mesh = new THREE.Mesh(geometry, options.material || getRoadMaterial());
+  mesh.receiveShadow = true;
+  mesh.castShadow = false;
+  mesh.renderOrder = 1;
+  scene.add(mesh);
+  return mesh;
+}
+
+export function createPaths(scene, heightAt) {
+  const roadMaterial = getRoadMaterial();
+  createTrail(scene, heightAt,
+    [[-49, 2], [-44, -3], [-39, -6], [-33, -7], [-27, -6], [-22, -3],
+      [-18, 1], [-18, 6], [-22, 10], [-29, 12], [-37, 10], [-43, 6], [-49, 2]],
+    4.2, { material: roadMaterial });
+  createTrail(scene, heightAt,
+    [[-18, -3], [-12, -7], [-7, -10], [-2, -12], [3, -13], [7, -14], [8.2, -16.8]],
+    4.6, { material: roadMaterial });
 }

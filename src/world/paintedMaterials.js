@@ -125,3 +125,32 @@ export function createPaintedTexture(kind, seed = 1) {
   legacyCache.set(surface, texture);
   return texture;
 }
+
+
+// Texturas PBR para arquitectura medieval, compartidas para reducir memoria.
+const BUILDING_SURFACES = {
+  stone: { folder: "../../bricks_wall_07_1k", color: "bricks_wall_07_baseColor_1k.png", normal: "bricks_wall_07_normal_gl_1k.png", roughness: "bricks_wall_07_roughness_1k.png" },
+  plaster: { folder: "../../tudor_wall_04_1k", color: "tudor_wall_04_basecolor_1k.png", normal: "tudor_wall_04_normal_gl_1k.png", roughness: "tudor_wall_04_roughness_1k.png" },
+  roof: { folder: "../../roof_tiles_02_1k", color: "roof_tiles_02_color_1k.png", normal: "roof_tiles_02_normal_gl_1k.png", roughness: "roof_tiles_02_roughness_1k.png" }
+};
+const buildingMaterialCache = new Map();
+
+export function createBuildingMaterial(kind, {
+  repeatX = 1.5, repeatY = repeatX, color = 0xffffff, roughness = 1, normalScale = 0.45
+} = {}) {
+  const definition = BUILDING_SURFACES[kind];
+  if (!definition) return new THREE.MeshStandardMaterial({ color, roughness });
+  const key = [kind, repeatX, repeatY, color, roughness, normalScale].join(":");
+  if (buildingMaterialCache.has(key)) return buildingMaterialCache.get(key);
+  const root = definition.folder;
+  const map = loadTexture(new URL(`${root}/${definition.color}`, import.meta.url).href, true);
+  const normalMap = loadTexture(new URL(`${root}/${definition.normal}`, import.meta.url).href);
+  const roughnessMap = loadTexture(new URL(`${root}/${definition.roughness}`, import.meta.url).href);
+  for (const texture of [map, normalMap, roughnessMap]) setRepeat(texture, repeatX, repeatY);
+  const material = new THREE.MeshStandardMaterial({
+    color, map, normalMap, normalScale: new THREE.Vector2(normalScale, normalScale),
+    roughnessMap, roughness, metalness: 0
+  });
+  buildingMaterialCache.set(key, material);
+  return material;
+}

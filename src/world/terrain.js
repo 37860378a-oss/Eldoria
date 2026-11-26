@@ -41,7 +41,7 @@ export function createTerrain(scene){
   geometry.computeVertexNormals();
 
   const material=createSurfaceMaterial("grass",{
-    repeatX:3.2,repeatY:3.2,roughness:1,normalScale:.42,aoIntensity:.55
+    repeatX:5.0,repeatY:5.0,roughness:1,normalScale:.42,aoIntensity:.55
   });
   const ground=new THREE.Mesh(geometry,material);
   ground.receiveShadow=true;

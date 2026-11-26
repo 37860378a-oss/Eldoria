@@ -82,16 +82,16 @@ function createWatchBridge(scene, heightAt) {
   // y pretiles gemelos. Cada tramo sigue exactamente la misma curva.
   const startZ=-37.2,endZ=-16.8,centerX=8.2,halfWidth=4.1;
   const archHeight=3.65,segments=34;
-  const stoneA=new THREE.MeshStandardMaterial({color:0x77796f,roughness:.96,flatShading:true});
-  const stoneB=new THREE.MeshStandardMaterial({color:0x918d80,roughness:.98,flatShading:true});
-  const capMat=new THREE.MeshStandardMaterial({color:0xa19b8b,roughness:.94,flatShading:true});
+  const stoneA=surfaceMaterials.brick;
+  const stoneB=surfaceMaterials.brick;
+  const capMat=surfaceMaterials.brick;
   const deckY=(t,x)=>heightAt(x,startZ+(endZ-startZ)*t)+.48+archHeight*Math.sin(Math.PI*t);
   // Dovelas anchas a lo largo de todo el tablero; las juntas hacen visible la piedra.
   for(let i=0;i<segments;i++){
     const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
     const slope=(deckY(Math.min(1,t+.002),centerX)-deckY(Math.max(0,t-.002),centerX))/
       ((endZ-startZ)*.004);
-    const slab=new THREE.Mesh(new THREE.BoxGeometry(8.15,.58,(endZ-startZ)/segments+.055),i%3===0?stoneB:stoneA);
+    const slab=new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(8.15,.58,(endZ-startZ)/segments+.055)),i%3===0?stoneB:stoneA);
     slab.position.set(centerX,deckY(t,centerX)-.27,z);
     slab.rotation.x=-Math.atan(slope);
     slab.castShadow=true;slab.receiveShadow=true;scene.add(slab);
@@ -101,17 +101,17 @@ function createWatchBridge(scene, heightAt) {
     for(let i=0;i<segments;i++){
       const t=(i+.5)/segments,z=startZ+(endZ-startZ)*t;
       const x=centerX+side*3.78,y=deckY(t,x);
-      const block=new THREE.Mesh(new THREE.BoxGeometry(.62,1.05,(endZ-startZ)/segments+.04),i%4===0?stoneB:stoneA);
+      const block=new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(.62,1.05,(endZ-startZ)/segments+.04)),i%4===0?stoneB:stoneA);
       block.position.set(x,y+.34,z);
       const slope=(deckY(Math.min(1,t+.002),x)-deckY(Math.max(0,t-.002),x))/((endZ-startZ)*.004);
       block.rotation.x=-Math.atan(slope);block.castShadow=true;block.receiveShadow=true;scene.add(block);
-      const cap=new THREE.Mesh(new THREE.BoxGeometry(.78,.2,(endZ-startZ)/segments+.08),capMat);
+      const cap=new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(.78,.2,(endZ-startZ)/segments+.08)),capMat);
       cap.position.set(x,y+.96,z);cap.rotation.x=-Math.atan(slope);cap.castShadow=true;scene.add(cap);
     }
   }
   // Entradas ensanchadas y simétricas, asentadas en el camino.
   for(const z of [startZ+.42,endZ-.42]){
-    const t=(z-startZ)/(endZ-startZ),landing=new THREE.Mesh(new THREE.BoxGeometry(8.7,.5,1.15),stoneB);
+    const t=(z-startZ)/(endZ-startZ),landing=new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(8.7,.5,1.15)),stoneB);
     landing.position.set(centerX,deckY(t,centerX)-.22,z);landing.castShadow=true;landing.receiveShadow=true;scene.add(landing);
   }
 }
@@ -121,7 +121,7 @@ function createRiverDock(scene,heightAt) {
   const wood=new THREE.MeshStandardMaterial({color:0x705238,roughness:1});
   const wornWood=new THREE.MeshStandardMaterial({color:0x92704a,roughness:1});
   const iron=new THREE.MeshStandardMaterial({color:0x343b38,metalness:.25,roughness:.8});
-  const stoneStep=new THREE.MeshStandardMaterial({color:0x888477,roughness:1,flatShading:true});
+  const stoneStep=surfaceMaterials.brick;
   const x=-12,shoreZ=-17.2,endZ=-24.1,waterY=heightAt(x,-25)+1.65;
   const shoreY=heightAt(x,shoreZ)+.12;
   const deckY=t=>shoreY+(waterY+.3-shoreY)*t;
@@ -154,7 +154,7 @@ function createRiverDock(scene,heightAt) {
     cap.position.set(x+px,deckY(1)+.94,endZ);scene.add(cap);
   }
   for(let i=0;i<4;i++){
-    const step=new THREE.Mesh(new THREE.BoxGeometry(1.5,.16,.42),stoneStep);
+    const step=new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(1.5,.16,.42)),stoneStep);
     step.position.set(x,shoreY-.12-i*.2,shoreZ-.55-i*.42);scene.add(step);
   }
 }
@@ -217,15 +217,15 @@ function createWatchKeep(scene, heightAt) {
 export function createVillage(scene, heightAt) {
   // Las viviendas y sus cercos fueron retirados para abrir el valle.
 
-  const plaza = new THREE.Mesh(new THREE.CircleGeometry(8.2, 32), mats.stone);
+  const plaza = new THREE.Mesh(prepareGeometry(new THREE.CircleGeometry(8.2, 32)), mats.stone);
   plaza.rotation.x = -Math.PI / 2;
   plaza.position.set(-29, heightAt(-29, 1) + 0.18, 1);
   scene.add(plaza);
 
   const well = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.4, 0.9, 8), mats.stone);
+  const base = new THREE.Mesh(prepareGeometry(new THREE.CylinderGeometry(1.25, 1.4, 0.9, 8)), mats.stone);
   base.position.y = 0.55; well.add(base);
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(1.75, 1.25, 4), mats.roof[0]);
+  const roof = new THREE.Mesh(prepareGeometry(new THREE.ConeGeometry(1.75, 1.25, 4)), mats.roof[0]);
   roof.position.y = 2.0; roof.rotation.y = Math.PI / 4; well.add(roof);
   block(well, 0.14, 1.5, 0.14, mats.timber, -1.15, 1.25, 0);
   block(well, 0.14, 1.5, 0.14, mats.timber, 1.15, 1.25, 0);

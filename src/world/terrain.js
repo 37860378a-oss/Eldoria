@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createSurfaceMaterial } from "./paintedMaterials.js";
 
 const WORLD_SIZE = 550;
 
@@ -111,5 +112,44 @@ export function createTerrain(scene) {
   const ground = new THREE.Mesh(geometry, material);
   ground.receiveShadow = true;
   scene.add(ground);
+
+  // Parches de césped PBR con bordes difuminados para mantener la mezcla tierra/césped.
+  const grassMaterial = createSurfaceMaterial("grass", {
+    repeatX: 0.72, repeatY: 0.72, normalScale: 0.28, aoIntensity: 0.3
+  });
+  const alphaCanvas = document.createElement("canvas");
+  alphaCanvas.width = alphaCanvas.height = 128;
+  const alphaContext = alphaCanvas.getContext("2d");
+  const gradient = alphaContext.createRadialGradient(64, 64, 13, 64, 64, 62);
+  gradient.addColorStop(0, "rgba(255,255,255,0.92)");
+  gradient.addColorStop(0.58, "rgba(255,255,255,0.68)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  alphaContext.fillStyle = gradient;
+  alphaContext.fillRect(0, 0, 128, 128);
+  grassMaterial.alphaMap = new THREE.CanvasTexture(alphaCanvas);
+  grassMaterial.transparent = true;
+  grassMaterial.depthWrite = false;
+  grassMaterial.color.setHex(0xb4b18d);
+  const patchGeometry = new THREE.CircleGeometry(1, 9);
+  patchGeometry.rotateX(-Math.PI / 2);
+  const dummy = new THREE.Object3D();
+  const patches = [];
+  let seed = 72191;
+  const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  for (let i = 0; i < 105; i++) {
+    const x = (random() - 0.5) * 490, z = (random() - 0.5) * 490;
+    if (Math.abs(z + 25) < 13 || (x > -52 && x < 18 && z > -22 && z < 18)) continue;
+    const radius = 2.1 + random() * 3.1;
+    dummy.position.set(x, terrainHeight(x, z) + 0.055, z);
+    dummy.rotation.y = random() * Math.PI * 2;
+    dummy.scale.set(radius * (0.8 + random() * 0.5), 1, radius * (0.7 + random() * 0.5));
+    dummy.updateMatrix();
+    patches.push(dummy.matrix.clone());
+  }
+  const grassPatches = new THREE.InstancedMesh(patchGeometry, grassMaterial, patches.length);
+  patches.forEach((matrix, index) => grassPatches.setMatrixAt(index, matrix));
+  grassPatches.instanceMatrix.needsUpdate = true;
+  grassPatches.renderOrder = 1;
+  scene.add(grassPatches);
   return { heightAt: terrainHeight, update() {} };
 }

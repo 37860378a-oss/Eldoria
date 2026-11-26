@@ -1,17 +1,18 @@
 import * as THREE from "three";
+import { surfaceMaterials, prepareGeometry } from "./materials.js";
 
 const mats = {
-  plaster: new THREE.MeshStandardMaterial({ color: 0xd1bd91, roughness: 1 }),
+  plaster: surfaceMaterials.tudor,
   timber: new THREE.MeshStandardMaterial({ color: 0x59432f, roughness: 1 }),
   dark: new THREE.MeshStandardMaterial({ color: 0x342c23, roughness: 1 }),
-  roof: [0x765044, 0x8b6247, 0x6e5140].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1, flatShading: true })),
-  stone: new THREE.MeshStandardMaterial({ color: 0x888477, roughness: 1, flatShading: true }),
+  roof: [surfaceMaterials.roof, surfaceMaterials.roof, surfaceMaterials.roof],
+  stone: surfaceMaterials.brick,
   window: new THREE.MeshStandardMaterial({ color: 0xe8bd69, emissive: 0x8c5724, emissiveIntensity: 0.22 }),
   fence: new THREE.MeshStandardMaterial({ color: 0x765b3c, roughness: 1 })
 };
 
 function block(parent, w, h, d, material, x, y, z) {
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  const mesh = new THREE.Mesh(prepareGeometry(new THREE.BoxGeometry(w, h, d)), material);
   mesh.position.set(x, y, z);
   parent.add(mesh);
   return mesh;
@@ -22,7 +23,7 @@ function makeHouse(scene, x, z, width, depth, height, heightAt, variant, rotatio
   block(group, width + 0.55, 0.42, depth + 0.55, mats.stone, 0, 0.21, 0);
   block(group, width, height, depth, mats.plaster, 0, height / 2 + 0.42, 0);
 
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(width, depth) * 0.77, height * 0.7, 4), mats.roof[variant % mats.roof.length]);
+  const roof = new THREE.Mesh(prepareGeometry(new THREE.ConeGeometry(Math.max(width, depth) * 0.77, height * 0.7, 4)), mats.roof[variant % mats.roof.length]);
   roof.position.y = height + height * 0.33 + 0.42;
   roof.rotation.y = Math.PI / 4;
   roof.scale.z = depth / width;
@@ -160,14 +161,14 @@ function createRiverDock(scene,heightAt) {
 function createWatchKeep(scene, heightAt) {
   // Un solo edificio: casa de guardia de piedra con torre integrada en una esquina.
   const group = new THREE.Group();
-  const stone = new THREE.MeshStandardMaterial({ color: 0x77766d, roughness: .96, flatShading: true });
-  const paleStone = new THREE.MeshStandardMaterial({ color: 0x9a9582, roughness: .95, flatShading: true });
+  const stone = surfaceMaterials.brick;
+  const paleStone = surfaceMaterials.tudor;
   const timber = new THREE.MeshStandardMaterial({ color: 0x493629, roughness: 1 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x59463a, roughness: 1, flatShading: true });
+  const roofMat = surfaceMaterials.roof;
   const iron = new THREE.MeshStandardMaterial({ color: 0x343b38, metalness: .35, roughness: .72 });
   const windowMat = new THREE.MeshStandardMaterial({ color: 0xd8a85f, emissive: 0x6b3d16, emissiveIntensity: .35 });
   const add = (geo, mat, x, y, z, sx=1, sy=1, sz=1) => {
-    const m = new THREE.Mesh(geo, mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); group.add(m); return m;
+    const m = new THREE.Mesh(prepareGeometry(geo), mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); group.add(m); return m;
   };
   // Cuerpo principal de la casa de guardia.
   add(new THREE.BoxGeometry(8.2,.55,7.1),stone,0,.28,0);
